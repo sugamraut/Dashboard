@@ -1,72 +1,96 @@
-import toplogo from "../assets/image/company_name.png";
-function Homepage() {
+
+import {
+  Box,
+  Drawer,
+  List,
+  Divider,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+} from '@mui/material';
+
+import image from "../assets/image/company_name.png";
+import HomeIcon from '@mui/icons-material/Home';
+import FolderIcon from '@mui/icons-material/Folder';
+import TextSnippetIcon from '@mui/icons-material/TextSnippet';
+import SummarizeIcon from '@mui/icons-material/Summarize';
+import CategoryIcon from '@mui/icons-material/Category';
+import PeopleIcon from '@mui/icons-material/People';
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
+import FolderOpenIcon from '@mui/icons-material/FolderOpen';
+import PublicIcon from '@mui/icons-material/Public';
+import SettingsIcon from '@mui/icons-material/Settings';
+import LogoutIcon from '@mui/icons-material/Logout';
+import HelpIcon from '@mui/icons-material/Help';
+
+export default function PersistentLeftDrawer() {
+  const anchor: 'left' = 'left';
+
+  const menuItems = [
+    { text: 'Dashboard', icon: <HomeIcon /> },
+    { text: 'Applications', icon: <FolderIcon /> },
+    { text: 'Forms', icon: <TextSnippetIcon /> },
+    { text: 'Reports', icon: <SummarizeIcon /> },
+    { text: 'Categories', icon: <CategoryIcon /> },
+    { text: 'Users', icon: <PeopleIcon /> },
+    { text: 'Roles & Access', icon: <AdminPanelSettingsIcon /> },
+    { text: 'File Manager', icon: <FolderOpenIcon /> },
+    { text: 'Web Portal', icon: <PublicIcon /> },
+    { text: 'Settings', icon: <SettingsIcon /> },
+  ];
+
+  const bottomItems = [
+    { text: 'Logout', icon: <LogoutIcon /> },
+    { text: 'Help', icon: <HelpIcon /> },
+  ];
+
+  const list = (
+    <Box
+      sx={{
+        width: 250,
+        height: '100%',
+        background: 'linear-gradient(to bottom, #003366, #8b0000)',
+        color: 'white',
+       
+      }}
+    >
+      <Box>
+        <Box sx={{ textAlign: 'center', p: 3, borderBottom: '1px solid rgba(255,255,255,0.2)' }}>
+          <img src={image} alt="Sunlife Logo" width="120" />
+        </Box>
+
+        <List>
+          {menuItems.map(({ text, icon }) => (
+            <ListItem key={text} disablePadding>
+              <ListItemButton>
+                <ListItemIcon sx={{ color: 'white' }}>{icon}</ListItemIcon>
+                <ListItemText primary={text} />
+              </ListItemButton>
+            </ListItem>
+          ))}
+        </List>
+      </Box>
+
+      <Box>
+        <Divider sx={{ borderColor: 'rgba(255,255,255,0.2)' }} />
+        <List>
+          {bottomItems.map(({ text, icon }) => (
+            <ListItem key={text} disablePadding>
+              <ListItemButton>
+                <ListItemIcon sx={{ color: 'white' }}>{icon}</ListItemIcon>
+                <ListItemText primary={text} />
+              </ListItemButton>
+            </ListItem>
+          ))}
+        </List>
+      </Box>
+    </Box>
+  );
+
   return (
-    <div>
-      <div>
-        <div>
-          <div className="sidebar d-flex flex-column">
-            <div className="text-center p-3 border-bottom border-white border-opacity-25 logo">
-              <img src={toplogo} alt="Sunlife Logo" />
-            </div>
-
-            <div className="nav flex-column nav-section">
-              <a href="#" className="nav-link">
-                <i className="fas fa-home"></i>
-                <span>Dashboard</span>
-              </a>
-              <a href="#" className="nav-link">
-                <i className="fas fa-folder"></i>
-                <span>Applications</span>
-              </a>
-              <a href="#" className="nav-link">
-                <i className="fas fa-file-alt"></i>
-                <span>Forms</span>
-              </a>
-              <a href="#" className="nav-link">
-                <i className="fas fa-chart-bar"></i>
-                <span>Reports</span>
-              </a>
-              <a href="#" className="nav-link">
-                <i className="fas fa-layer-group"></i>
-                <span>Categories</span>
-              </a>
-              <a href="#" className="nav-link">
-                <i className="fas fa-users"></i>
-                <span>Users</span>
-              </a>
-              <a href="#" className="nav-link">
-                <i className="fas fa-user-shield"></i>
-                <span>Roles & Access</span>
-              </a>
-              <a href="#" className="nav-link">
-                <i className="fas fa-folder-open"></i>
-                <span>File Manager</span>
-              </a>
-              <a href="#" className="nav-link">
-                <i className="fas fa-globe"></i>
-                <span>Web Portal</span>
-              </a>
-              <a href="#" className="nav-link">
-                <i className="fas fa-cogs"></i>
-                <span>Settings</span>
-              </a>
-            </div>
-
-            <div className="nav flex-column bottom-nav">
-              <a href="#" className="nav-link">
-                <i className="fas fa-sign-out-alt"></i>
-                <span>Logout</span>
-              </a>
-              <a href="#" className="nav-link">
-                <i className="fas fa-question-circle"></i>
-                <span>Help</span>
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <Drawer anchor={anchor} open={true} variant="persistent">
+      {list}
+    </Drawer>
   );
 }
-
-export default Homepage;
