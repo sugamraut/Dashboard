@@ -6,13 +6,15 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "./assets/custom.scss"
+import BrandingSignInPage from "./pages/demo";
 const router = createBrowserRouter([
   {
-    path: "/",
+    path: "/admin/",
     element: <RootLayout />,
     children: [
-      { index: true, element: <Home /> },
-      { path: 'admin', element: <Login/> },
+      { index: true, element:  <Login/> },
+      { path: 'admin', element: <Home /> },
+      {path:"demo",element:<BrandingSignInPage/>},
       // { path: '*', element: <NotFound /> }
     ],
   },
