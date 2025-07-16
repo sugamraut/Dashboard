@@ -2,6 +2,7 @@ import { createBrowserRouter } from "react-router-dom";
 import RootLayout from "./layouts/rootlayouts";
 import Home from "./pages/homepage"
 import Login from "./pages/loginpage"
+import Demo from "./pages/demo"
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
@@ -14,7 +15,8 @@ const router = createBrowserRouter([
     children: [
       { index: true, element:  <Login/> },
       { path: 'home', element: <Home /> },
-      {path:"demo",element:<BrandingSignInPage/>},
+      {path:"branch",element:<BrandingSignInPage/>},
+      {path:"branch/demo",element:<Demo/>}
       // { path: '*', element: <NotFound /> }
     ],
   },

@@ -47,16 +47,17 @@ const LoginInput: React.FC<LoginInputProps> = ({
         }
         value={value}
         onChange={onChange}
-        startAdornment={
-          iconClass && (
-            <InputAdornment position="start">
-              <i
-                className={iconClass}
-                style={{ fontSize: "1rem", marginRight: "12px" }}
-              />
-            </InputAdornment>
-          )
-        }
+        // startAdornment={
+            
+        //   iconClass && (
+        //     <InputAdornment position="start">
+        //       <i
+        //         className={iconClass}
+        //         style={{ fontSize: "1rem", marginRight: "12px" }}
+        //       />
+        //     </InputAdornment>
+        //   )
+        // }
         endAdornment={
           type === "password" &&
           togglePasswordVisibility && (

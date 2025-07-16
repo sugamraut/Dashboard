@@ -48,11 +48,11 @@ export default function Sidebar() {
       }}
     >
       <img src={companyLogo} alt="Logo" width="40" />
-      <List sx={{ mt: 2, flexGrow: 1 }}>
+      <List sx={{ mt: 2 }} className="mt-5">
         {sidebarIcons.map(({ icon, label }, index) => (
           <Tooltip title={label} placement="right" arrow key={index}>
-            <ListItem disablePadding>
-              <IconButton sx={{ color: "white" }}>{icon}</IconButton>
+            <ListItem disablePadding className="mt-5 ">
+              <IconButton sx={{ color: "white" }} >{icon}</IconButton>
             </ListItem>
           </Tooltip>
         ))}

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Sidebar from "./homepage";
+import EditBranchForm from "./demo";
 import {
   Box,
   Table,
@@ -13,7 +14,8 @@ import {
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import BranchFilterBar from "../components/Tablefield"; 
+import BranchFilterBar from "../components/Tablefield";
+import { Link } from "react-router-dom";
 
 const branches = [
   { id: 1, name: "KHUSIBU BRANCH", code: "59" },
@@ -100,7 +102,9 @@ export default function BranchesPage() {
                     <TableCell>--</TableCell>
                     <TableCell align="center">
                       <IconButton color="primary">
-                        <EditIcon />
+                        <Link to={{ pathname: "./demo" }}>
+                          <EditIcon />
+                        </Link>
                       </IconButton>
                       <IconButton color="error">
                         <DeleteIcon />
