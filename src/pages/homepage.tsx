@@ -1,12 +1,4 @@
-import React from "react";
-import {
-  Box,
-  Drawer,
-  IconButton,
-  List,
-  ListItem,
-  Tooltip,
-} from "@mui/material";
+import { Drawer, IconButton, List, ListItem, Tooltip } from "@mui/material";
 
 import HomeIcon from "@mui/icons-material/Home";
 import FolderIcon from "@mui/icons-material/Folder";
@@ -20,7 +12,7 @@ import PublicIcon from "@mui/icons-material/Public";
 import SettingsIcon from "@mui/icons-material/Settings";
 import LogoutIcon from "@mui/icons-material/Logout";
 
-import companyLogo from "../assets/image/company_name.png"; // adjust the path
+import companyLogo from "../assets/image/company_name.png";
 
 const drawerWidth = 70;
 const sidebarIcons = [

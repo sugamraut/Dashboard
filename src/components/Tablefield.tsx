@@ -7,6 +7,7 @@ import {
   Select,
   MenuItem,
   IconButton,
+  type SelectChangeEvent,
 } from "@mui/material";
 import FilterAltOffIcon from "@mui/icons-material/FilterAltOff";
 import AddIcon from "@mui/icons-material/Add";
@@ -14,8 +15,8 @@ import AddIcon from "@mui/icons-material/Add";
 type BranchFilterBarProps = {
   state: string;
   district: string;
-  onStateChange: (e: React.ChangeEvent<{ value: unknown }>) => void;
-  onDistrictChange: (e: React.ChangeEvent<{ value: unknown }>) => void;
+ onStateChange: (event: SelectChangeEvent) => void; 
+  onDistrictChange: (event: SelectChangeEvent) => void; 
   onSearchChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onClearFilters: () => void;
   onAdd: () => void;
