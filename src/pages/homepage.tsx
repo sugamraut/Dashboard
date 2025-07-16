@@ -1,96 +1,70 @@
-
+import React from "react";
 import {
   Box,
   Drawer,
+  IconButton,
   List,
-  Divider,
   ListItem,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-} from '@mui/material';
+  Tooltip,
+} from "@mui/material";
 
-import image from "../assets/image/company_name.png";
-import HomeIcon from '@mui/icons-material/Home';
-import FolderIcon from '@mui/icons-material/Folder';
-import TextSnippetIcon from '@mui/icons-material/TextSnippet';
-import SummarizeIcon from '@mui/icons-material/Summarize';
-import CategoryIcon from '@mui/icons-material/Category';
-import PeopleIcon from '@mui/icons-material/People';
-import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
-import FolderOpenIcon from '@mui/icons-material/FolderOpen';
-import PublicIcon from '@mui/icons-material/Public';
-import SettingsIcon from '@mui/icons-material/Settings';
-import LogoutIcon from '@mui/icons-material/Logout';
-import HelpIcon from '@mui/icons-material/Help';
+import HomeIcon from "@mui/icons-material/Home";
+import FolderIcon from "@mui/icons-material/Folder";
+import TextSnippetIcon from "@mui/icons-material/TextSnippet";
+import SummarizeIcon from "@mui/icons-material/Summarize";
+import CategoryIcon from "@mui/icons-material/Category";
+import PeopleIcon from "@mui/icons-material/People";
+import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
+import FolderOpenIcon from "@mui/icons-material/FolderOpen";
+import PublicIcon from "@mui/icons-material/Public";
+import SettingsIcon from "@mui/icons-material/Settings";
+import LogoutIcon from "@mui/icons-material/Logout";
 
-export default function PersistentLeftDrawer() {
-  const anchor: 'left' = 'left';
+import companyLogo from "../assets/image/company_name.png"; // adjust the path
 
-  const menuItems = [
-    { text: 'Dashboard', icon: <HomeIcon /> },
-    { text: 'Applications', icon: <FolderIcon /> },
-    { text: 'Forms', icon: <TextSnippetIcon /> },
-    { text: 'Reports', icon: <SummarizeIcon /> },
-    { text: 'Categories', icon: <CategoryIcon /> },
-    { text: 'Users', icon: <PeopleIcon /> },
-    { text: 'Roles & Access', icon: <AdminPanelSettingsIcon /> },
-    { text: 'File Manager', icon: <FolderOpenIcon /> },
-    { text: 'Web Portal', icon: <PublicIcon /> },
-    { text: 'Settings', icon: <SettingsIcon /> },
-  ];
+const drawerWidth = 70;
+const sidebarIcons = [
+  { icon: <HomeIcon />, label: "Dashboard" },
+  { icon: <FolderIcon />, label: "online Acoount" },
+  { icon: <TextSnippetIcon />, label: "Account Type " },
+  { icon: <SummarizeIcon />, label: "Branches" },
+  { icon: <CategoryIcon />, label: "Categories" },
+  { icon: <PeopleIcon />, label: "Users" },
+  { icon: <AdminPanelSettingsIcon />, label: "Roles & Access" },
+  { icon: <FolderOpenIcon />, label: "File Manager" },
+  { icon: <PublicIcon />, label: "Web Portal" },
+  { icon: <SettingsIcon />, label: "Settings" },
+  { icon: <LogoutIcon />, label: "Logout" },
+];
 
-  const bottomItems = [
-    { text: 'Logout', icon: <LogoutIcon /> },
-    { text: 'Help', icon: <HelpIcon /> },
-  ];
-
-  const list = (
-    <Box
+export default function Sidebar() {
+  return (
+    <Drawer
+      variant="permanent"
       sx={{
-        width: 250,
-        height: '100%',
-        background: 'linear-gradient(to bottom, #003366, #8b0000)',
-        color: 'white',
-       
+        width: drawerWidth,
+        flexShrink: 0,
+        "& .MuiDrawer-paper": {
+          width: drawerWidth,
+          boxSizing: "border-box",
+          background: "linear-gradient(to bottom, #002b5c, #8b0000)",
+          color: "white",
+          display: "flex",
+          alignItems: "center",
+          pt: 2,
+        },
       }}
     >
-      <Box>
-        <Box sx={{ textAlign: 'center', p: 3, borderBottom: '1px solid rgba(255,255,255,0.2)' }}>
-          <img src={image} alt="Sunlife Logo" width="120" />
-        </Box>
-
-        <List>
-          {menuItems.map(({ text, icon }) => (
-            <ListItem key={text} disablePadding>
-              <ListItemButton>
-                <ListItemIcon sx={{ color: 'white' }}>{icon}</ListItemIcon>
-                <ListItemText primary={text} />
-              </ListItemButton>
+      <img src={companyLogo} alt="Logo" width="40" />
+      <List sx={{ mt: 2, flexGrow: 1 }}>
+        {sidebarIcons.map(({ icon, label }, index) => (
+          <Tooltip title={label} placement="right" arrow key={index}>
+            <ListItem disablePadding>
+              <IconButton sx={{ color: "white" }}>{icon}</IconButton>
             </ListItem>
-          ))}
-        </List>
-      </Box>
-
-      <Box>
-        <Divider sx={{ borderColor: 'rgba(255,255,255,0.2)' }} />
-        <List>
-          {bottomItems.map(({ text, icon }) => (
-            <ListItem key={text} disablePadding>
-              <ListItemButton>
-                <ListItemIcon sx={{ color: 'white' }}>{icon}</ListItemIcon>
-                <ListItemText primary={text} />
-              </ListItemButton>
-            </ListItem>
-          ))}
-        </List>
-      </Box>
-    </Box>
-  );
-
-  return (
-    <Drawer anchor={anchor} open={true} variant="persistent">
-      {list}
+          </Tooltip>
+        ))}
+      </List>
     </Drawer>
   );
 }
