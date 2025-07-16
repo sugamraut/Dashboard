@@ -140,7 +140,6 @@ export default function BranchesPage() {
           maxWidth="md"
           fullWidth
         >
-          <DialogTitle>Edit Branch</DialogTitle>
           <DialogContent>
             <EditBranchForm
               initialData={selectedBranch}
