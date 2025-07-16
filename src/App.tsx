@@ -2,6 +2,7 @@ import { createBrowserRouter } from "react-router-dom";
 import RootLayout from "./layouts/rootlayouts";
 import Home from "./pages/homepage"
 import Login from "./pages/loginpage"
+import Editfield from "./pages/Editfield"
 import Demo from "./pages/demo"
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -16,7 +17,8 @@ const router = createBrowserRouter([
       { index: true, element:  <Login/> },
       { path: 'home', element: <Home /> },
       {path:"branch",element:<BrandingSignInPage/>},
-      {path:"branch/demo",element:<Demo/>}
+      {path:"branch/edit",element:<Editfield/>},
+      {path:"demo",element:<Demo/>}
       // { path: '*', element: <NotFound /> }
     ],
   },

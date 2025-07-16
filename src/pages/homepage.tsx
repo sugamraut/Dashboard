@@ -14,7 +14,7 @@ import LogoutIcon from "@mui/icons-material/Logout";
 
 import companyLogo from "../assets/image/company_name.png";
 
-const drawerWidth = 70;
+const drawerWidth = 100;
 const sidebarIcons = [
   { icon: <HomeIcon />, label: "Dashboard" },
   { icon: <FolderIcon />, label: "online Acoount" },
@@ -31,13 +31,14 @@ const sidebarIcons = [
 
 export default function Sidebar() {
   return (
+    
     <Drawer
       variant="permanent"
       sx={{
-        width: drawerWidth,
+        width: 55,
         flexShrink: 0,
         "& .MuiDrawer-paper": {
-          width: drawerWidth,
+          width: 70,
           boxSizing: "border-box",
           background: "linear-gradient(to bottom, #002b5c, #8b0000)",
           color: "white",
@@ -52,7 +53,7 @@ export default function Sidebar() {
         {sidebarIcons.map(({ icon, label }, index) => (
           <Tooltip title={label} placement="right" arrow key={index}>
             <ListItem disablePadding className="mt-5 ">
-              <IconButton sx={{ color: "white" }} >{icon}</IconButton>
+              <IconButton sx={{ color: "white" }}>{icon}</IconButton>
             </ListItem>
           </Tooltip>
         ))}

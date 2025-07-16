@@ -1,72 +1,88 @@
-body {
-  font-family: "lato",Segoe UI;
-  // background-color: #f2f4f8;
-}
-.sidebar {
-  width: 250px;
-  height: 100vh;
-  position: fixed;
-  top: 0;
-  left: 0;
-  background: linear-gradient(to bottom, #003366, #8b0000);
-  color: white;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
+// body {
+//   font-family: "lato",Segoe UI;
+//   // background-color: #f2f4f8;
+// }
+// .sidebar {
+//   width: 250px;
+//   height: 100vh;
+//   position: fixed;
+//   top: 0;
+//   left: 0;
+//   background: linear-gradient(to bottom, #003366, #8b0000);
+//   color: white;
+//   display: flex;
+//   flex-direction: column;
+//   justify-content: space-between;
+// }
 
-.nav-link {
-  color: white;
-  padding: 12px 20px;
-  display: flex;
-  align-items: center;
-}
+// .nav-link {
+//   color: white;
+//   padding: 12px 20px;
+//   display: flex;
+//   align-items: center;
+// }
 
-.nav-link i {
-  margin-right: 15px;
-}
+// .nav-link i {
+//   margin-right: 15px;
+// }
 
-.nav-link:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-}
+// .nav-link:hover {
+//   background-color: rgba(255, 255, 255, 0.1);
+// }
 
-.nav-link.active {
-  background-color: rgba(255, 255, 255, 0.2);
-  font-weight: bold;
-  border-left: 4px solid white;
-}
+// .nav-link.active {
+//   background-color: rgba(255, 255, 255, 0.2);
+//   font-weight: bold;
+//   border-left: 4px solid white;
+// }
 
-.logo img {
-  max-width: 100px;
-}
+// .logo img {
+//   max-width: 100px;
+// }
 
-.nav-section {
-  flex: 1;
-  overflow-y: auto;
-}
+// .nav-section {
+//   flex: 1;
+//   overflow-y: auto;
+// }
 
-.bottom-nav {
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
-}
-.login-section{
-  background-color: linear-gradient(to bottom, #0033cc, #cc0000);
-}
-.login-container {
-  height: 100vh;
-  background: linear-gradient(to bottom, #0033cc, #cc0000);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
+// .bottom-nav {
+//   border-top: 1px solid rgba(255, 255, 255, 0.2);
+// }
+// .login-section{
+//   background-color: linear-gradient(to bottom, #0033cc, #cc0000);
+// }
+// .login-container {
+//   height: 100vh;
+//   background: linear-gradient(to bottom, #0033cc, #cc0000);
+//   display: flex;
+//   justify-content: center;
+//   align-items: center;
+// }
 
-.login-box {
-  width: 360px;
-  background-color: white;
-  border-radius: 10px;
-  padding: 30px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-}
+// .login-box {
+//   width: 360px;
+//   background-color: white;
+//   border-radius: 10px;
+//   padding: 30px;
+//   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+// }
 
-input::placeholder {
-  color: #aaa;
+// input::placeholder {
+//   color: #aaa;
+// }
+
+.css-1e70fe0-MuiDrawer-docked .MuiDrawer-paper {
+    width: 90px;
+    box-sizing: border-box;
+    background: linear-gradient(to bottom, #002b5c, #8b0000);
+    color: white;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-align-items: center;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    padding-top: 16px;
 }

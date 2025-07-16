@@ -1,205 +1,125 @@
-import React, { useState } from "react";
-import { Grid } from "@mui/material";
 import {
   Box,
-  Button,
-  TextField,
+  Grid,
+  Card,
+  CardContent,
   Typography,
-  Alert,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-} from "@mui/material";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import SaveIcon from "@mui/icons-material/Save";
+  Avatar,
+  Chip
+} from '@mui/material';
 
-export default function EditBranchForm() {
-  const [formData, setFormData] = useState({
-    branchName: "KANTIPATH BRANCH",
-    code: "01",
-    telephone: "",
-    email: "",
-    fax: "",
-    state: "",
-    district: "Good District",
-    city: "",
-    streetAddress: "KANTIPATH BRANCH",
-    wardNo: "",
-  });
+import StorageIcon from '@mui/icons-material/Storage';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import CancelIcon from '@mui/icons-material/Cancel';
+import BlockIcon from '@mui/icons-material/Block';
 
-  const [error, setError] = useState<string | null>("");
+const cardItems = [
+  {
+    title: 'TOTAL',
+    count: 7,
+    trend: 1,
+    icon: <StorageIcon />,
+    iconBg: '#0a58ca',
+    trendColor: '#0a58ca',
+  },
+  {
+    title: 'PENDING',
+    count: 7,
+    trend: 1,
+    icon: <VisibilityOffIcon />,
+    iconBg: '#6c757d',
+    trendColor: '#6c757d',
+  },
+  {
+    title: 'PROCESSING',
+    count: 0,
+    trend: 0,
+    icon: <AccessTimeIcon />,
+    iconBg: '#0d6efd',
+    trendColor: '#0d6efd',
+  },
+  {
+    title: 'APPROVED',
+    count: 0,
+    trend: 0,
+    icon: <CheckCircleIcon />,
+    iconBg: '#198754',
+    trendColor: '#198754',
+  },
+  {
+    title: 'REJECTED',
+    count: 0,
+    trend: 0,
+    icon: <CancelIcon />,
+    iconBg: '#dc3545',
+    trendColor: '#dc3545',
+  },
+  {
+    title: 'SPAM',
+    count: 0,
+    trend: 0,
+    icon: <BlockIcon />,
+    iconBg: '#ffc107',
+    trendColor: '#ffc107',
+  },
+];
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name as string]: value }));
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    alert("Submitted!");
-  };
-
+const StatusCards = () => {
   return (
-    <Box
-      sx={{
-        maxWidth: 600,
-        mx: "auto",
-        p: 3,
-        borderRadius: 2,
-        boxShadow: 2,
-        bgcolor: "white",
-      }}
-    >
-      <Box
-        display="flex"
-        justifyContent="space-between"
-        alignItems="center"
-        mb={2}
-      >
-        <Typography variant="h6" fontWeight="bold" color="primary">
-          Edit Branches
-        </Typography>
-        <Button size="small" color="error" startIcon={<ArrowBackIcon />}>
-          Back
-        </Button>
-      </Box>
+    <Box sx={{ p: 4 }}>
+      <Grid container spacing={3}>
+        {cardItems.map((item, index) => (
+          <Grid item xs={12} sm={6} md={4} key={index}>
+            <Card sx={{ position: 'relative', minHeight: 120 }}>
+              <CardContent>
+                <Avatar
+                  sx={{
+                    bgcolor: item.iconBg,
+                    position: 'absolute',
+                    top: 16,
+                    left: 16,
+                    width: 32,
+                    height: 32,
+                  }}
+                >
+                  {item.icon}
+                </Avatar>
 
-      {error && (
-        <Alert severity="error" sx={{ mb: 2 }}>
-          {error}
-        </Alert>
-      )}
+                <Chip
+                  label={item.trend}
+                  size="small"
+                  sx={{
+                    position: 'absolute',
+                    top: 16,
+                    right: 16,
+                    backgroundColor: item.trendColor,
+                    color: 'white',
+                    fontWeight: 'bold',
+                  }}
+                />
 
-      <form onSubmit={handleSubmit}>
-        <Grid container spacing={2}>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              required
-              fullWidth
-              label="Branch Name"
-              name="branchName"
-              value={formData.branchName}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              required
-              fullWidth
-              label="Code"
-              name="code"
-              value={formData.code}
-              onChange={handleChange}
-            />
-          </Grid>
+                <Typography
+                  variant="h4"
+                  sx={{ mt: 4, textAlign: 'center', fontWeight: 'bold' }}
+                >
+                  {item.count}
+                </Typography>
 
-          <Grid item xs={12} sm={6}>
-            <TextField
-              required
-              fullWidth
-              label="Telephone"
-              name="telephone"
-              value={formData.telephone}
-              onChange={handleChange}
-            />
+                <Typography
+                  variant="subtitle2"
+                  sx={{ textAlign: 'center', color: 'gray' }}
+                >
+                  {item.title}
+                </Typography>
+              </CardContent>
+            </Card>
           </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              required
-              fullWidth
-              label="Email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-            />
-          </Grid>
-
-          <Grid item xs={12}>
-            <TextField
-              fullWidth
-              label="Fax"
-              name="fax"
-              value={formData.fax}
-              onChange={handleChange}
-            />
-          </Grid>
-
-          <Grid item xs={12}>
-            <Typography variant="subtitle1" fontWeight="bold">
-              Address
-            </Typography>
-          </Grid>
-
-          <Grid item xs={12} sm={6}>
-            <FormControl fullWidth required>
-              <InputLabel>State</InputLabel>
-              <Select
-                name="state"
-                value={formData.state}
-                onChange={handleChange}
-                label="State"
-              >
-                <MenuItem value="">
-                  <em>None</em>
-                </MenuItem>
-                <MenuItem value="State 1">State 1</MenuItem>
-                <MenuItem value="State 2">State 2</MenuItem>
-              </Select>
-            </FormControl>
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <FormControl fullWidth disabled required>
-              <InputLabel>District</InputLabel>
-              <Select
-                name="district"
-                value={formData.district}
-                onChange={handleChange}
-                label="District"
-              >
-                <MenuItem value="Good District">Good District</MenuItem>
-              </Select>
-            </FormControl>
-          </Grid>
-
-          <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
-              label="City"
-              name="city"
-              value={formData.city}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
-              label="Street Address"
-              name="streetAddress"
-              value={formData.streetAddress}
-              onChange={handleChange}
-            />
-          </Grid>
-
-          <Grid item xs={12}>
-            <TextField
-              fullWidth
-              label="Ward No."
-              name="wardNo"
-              value={formData.wardNo}
-              onChange={handleChange}
-            />
-          </Grid>
-        </Grid>
-
-        <Box mt={3} textAlign="right">
-          <Button type="submit" variant="contained" startIcon={<SaveIcon />}>
-            Submit
-          </Button>
-        </Box>
-      </form>
+        ))}
+      </Grid>
     </Box>
   );
-}
+};
+
+export default StatusCards;
