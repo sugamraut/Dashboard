@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import  { useState } from "react";
 import Sidebar from "./homepage";
-import "./Editfield"
+import "./Editfield";
 import {
   Box,
   Table,
@@ -11,8 +11,6 @@ import {
   TableRow,
   Paper,
   IconButton,
-  Modal,
-  Backdrop,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -37,9 +35,6 @@ export default function BranchesPage() {
   const [state, setState] = useState("");
   const [district, setDistrict] = useState("");
   const [search, setSearch] = useState("");
-  const [open, setOpen] = React.useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
 
   const handleClearFilters = () => {
     setState("");
@@ -67,76 +62,76 @@ export default function BranchesPage() {
           },
         }}
       > */}
+      <Box
+        component="main"
+        sx={{ flexGrow: 1, p: 3, backgroundColor: "#f9fbfd" }}
+      >
         <Box
-          component="main"
-          sx={{ flexGrow: 1, p: 3, backgroundColor: "#f9fbfd" }}
+          display="flex"
+          justifyContent="space-between"
+          alignItems="center"
+          mb={2}
         >
-          <Box
-            display="flex"
-            justifyContent="space-between"
-            alignItems="center"
-            mb={2}
-          >
-            <h2>Branches</h2>
-            <BranchFilterBar
-              state={state}
-              district={district}
-              onStateChange={(e) => setState(e.target.value as string)}
-              onDistrictChange={(e) => setDistrict(e.target.value as string)}
-              onSearchChange={(e) => setSearch(e.target.value)}
-              onClearFilters={handleClearFilters}
-              onAdd={handleAdd}
-            />
-          </Box>
+          <h2>Branches</h2>
+          <BranchFilterBar
+            state={state}
+            district={district}
+            onStateChange={(e) => setState(e.target.value as string)}
+            onDistrictChange={(e) => setDistrict(e.target.value as string)}
+            onSearchChange={(e) => setSearch(e.target.value)}
+            onClearFilters={handleClearFilters}
+            onAdd={handleAdd}
+          />
+        </Box>
 
-          <TableContainer component={Paper}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>#</TableCell>
-                  <TableCell>Branch Name</TableCell>
-                  <TableCell>District</TableCell>
-                  <TableCell>Location</TableCell>
-                  <TableCell>Contact Details</TableCell>
-                  <TableCell align="center">Actions</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {branches
-                  .filter((b) =>
-                    b.name.toLowerCase().includes(search.toLowerCase())
-                  )
-                  .map((branch, index) => (
-                    <TableRow key={branch.id}>
-                      <TableCell>{index + 1}</TableCell>
-                      <TableCell>
-                        {branch.name} ({branch.code})
-                      </TableCell>
-                      <TableCell>Good District</TableCell>
-                      <TableCell>
-                        Phungling Municipality, {branch.name} -
-                      </TableCell>
-                      <TableCell>--</TableCell>
-                      <TableCell align="center">
-                        <IconButton color="primary">
-                          <Link to={{ pathname: "/admin/branch/edit" }}>
-                            {/* <button onClick={handleOpen}>
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>#</TableCell>
+                <TableCell>Branch Name</TableCell>
+                <TableCell>District</TableCell>
+                <TableCell>Location</TableCell>
+                <TableCell>Contact Details</TableCell>
+                <TableCell align="center">Actions</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {branches
+                .filter((b) =>
+                  b.name.toLowerCase().includes(search.toLowerCase())
+                )
+                .map((branch, index) => (
+                  <TableRow key={branch.id}>
+                    <TableCell>{index + 1}</TableCell>
+                    <TableCell>
+                      {branch.name} ({branch.code})
+                    </TableCell>
+                    <TableCell>Good District</TableCell>
+                    <TableCell>
+                      Phungling Municipality, {branch.name} -
+                    </TableCell>
+                    <TableCell>--</TableCell>
+                    <TableCell align="center">
+                      <IconButton color="primary">
+                        <Link to={{ pathname: "/admin/branch/edit" }}>
+                          {/* <button onClick={handleOpen}>
                               {" "}
                               
                             </button> */}
-                            <EditIcon />
-                          </Link>
-                        </IconButton>
-                        <IconButton color="error">
-                          <DeleteIcon />
-                        </IconButton>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Box>
+                          <EditIcon />
+                        </Link>
+                      </IconButton>
+                      <IconButton color="error">
+                        <DeleteIcon />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Box>
       {/* </Modal> */}
     </Box>
   );

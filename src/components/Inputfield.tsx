@@ -28,7 +28,6 @@ const LoginInput: React.FC<LoginInputProps> = ({
   onChange,
   showPassword,
   togglePasswordVisibility,
-  iconClass,
 }) => {
   return (
     <FormControl variant="filled" fullWidth sx={{ mb: 3 }}>
