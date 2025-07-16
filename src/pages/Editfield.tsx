@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Grid } from "@mui/material";
 import {
   Box,
@@ -15,7 +15,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import SaveIcon from "@mui/icons-material/Save";
 import { Link } from "react-router-dom";
 
-export default function EditBranchForm() {
+export default function EditBranchForm({ initialData = {}, onClose }: any) {
   const [formData, setFormData] = useState({
     branchName: "",
     code: "",
@@ -30,6 +30,16 @@ export default function EditBranchForm() {
   });
 
   const [error, setError] = useState<string | null>("");
+  useEffect(() => {
+    if (initialData) {
+      setFormData((prev) => ({
+        ...prev,
+        branchName: initialData.name || "",
+        code: initialData.code || "",
+        
+      }));
+    }
+  }, [initialData]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>
@@ -40,7 +50,9 @@ export default function EditBranchForm() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    alert("Submitted!");
+   
+    alert("Form submitted with: " + JSON.stringify(formData, null, 2));
+    if (onClose) onClose(); 
   };
 
   return (

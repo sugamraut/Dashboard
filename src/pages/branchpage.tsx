@@ -1,4 +1,4 @@
-import  { useState } from "react";
+import { useState } from "react";
 import Sidebar from "./homepage";
 import "./Editfield";
 import {
@@ -11,11 +11,16 @@ import {
   TableRow,
   Paper,
   IconButton,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  Dialog,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import BranchFilterBar from "../components/Tablefield";
-import { Link } from "react-router-dom";
+import EditBranchForm from "./Editfield";
 
 const branches = [
   { id: 1, name: "KHUSIBU BRANCH", code: "59" },
@@ -36,10 +41,22 @@ export default function BranchesPage() {
   const [district, setDistrict] = useState("");
   const [search, setSearch] = useState("");
 
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [selectedBranch, setSelectedBranch] = useState<any>(null);
+
   const handleClearFilters = () => {
     setState("");
     setDistrict("");
     setSearch("");
+  };
+  const handleEditClick = (branch: any) => {
+    setSelectedBranch(branch);
+    setEditDialogOpen(true);
+  };
+
+  const handleDialogClose = () => {
+    setEditDialogOpen(false);
+    setSelectedBranch(null);
   };
 
   const handleAdd = () => {
@@ -49,19 +66,7 @@ export default function BranchesPage() {
   return (
     <Box sx={{ display: "flex" }}>
       <Sidebar />
-      {/* <Modal
-        aria-labelledby="transition-modal-title"
-        aria-describedby="transition-modal-description"
-        open={open}
-        onClose={handleClose}
-        closeAfterTransition
-        slots={{ backdrop: Backdrop }}
-        slotProps={{
-          backdrop: {
-            timeout: 500,
-          },
-        }}
-      > */}
+
       <Box
         component="main"
         sx={{ flexGrow: 1, p: 3, backgroundColor: "#f9fbfd" }}
@@ -113,15 +118,13 @@ export default function BranchesPage() {
                     </TableCell>
                     <TableCell>--</TableCell>
                     <TableCell align="center">
-                      <IconButton color="primary">
-                        <Link to={{ pathname: "/admin/branch/edit" }}>
-                          {/* <button onClick={handleOpen}>
-                              {" "}
-                              
-                            </button> */}
-                          <EditIcon />
-                        </Link>
+                      <IconButton
+                        color="primary"
+                        onClick={() => handleEditClick(branch)}
+                      >
+                        <EditIcon />
                       </IconButton>
+
                       <IconButton color="error">
                         <DeleteIcon />
                       </IconButton>
@@ -131,6 +134,25 @@ export default function BranchesPage() {
             </TableBody>
           </Table>
         </TableContainer>
+        <Dialog
+          open={editDialogOpen}
+          onClose={handleDialogClose}
+          maxWidth="md"
+          fullWidth
+        >
+          <DialogTitle>Edit Branch</DialogTitle>
+          <DialogContent>
+            <EditBranchForm
+              initialData={selectedBranch}
+              onClose={handleDialogClose}
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleDialogClose} color="error">
+              Cancel
+            </Button>
+          </DialogActions>
+        </Dialog>
       </Box>
       {/* </Modal> */}
     </Box>
