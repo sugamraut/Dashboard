@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
   Box,
-  Button,
   TextField,
   Typography,
   Alert,
@@ -10,7 +9,7 @@ import {
   Select,
   MenuItem,
 } from "@mui/material";
-import SaveIcon from "@mui/icons-material/Save";
+import Textfield from "./Textfield";
 
 interface EditBranchFormProps {
   initialData?: Partial<FormDataState>;
@@ -28,6 +27,7 @@ interface FormDataState {
   city: string;
   streetAddress: string;
   wardNo: string;
+  title: string;
 }
 
 const defaultFormData: FormDataState = {
@@ -41,6 +41,7 @@ const defaultFormData: FormDataState = {
   city: "",
   streetAddress: "",
   wardNo: "",
+  title: "",
 };
 
 const EditBranchForm: React.FC<EditBranchFormProps> = ({
@@ -88,20 +89,10 @@ const EditBranchForm: React.FC<EditBranchFormProps> = ({
         borderRadius: 2,
       }}
     >
-      <Box
-        mb={2}
-        // sx={{
-        //   position: 'sticky',
-        //   top: 10,
-        //   backgroundColor: 'white',
-        //   zIndex:1,
-        //   height:'60px'
-
-        // }}
-      >
+      <Box mb={2}>
         <Box>
           <Typography variant="h6" fontWeight="bold" color="primary">
-            Edit Branches
+            {formData.title}
           </Typography>
         </Box>
       </Box>
@@ -113,24 +104,18 @@ const EditBranchForm: React.FC<EditBranchFormProps> = ({
       )}
 
       <form onSubmit={handleSubmit}>
-        <TextField
-          required
-          fullWidth
-          label="Branch Name"
+        <Textfield
+          lable="Branch Name"
           name="branchName"
           value={formData.branchName}
           onChange={handleChange}
-          margin="normal"
         />
 
-        <TextField
-          required
-          fullWidth
-          label="Code"
-          name="code"
-          value={formData.code}
-          onChange={handleChange}
-          margin="normal"
+        <Textfield lable="Code" name="code" value={formData.branchName} />
+        <Textfield
+          lable="Telephone"
+          name="telephone"
+          value={formData.telephone}
         />
 
         <TextField
