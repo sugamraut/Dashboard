@@ -3,7 +3,7 @@ import RootLayout from "./layouts/rootlayouts";
 import Home from "./pages/homepage"
 import Login from "./pages/loginpage"
 import Editfield from "./pages/Editfield"
-import Demo from "./pages/demo"
+import Demo from "./pages/dashboard"
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
