@@ -16,7 +16,6 @@ export default function Editfield() {
 
   const handleUpdate = (data: any) => {
     console.log("Updated branch data:", data);
-    // You could call your API here
   };
 
   return <BranchForm initialData={mockData} onSubmit={handleUpdate} />;

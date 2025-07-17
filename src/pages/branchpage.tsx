@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Sidebar from "./homepage";
+import SaveIcon from "@mui/icons-material/Save";
 import "./Editfield";
 import {
   Box,
@@ -134,19 +135,25 @@ export default function BranchesPage() {
             </TableBody>
           </Table>
         </TableContainer>
-        <Dialog
-          open={editDialogOpen}
-          onClose={handleDialogClose}
-          maxWidth="md"
-          fullWidth
-        >
+        <Dialog open={editDialogOpen} onClose={handleDialogClose} maxWidth="md">
           <DialogContent>
             <EditBranchForm
               initialData={selectedBranch}
               onClose={handleDialogClose}
             />
           </DialogContent>
-          <DialogActions>
+          <DialogActions
+            style={{
+              justifyContent: "flex-start",
+            }} className="editfiled-button-postion"
+          >
+            <Button type="submit" variant="contained" startIcon={<SaveIcon />}>
+              Submit
+            </Button>
+          </DialogActions>
+          <DialogActions
+          
+          >
             <Button onClick={handleDialogClose} color="error">
               Cancel
             </Button>
