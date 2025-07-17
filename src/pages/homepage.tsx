@@ -16,7 +16,7 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import companyLogo from "../assets/image/company_name.png";
 
 const sidebarIcons = [
-  { icon: <HomeIcon />, label: "Dashboard", path: "/dashboard" },
+  { icon: <HomeIcon />, label: "Dashboard", path: "/admin/demo" },
   { icon: <FolderIcon />, label: "Online Account", path: "/online-account" },
   { icon: <TextSnippetIcon />, label: "Account Type", path: "/account-type" },
   { icon: <SummarizeIcon />, label: "Branches", path: "/admin/branch" },
