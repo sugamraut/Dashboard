@@ -28,6 +28,7 @@ interface FormDataState {
   streetAddress: string;
   wardNo: string;
   title: string;
+  subtitle: string;
 }
 
 const defaultFormData: FormDataState = {
@@ -42,6 +43,7 @@ const defaultFormData: FormDataState = {
   streetAddress: "",
   wardNo: "",
   title: "",
+  subtitle: "",
 };
 
 const EditBranchForm: React.FC<EditBranchFormProps> = ({
@@ -117,38 +119,27 @@ const EditBranchForm: React.FC<EditBranchFormProps> = ({
           name="telephone"
           value={formData.telephone}
         />
-
-        <TextField
-          required
-          fullWidth
-          label="Telephone"
+        <Textfield
+          lable="Telephone"
           name="telephone"
           value={formData.telephone}
           onChange={handleChange}
-          margin="normal"
         />
-
-        <TextField
-          required
-          fullWidth
-          label="Email"
+        <Textfield
+          lable="Email"
           name="email"
           value={formData.email}
           onChange={handleChange}
-          margin="normal"
         />
-
-        <TextField
-          fullWidth
-          margin="normal"
-          label="Fax"
+        <Textfield
+          lable="Fax"
           name="fax"
           value={formData.fax}
           onChange={handleChange}
         />
 
         <Typography variant="subtitle1" fontWeight="bold">
-          Address
+          {formData.subtitle}
         </Typography>
 
         <FormControl fullWidth required margin="normal">
@@ -178,32 +169,23 @@ const EditBranchForm: React.FC<EditBranchFormProps> = ({
             <MenuItem value="Good District">Good District</MenuItem>
           </Select>
         </FormControl>
-
-        <TextField
-          fullWidth
-          label="City"
+        <Textfield
           name="city"
+          lable="City"
           value={formData.city}
           onChange={handleChange}
-          margin="normal"
         />
-
-        <TextField
-          fullWidth
-          label="Street Address"
+        <Textfield
           name="streetAddress"
-          value={formData.streetAddress}
+          lable="Street Address"
+          value={formData.city}
           onChange={handleChange}
-          margin="normal"
         />
-
-        <TextField
-          fullWidth
-          label="Ward No."
+        <Textfield
           name="wardNo"
-          value={formData.wardNo}
+          lable="Ward No."
+          value={formData.city}
           onChange={handleChange}
-          margin="normal"
         />
       </form>
     </Box>

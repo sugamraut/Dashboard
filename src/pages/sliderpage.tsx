@@ -16,7 +16,7 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import companyLogo from "../assets/image/company_name.png";
 
 const sidebarIcons = [
-  { icon: <HomeIcon />, label: "Dashboard", path: "/admin/demo" },
+  { icon: <HomeIcon />, label: "Dashboard", path: "/admin/dashboard" },
   { icon: <FolderIcon />, label: "Online Account", path: "/online-account" },
   { icon: <TextSnippetIcon />, label: "Account Type", path: "/account-type" },
   { icon: <SummarizeIcon />, label: "Branches", path: "/admin/branch" },
@@ -59,7 +59,7 @@ export default function Sidebar() {
                 <Link to={path} style={{ color: "inherit", textDecoration: "none" }}>
                   <IconButton
                     sx={{
-                      color: isActive ? "#FFD700" : "white", // Gold if active
+                      color: isActive ? "#877d43ff" : "white", 
                       backgroundColor: isActive ? "rgba(255, 255, 255, 0.15)" : "transparent",
                       "&:hover": {
                         backgroundColor: "rgba(255, 255, 255, 0.2)",

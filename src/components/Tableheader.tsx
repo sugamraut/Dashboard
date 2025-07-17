@@ -15,8 +15,8 @@ import AddIcon from "@mui/icons-material/Add";
 type BranchFilterBarProps = {
   state: string;
   district: string;
- onStateChange: (event: SelectChangeEvent) => void; 
-  onDistrictChange: (event: SelectChangeEvent) => void; 
+  onStateChange: (event: SelectChangeEvent) => void;
+  onDistrictChange: (event: SelectChangeEvent) => void;
   onSearchChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onClearFilters: () => void;
   onAdd: () => void;
@@ -32,7 +32,7 @@ const BranchFilterBar: React.FC<BranchFilterBarProps> = ({
   onAdd,
 }) => {
   return (
-    <Box display="flex" gap={2}>
+    <Box display="flex" gap={2} alignItems="center" mb={3}>
       <FormControl size="small" sx={{ minWidth: 180 }}>
         <InputLabel>By State</InputLabel>
         <Select label="By State" value={state} onChange={onStateChange}>

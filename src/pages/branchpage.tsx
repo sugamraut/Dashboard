@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Sidebar from "./homepage";
+import Sidebar from "./sliderpage";
 import SaveIcon from "@mui/icons-material/Save";
 import "./Editfield";
 import {
@@ -12,7 +12,6 @@ import {
   TableRow,
   Paper,
   IconButton,
-  DialogTitle,
   DialogContent,
   DialogActions,
   Button,
@@ -20,7 +19,7 @@ import {
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import BranchFilterBar from "../components/Tablefield";
+import BranchFilterBar from "../components/Tableheader";
 import EditBranchForm from "./Editfield";
 
 const branches = [
@@ -50,7 +49,7 @@ export default function BranchesPage() {
     setDistrict("");
     setSearch("");
   };
-  const handleEditClick = (branch: any) => {
+  const handleEditClick = (branch: string) => {
     setSelectedBranch(branch);
     setEditDialogOpen(true);
   };

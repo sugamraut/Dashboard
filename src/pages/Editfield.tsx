@@ -13,6 +13,7 @@ export default function Editfield() {
     streetAddress: "Main Street",
     wardNo: "7",
     title: "Edit Branch",
+    subtitle:"Address"
   };
 
   const handleUpdate = (data: any) => {

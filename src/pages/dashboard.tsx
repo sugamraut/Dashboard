@@ -14,7 +14,7 @@ import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
 import BlockIcon from "@mui/icons-material/Block";
-import Sidebar from "./homepage";
+import Sidebar from "./sliderpage";
 
 const cardItems = [
   {
