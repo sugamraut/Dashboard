@@ -56,7 +56,7 @@ export default function Sidebar() {
           return (
             <Tooltip title={label} placement="right" arrow key={index}>
               <ListItem disablePadding sx={{ mt: 2 }}>
-                <Link to={path} style={{ color: "inherit", textDecoration: "none" }}>
+                <Link to={path}>
                   <IconButton
                     sx={{
                       color: isActive ? "#877d43ff" : "white", 

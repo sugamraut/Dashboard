@@ -78,7 +78,7 @@ const StatusCards = () => {
         {" "}
         <Box sx={{ p: 4 }}>
           <Grid container spacing={5}>
-            {cardItems.map((item, index) => (
+            {cardItems.map((item) => (
               <Card
                 sx={{
                   position: "relative",

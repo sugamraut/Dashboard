@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
 import BranchFilterBar from "../../components/Table_header_field";
-import EditBranchForm from "../../components/Form_Component";
+import EditBranchForm from "../../components/Form_field";
 import SaveIcon from "@mui/icons-material/Save";
 
 const BranchManagement: React.FC = () => {

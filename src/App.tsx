@@ -1,8 +1,8 @@
-import React from 'react';
-import { RouterProvider } from 'react-router-dom';
-import router from './router'; // Your router setup
 
-// You can remove useState, logos, and demo UI since you want routing here
+import { RouterProvider } from 'react-router-dom';
+import router from './router';
+
+
 
 function App() {
   return (
