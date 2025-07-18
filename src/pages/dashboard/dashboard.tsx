@@ -80,13 +80,7 @@ const StatusCards = () => {
           <Grid container spacing={5}>
             {cardItems.map((item) => (
               <Card
-                sx={{
-                  position: "relative",
-                  minHeight: 120,
-                  minWidth: 420,
-                  boxShadow: 6,
-                }}
-                // className="dashboard-section-card-design"
+                className="dashboard-section-card-design"
               >
                 <CardContent>
                   <Avatar

@@ -39,7 +39,7 @@ const loginpage = () => {
               id="username"
               label="Username"
               value={username}
-              onChange={(e: { target: { value: React.SetStateAction<string>; }; }) => setUsername(e.target.value)}
+              onChange={(e) => setUsername(e.target.value)}
               iconClass="fa-regular fa-circle-user"
             />
 

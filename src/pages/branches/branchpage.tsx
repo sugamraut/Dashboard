@@ -4,24 +4,25 @@ import SaveIcon from "@mui/icons-material/Save";
 import "./edit_field";
 import {
   Box,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  IconButton,
   DialogContent,
   DialogActions,
   Button,
   Dialog,
+  TableContainer,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+  Paper,
+  IconButton,
 } from "@mui/material";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
 import BranchFilterBar from "../../components/Table_header_field";
 import EditBranchForm from "./edit_field";
 import { useNavigate } from "react-router-dom";
+import BranchTable from "../../components/Table_field";
+
+const headers = ["Branch Name", "District", "Location", "Contact Details"];
 
 const branches = [
   { id: 1, name: "KHUSIBU BRANCH", code: "59" },
@@ -44,13 +45,17 @@ export default function BranchesPage() {
 
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [selectedBranch, setSelectedBranch] = useState<any>(null);
- const navigate=useNavigate()
+  const navigate = useNavigate();
   const handleClearFilters = () => {
     setState("");
     setDistrict("");
     setSearch("");
   };
-  const handleEditClick = (branch: { id: number; name: string; code: string }) => {
+  const handleEditClick = (branch: {
+    id: number;
+    name: string;
+    code: string;
+  }) => {
     setSelectedBranch(branch);
     setEditDialogOpen(true);
   };
@@ -62,7 +67,7 @@ export default function BranchesPage() {
 
   const handleAdd = () => {
     alert("Add Branch clicked");
-    navigate("admin/addform")
+    navigate("admin/addform");
   };
 
   return (
@@ -90,7 +95,7 @@ export default function BranchesPage() {
           />
         </Box>
 
-        <TableContainer component={Paper}>
+        {/* <TableContainer component={Paper}>
           <Table>
             <TableHead>
               <TableRow>
@@ -134,7 +139,14 @@ export default function BranchesPage() {
                 ))}
             </TableBody>
           </Table>
-        </TableContainer>
+        </TableContainer> */}
+        <BranchTable
+          branches={branches}
+          headers={headers}
+          search={search}
+          onEdit={handleEditClick}
+          onDelete={handleDialogClose}
+        />
         <Dialog open={editDialogOpen} onClose={handleDialogClose} maxWidth="md">
           <DialogContent>
             <EditBranchForm
@@ -145,15 +157,14 @@ export default function BranchesPage() {
           <DialogActions
             style={{
               justifyContent: "flex-start",
-            }} className="editfiled-button-postion"
+            }}
+            className="editfiled-button-postion"
           >
             <Button type="submit" variant="contained" startIcon={<SaveIcon />}>
               Submit
             </Button>
           </DialogActions>
-          <DialogActions
-          
-          >
+          <DialogActions>
             <Button onClick={handleDialogClose} color="error">
               Cancel
             </Button>

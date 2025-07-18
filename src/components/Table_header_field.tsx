@@ -1,4 +1,4 @@
-import React, { type ChangeEvent } from "react";
+import React from "react";
 import {
   Box,
   TextField,
@@ -26,12 +26,8 @@ const BranchFilterBar: React.FC<BranchFilterBarProps> = ({
 }) => {
   const stateOptions = ["State 1", "State 2", "State 3"];
   const districtOptions = ["Kathmandu", "Lalitpur", "Bhaktapur"];
-  function handleChange(
-    _event:
-      | ChangeEvent<Omit<HTMLInputElement, "value"> & { value: string }>
-      | (Event & { target: { value: string; name: string } })
-  ): void {
-    throw new Error("Function not implemented.");
+  const handleChange=()=>{
+    console.log("subbmit")
   }
 
   return (
