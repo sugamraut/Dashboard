@@ -1,54 +1,58 @@
-import React from "react";
+import React, { type ChangeEvent } from "react";
 import {
   Box,
   TextField,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
   IconButton,
   type SelectChangeEvent,
 } from "@mui/material";
 import FilterAltOffIcon from "@mui/icons-material/FilterAltOff";
 import AddIcon from "@mui/icons-material/Add";
+import DropdownField from "./Drop_field_component";
 
 type BranchFilterBarProps = {
   state: string;
   district: string;
-  onStateChange ?: (event: SelectChangeEvent) => void;
-  onDistrictChange ?: (event: SelectChangeEvent) => void;
-  onSearchChange ?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onClearFilters ?: () => void;
-  onAdd ? : () => void;
+  onStateChange?: (event: SelectChangeEvent) => void;
+  onDistrictChange?: (event: SelectChangeEvent) => void;
+  onSearchChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onClearFilters?: () => void;
+  onAdd?: () => void;
 };
 
 const BranchFilterBar: React.FC<BranchFilterBarProps> = ({
-  state,
-  district,
-  onStateChange,
-  onDistrictChange,
   onSearchChange,
   onClearFilters,
   onAdd,
 }) => {
+  const stateOptions = ["State 1", "State 2", "State 3"];
+  const districtOptions = ["Kathmandu", "Lalitpur", "Bhaktapur"];
+  function handleChange(
+    _event:
+      | ChangeEvent<Omit<HTMLInputElement, "value"> & { value: string }>
+      | (Event & { target: { value: string; name: string } })
+  ): void {
+    throw new Error("Function not implemented.");
+  }
+
   return (
     <Box display="flex" gap={2} alignItems="center" mb={3}>
-      <FormControl size="small" sx={{ minWidth: 180 }}>
-        <InputLabel>By State</InputLabel>
-        <Select label="By State" value={state} onChange={onStateChange}>
-          <MenuItem value="">All</MenuItem>
-          <MenuItem value="State 1">State 1</MenuItem>
-          <MenuItem value="State 2">State 2</MenuItem>
-        </Select>
-      </FormControl>
+      <DropdownField
+        label="District"
+        name="district"
+        value={FormData.district}
+        onChange={handleChange}
+        options={districtOptions}
+        required
+      />
 
-      <FormControl size="small" sx={{ minWidth: 180 }}>
-        <InputLabel>District</InputLabel>
-        <Select label="District" value={district} onChange={onDistrictChange}>
-          <MenuItem value="">All</MenuItem>
-          <MenuItem value="Good District">Good District</MenuItem>
-        </Select>
-      </FormControl>
+      <DropdownField
+        label="State"
+        name="state"
+        value={FormData.state}
+        onChange={handleChange}
+        options={stateOptions}
+        required
+      />
 
       <TextField size="small" label="Search" onChange={onSearchChange} />
 
@@ -59,11 +63,8 @@ const BranchFilterBar: React.FC<BranchFilterBarProps> = ({
       <IconButton color="primary" onClick={onAdd}>
         <AddIcon />
       </IconButton>
-      
     </Box>
   );
 };
 
 export default BranchFilterBar;
-
-
