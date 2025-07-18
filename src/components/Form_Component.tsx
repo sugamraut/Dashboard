@@ -1,19 +1,20 @@
 import React, { useEffect, useState } from "react";
 import {
   Box,
-  TextField,
   Typography,
   Alert,
   FormControl,
   InputLabel,
   Select,
   MenuItem,
+  type SelectChangeEvent,
 } from "@mui/material";
 import Textfield from "./Text_field";
 
 interface EditBranchFormProps {
   initialData?: Partial<FormDataState>;
   onClose?: () => void;
+  onSubmit?: (data: FormDataState) => void; 
 }
 
 interface FormDataState {
@@ -60,7 +61,7 @@ const EditBranchForm: React.FC<EditBranchFormProps> = ({
   }, [initialData]);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>
+    e: React.ChangeEvent<HTMLInputElement>|SelectChangeEvent
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({

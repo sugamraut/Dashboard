@@ -50,7 +50,7 @@ export default function BranchesPage() {
     setDistrict("");
     setSearch("");
   };
-  const handleEditClick = (branch: string) => {
+  const handleEditClick = (branch: { id: number; name: string; code: string }) => {
     setSelectedBranch(branch);
     setEditDialogOpen(true);
   };

@@ -38,9 +38,7 @@ const BranchManagement: React.FC = () => {
           <EditBranchForm onClose={handleCloseForm} />
         </DialogContent>
          <DialogActions
-            style={{
-              justifyContent: "flex-start",
-            }} className="editfiled-button-postion"
+             className="editfiled-button-postion justify-content-start "
           >
             <Button type="submit" variant="contained" startIcon={<SaveIcon />}>
               Submit

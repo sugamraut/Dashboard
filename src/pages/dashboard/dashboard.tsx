@@ -86,6 +86,7 @@ const StatusCards = () => {
                   minWidth: 420,
                   boxShadow: 6,
                 }}
+                // className="dashboard-section-card-design"
               >
                 <CardContent>
                   <Avatar

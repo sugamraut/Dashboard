@@ -6,6 +6,7 @@ interface textdata{
     name:string,
     value:string,
     // functionvalue:string
+    onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
     
 }
 
