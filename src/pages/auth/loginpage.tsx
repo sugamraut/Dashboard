@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import image from "../assets/image/company_name.png";
+import image from "../../assets/image/company_name.png";
 import { Box, Button, Typography } from "@mui/material";
-import LoginInput from "../components/Inputfield"
+import LoginInput from "../../components/Input_field";
 
 const loginpage = () => {
   const [username, setUsername] = useState("");
@@ -40,12 +40,19 @@ const loginpage = () => {
             </Typography>
           </div>
 
-          <Box component="form" onSubmit={handleSubmit} noValidate autoComplete="off">
+          <Box
+            component="form"
+            onSubmit={handleSubmit}
+            noValidate
+            autoComplete="off"
+          >
             <LoginInput
               id="username"
               label="Username"
               value={username}
-              onChange={(e: { target: { value: React.SetStateAction<string>; }; }) => setUsername(e.target.value)}
+              onChange={(e: {
+                target: { value: React.SetStateAction<string> };
+              }) => setUsername(e.target.value)}
               iconClass="fa-regular fa-circle-user"
             />
 
@@ -54,7 +61,9 @@ const loginpage = () => {
               label="Password"
               type="password"
               value={password}
-              onChange={(e: { target: { value: React.SetStateAction<string>; }; }) => setPassword(e.target.value)}
+              onChange={(e: {
+                target: { value: React.SetStateAction<string> };
+              }) => setPassword(e.target.value)}
               showPassword={showPassword}
               togglePasswordVisibility={() => setShowPassword(!showPassword)}
               iconClass="fa-solid fa-fingerprint"

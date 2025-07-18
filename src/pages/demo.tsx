@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Dialog, DialogContent, DialogActions, Button } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
-import BranchFilterBar from "../components/Tableheader";
-import EditBranchForm from "../components/Editcomponent";
+import BranchFilterBar from "../components/Table_header_field";
+import EditBranchForm from "../components/Form_Component";
 
 const BranchPage: React.FC = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);

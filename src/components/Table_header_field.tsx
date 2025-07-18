@@ -15,11 +15,11 @@ import AddIcon from "@mui/icons-material/Add";
 type BranchFilterBarProps = {
   state: string;
   district: string;
-  onStateChange: (event: SelectChangeEvent) => void;
-  onDistrictChange: (event: SelectChangeEvent) => void;
-  onSearchChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onClearFilters: () => void;
-  onAdd: () => void;
+  onStateChange ?: (event: SelectChangeEvent) => void;
+  onDistrictChange ?: (event: SelectChangeEvent) => void;
+  onSearchChange ?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onClearFilters ?: () => void;
+  onAdd ? : () => void;
 };
 
 const BranchFilterBar: React.FC<BranchFilterBarProps> = ({
@@ -59,8 +59,11 @@ const BranchFilterBar: React.FC<BranchFilterBarProps> = ({
       <IconButton color="primary" onClick={onAdd}>
         <AddIcon />
       </IconButton>
+      
     </Box>
   );
 };
 
 export default BranchFilterBar;
+
+

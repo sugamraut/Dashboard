@@ -1,7 +1,7 @@
 import { useState } from "react";
-import Sidebar from "./sliderpage";
+import Sidebar from "../sliderpage";
 import SaveIcon from "@mui/icons-material/Save";
-import "./Editfield";
+import "./edit_field";
 import {
   Box,
   Table,
@@ -19,8 +19,9 @@ import {
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import BranchFilterBar from "../components/Tableheader";
-import EditBranchForm from "./Editfield";
+import BranchFilterBar from "../../components/Table_header_field";
+import EditBranchForm from "./edit_field";
+import { useNavigate } from "react-router-dom";
 
 const branches = [
   { id: 1, name: "KHUSIBU BRANCH", code: "59" },
@@ -43,7 +44,7 @@ export default function BranchesPage() {
 
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [selectedBranch, setSelectedBranch] = useState<any>(null);
-
+ const navigate=useNavigate()
   const handleClearFilters = () => {
     setState("");
     setDistrict("");
@@ -61,6 +62,7 @@ export default function BranchesPage() {
 
   const handleAdd = () => {
     alert("Add Branch clicked");
+    navigate("admin/addform")
   };
 
   return (
@@ -85,7 +87,6 @@ export default function BranchesPage() {
             onDistrictChange={(e) => setDistrict(e.target.value as string)}
             onSearchChange={(e) => setSearch(e.target.value)}
             onClearFilters={handleClearFilters}
-            onAdd={handleAdd}
           />
         </Box>
 

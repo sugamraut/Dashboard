@@ -1,4 +1,4 @@
-import BranchForm from "../components/Editcomponent";
+import BranchForm from "../../components/Form_Component";
  
 export default function Editfield() {
   const mockData = {
