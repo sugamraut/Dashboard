@@ -1,6 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
 import RootLayout from "./layouts/rootlayout";
-import Home from "./pages/sliderpage"
+import Home from "./pages/sidebar"
 import Login from "./pages/auth/loginpage"
 import Editfield from "./pages/branches/edit_field"
 import Demo from "./pages/demo"

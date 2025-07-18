@@ -14,7 +14,7 @@ import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
 import BlockIcon from "@mui/icons-material/Block";
-import Sidebar from "../sliderpage";
+import Sidebar from "../sidebar";
 
 const cardItems = [
   {
@@ -73,10 +73,10 @@ const StatusCards = () => {
       <Sidebar />
       <Box
         component="main"
-        sx={{ flexGrow: 1, p: 3, backgroundColor: "#f9fbfd" }}
+        sx={{ flexGrow: 1, p: 3 }}
       >
         {" "}
-        <Box sx={{ p: 4 }}>
+        <Box sx={{ p: 4 }} >
           <Grid container spacing={5}>
             {cardItems.map((item) => (
               <Card

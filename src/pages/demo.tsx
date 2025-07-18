@@ -9,7 +9,7 @@ const BranchPage: React.FC = () => {
   const [formData, setFormData] = useState(null);
 
   const handleAddClick = () => {
-    setFormData(null); 
+    setFormData(null);
     setIsDialogOpen(true);
   };
 
@@ -29,9 +29,17 @@ const BranchPage: React.FC = () => {
         onAdd={handleAddClick}
       />
 
-      <Dialog open={isDialogOpen} onClose={handleDialogClose} maxWidth="md" fullWidth>
+      <Dialog
+        open={isDialogOpen}
+        onClose={handleDialogClose}
+        maxWidth="md"
+        fullWidth
+      >
         <DialogContent>
-          <EditBranchForm initialData={formData || {}} onClose={handleDialogClose} />
+          <EditBranchForm
+            initialData={formData || {}}
+            onClose={handleDialogClose}
+          />
         </DialogContent>
         <DialogActions sx={{ justifyContent: "flex-start" }}>
           <Button type="submit" variant="contained" startIcon={<SaveIcon />}>

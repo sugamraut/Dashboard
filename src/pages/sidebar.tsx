@@ -39,7 +39,7 @@ export default function Sidebar() {
         width: 70,
         flexShrink: 0,
         "& .MuiDrawer-paper": {
-          width: 70,
+          width: 85,
           boxSizing: "border-box",
           background: "linear-gradient(to bottom, #002b5c, #8b0000)",
           color: "white",
@@ -49,12 +49,12 @@ export default function Sidebar() {
         },
       }}
     >
-      <img src={companyLogo} alt="Logo" width="40" />
+      <img src={companyLogo} alt="Logo" width="50" />
       <List sx={{ mt: 2 }}>
         {sidebarIcons.map(({ icon, label, path }, index) => {
           const isActive = location.pathname === path;
           return (
-            <Tooltip title={label} placement="right" arrow key={index}>
+            <Tooltip title={label} placement="right" arrow key={index} width="50">
               <ListItem disablePadding sx={{ mt: 2 }}>
                 <Link to={path}>
                   <IconButton
@@ -65,6 +65,7 @@ export default function Sidebar() {
                         backgroundColor: "rgba(255, 255, 255, 0.2)",
                       },
                     }}
+                    className="p-2"
                   >
                     {icon}
                   </IconButton>

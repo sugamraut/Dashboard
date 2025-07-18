@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Sidebar from "../sliderpage";
+import Sidebar from "../sidebar";
 import SaveIcon from "@mui/icons-material/Save";
 import "./edit_field";
 import {
