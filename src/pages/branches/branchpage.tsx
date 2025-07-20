@@ -1,7 +1,8 @@
 import { useState } from "react";
 import Sidebar from "../sidebar";
-import SaveIcon from "@mui/icons-material/Save";
-import "./edit_field";
+// import SaveIcon from "@mui/icons-material/Save";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 import {
   Box,
   DialogContent,
@@ -16,46 +17,61 @@ import {
   TableBody,
   Paper,
   IconButton,
+  FormControl,
+  MenuItem,
+  TextField,
+  Stack,
+  Select,
+  InputLabel,
+  Typography,
+  DialogTitle,
 } from "@mui/material";
-import BranchFilterBar from "../../components/Table_header_field";
-import EditBranchForm from "./edit_field";
-import { useNavigate } from "react-router-dom";
-import BranchTable from "../../components/Table_field";
 
-const headers = ["Branch Name", "District", "Location", "Contact Details"];
+import FilterAltOffIcon from "@mui/icons-material/FilterAltOff";
+import AddCircleIcon from "@mui/icons-material/AddCircle";
 
-const branches = [
-  { id: 1, name: "KHUSIBU BRANCH", code: "59" },
-  { id: 2, name: "GOLBAZAR BRANCH", code: "55" },
-  { id: 3, name: "CHABAHIL BRANCH", code: "37" },
-  { id: 4, name: "JANAKPUR BRANCH", code: "44" },
-  { id: 5, name: "MID- BANESHWOR BRANCH", code: "29" },
-  { id: 6, name: "THAMEL BRANCH", code: "09" },
-  { id: 7, name: "DADELDHURA BRANCH", code: "19" },
-  { id: 8, name: "GWARKO BRANCH", code: "88" },
-  { id: 9, name: "SINAMANGAL BRANCH", code: "84" },
-  { id: 10, name: "CHAINPUR BRANCH", code: "69" },
-  { id: 11, name: "DHARAN BRANCH", code: "68" },
+import EditBranchForm from "./add_edit_page";
+
+interface Branch {
+    id: number;
+  branchName: string;
+  code: string;
+  telephone?: string;
+  email?: string;
+  fax?: string;
+  state?: string;
+  district?: string;
+  city?: string;
+  streetAddress?: string;
+  wardNo?: string;
+}
+
+const initialBranches: Branch[] = [
+  { id: 1, branchName: "KHUSIBU BRANCH", code: "59" },
+  { id: 2, branchName: "GOLBAZAR BRANCH", code: "55" },
+  { id: 3, branchName: "CHABAHIL BRANCH", code: "37" },
+  { id: 4, branchName: "JANAKPUR BRANCH", code: "44" },
+  { id: 5, branchName: "MID- BANESHWOR BRANCH", code: "29" },
+  { id: 6, branchName: "THAMEL BRANCH", code: "09" },
+  { id: 7, branchName: "DADELDHURA BRANCH", code: "19" },
+  { id: 8, branchName: "GWARKO BRANCH", code: "88" },
+  { id: 9, branchName: "SINAMANGAL BRANCH", code: "84" },
+  { id: 10, branchName: "CHAINPUR BRANCH", code: "69" },
+  { id: 11, branchName: "DHARAN BRANCH", code: "68" },
 ];
 
 export default function BranchesPage() {
-  const [state, setState] = useState("");
-  const [district, setDistrict] = useState("");
+  const [branches, setBranches] = useState<Branch[]>(initialBranches);
   const [search, setSearch] = useState("");
-
   const [editDialogOpen, setEditDialogOpen] = useState(false);
-  const [selectedBranch, setSelectedBranch] = useState<any>(null);
-  const navigate = useNavigate();
-  const handleClearFilters = () => {
-    setState("");
-    setDistrict("");
-    setSearch("");
+  const [selectedBranch, setSelectedBranch] = useState<Branch | null>(null);
+
+  const handleAddClick = () => {
+    setSelectedBranch(null);
+    setEditDialogOpen(true);
   };
-  const handleEditClick = (branch: {
-    id: number;
-    name: string;
-    code: string;
-  }) => {
+
+  const handleEditClick = (branch: Branch) => {
     setSelectedBranch(branch);
     setEditDialogOpen(true);
   };
@@ -65,10 +81,6 @@ export default function BranchesPage() {
     setSelectedBranch(null);
   };
 
-  const handleAdd = () => {
-    alert("Add Branch clicked");
-    navigate("admin/addform");
-  };
 
   return (
     <Box sx={{ display: "flex" }}>
@@ -81,21 +93,52 @@ export default function BranchesPage() {
         <Box
           display="flex"
           justifyContent="space-between"
-          alignItems="center"
+          alignItems="end"
           mb={2}
         >
-          <h2>Branches</h2>
-          <BranchFilterBar
-            state={state}
-            district={district}
-            onStateChange={(e) => setState(e.target.value as string)}
-            onDistrictChange={(e) => setDistrict(e.target.value as string)}
-            onSearchChange={(e) => setSearch(e.target.value)}
-            onClearFilters={handleClearFilters}
-          />
+          <Typography variant="h5" fontWeight="bold">
+            Branches
+          </Typography>
+          <Box display="flex" justifyContent="end" alignItems="center" mb={2}>
+            <Stack direction="row" spacing={2}>
+              <FormControl size="small" sx={{ minWidth: 120 }}>
+                <InputLabel>By State</InputLabel>
+                <Select label="By State" value="" onChange={() => {}}>
+                  <MenuItem value="">
+                    <em>None</em>
+                  </MenuItem>
+                  <MenuItem value="State1">State 1</MenuItem>
+                  <MenuItem value="State2">State 2</MenuItem>
+                </Select>
+              </FormControl>
+              <FormControl size="small" sx={{ minWidth: 120 }}>
+                <InputLabel>District</InputLabel>
+                <Select label="District" value="" onChange={() => {}}>
+                  <MenuItem value="">
+                    <em>None</em>
+                  </MenuItem>
+                  <MenuItem value="District1">District 1</MenuItem>
+                  <MenuItem value="District2">District 2</MenuItem>
+                </Select>
+              </FormControl>
+              <TextField
+                size="small"
+                variant="outlined"
+                placeholder="Search"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+              <IconButton color="error" onClick={() => setSearch("")}>
+                <FilterAltOffIcon />
+              </IconButton>
+              <IconButton color="primary" onClick={handleAddClick}>
+                <AddCircleIcon />
+              </IconButton>
+            </Stack>
+          </Box>
         </Box>
 
-        {/* <TableContainer component={Paper}>
+        <TableContainer component={Paper}>
           <Table>
             <TableHead>
               <TableRow>
@@ -110,17 +153,17 @@ export default function BranchesPage() {
             <TableBody>
               {branches
                 .filter((b) =>
-                  b.name.toLowerCase().includes(search.toLowerCase())
+                  b.branchName.toLowerCase().includes(search.toLowerCase())
                 )
                 .map((branch, index) => (
                   <TableRow key={branch.id}>
                     <TableCell>{index + 1}</TableCell>
                     <TableCell>
-                      {branch.name} ({branch.code})
+                      {branch.branchName} ({branch.code})
                     </TableCell>
-                    <TableCell>Good District</TableCell>
+                    <TableCell>{branch.district || "Good District"}</TableCell>
                     <TableCell>
-                      Phungling Municipality, {branch.name} -
+                      Phungling Municipality, {branch.branchName} -
                     </TableCell>
                     <TableCell>--</TableCell>
                     <TableCell align="center">
@@ -130,7 +173,6 @@ export default function BranchesPage() {
                       >
                         <EditIcon />
                       </IconButton>
-
                       <IconButton color="error">
                         <DeleteIcon />
                       </IconButton>
@@ -139,39 +181,43 @@ export default function BranchesPage() {
                 ))}
             </TableBody>
           </Table>
-        </TableContainer> */}
-        <BranchTable
-          branches={branches}
-          headers={headers}
-          search={search}
-          onEdit={handleEditClick}
-          onDelete={handleDialogClose}
-        />
-        <Dialog open={editDialogOpen} onClose={handleDialogClose} maxWidth="md">
-          <DialogContent>
+        </TableContainer>
+        <Dialog
+          open={editDialogOpen}
+          onClose={handleDialogClose}
+          maxWidth="md"
+          fullWidth
+          disableEnforceFocus
+        >
+          <DialogTitle>
+            {selectedBranch ? "Edit Branch" : "Add Branch"}
+          </DialogTitle>
+          <DialogContent dividers>
+            <Typography variant="subtitle2" gutterBottom>
+              {selectedBranch
+                ? "Edit the details below"
+                : "Please fill in the details below"}
+            </Typography>
+
             <EditBranchForm
-              initialData={selectedBranch}
+              initialData={selectedBranch }
               onClose={handleDialogClose}
             />
           </DialogContent>
-          <DialogActions
-            style={{
-              justifyContent: "flex-start",
-            }}
-            className="editfiled-button-postion"
-          >
-            <Button type="submit" variant="contained" startIcon={<SaveIcon />}>
-              Submit
-            </Button>
-          </DialogActions>
-          <DialogActions>
+
+          <DialogActions sx={{ justifyContent: "space-between", px: 3 }}>
+              <Button type="submit" variant="contained" color="primary"  id="branch-form-submit">
+                        Submit
+                      </Button>
+
             <Button onClick={handleDialogClose} color="error">
               Cancel
             </Button>
           </DialogActions>
         </Dialog>
       </Box>
-      {/* </Modal> */}
     </Box>
   );
 }
+
+

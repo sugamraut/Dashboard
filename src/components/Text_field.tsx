@@ -5,7 +5,7 @@ interface textdata{
     lable:string,
     name:string,
     value:string,
-    // functionvalue:string
+     functionvalue:string
     onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
     
 }

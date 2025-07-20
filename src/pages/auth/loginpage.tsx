@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import image from "../../assets/image/company_name.png";
 import { Box, Button, Typography } from "@mui/material";
-import LoginInput from "../../components/Input_field"
+import LoginInput from "../../components/Login"
 
 const loginpage = () => {
   const [username, setUsername] = useState("");

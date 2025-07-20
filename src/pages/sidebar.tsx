@@ -54,7 +54,7 @@ export default function Sidebar() {
         {sidebarIcons.map(({ icon, label, path }, index) => {
           const isActive = location.pathname === path;
           return (
-            <Tooltip title={label} placement="right" arrow key={index} width="50">
+            <Tooltip title={label} placement="right" arrow key={index}>
               <ListItem disablePadding sx={{ mt: 2 }}>
                 <Link to={path}>
                   <IconButton
@@ -65,7 +65,7 @@ export default function Sidebar() {
                         backgroundColor: "rgba(255, 255, 255, 0.2)",
                       },
                     }}
-                    className="p-2"
+                    className="p-2" 
                   >
                     {icon}
                   </IconButton>
