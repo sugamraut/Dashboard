@@ -80,18 +80,14 @@ const StatusCards = () => {
           <Grid container spacing={5}>
             {cardItems.map((item) => (
               <Card
-                className="dashboard-section-card-design"
+                className="card-design"
               >
                 <CardContent>
                   <Avatar
                     sx={{
-                      bgcolor: item.iconBg,
-                      position: "absolute",
-                      top: 16,
-                      left: 16,
-                      width: 32,
-                      height: 32,
+                      bgcolor: item.iconBg
                     }}
+                    className="avatar-icon-style "
                   >
                     {item.icon}
                   </Avatar>
@@ -100,13 +96,11 @@ const StatusCards = () => {
                     label={item.trend}
                     size="small"
                     sx={{
-                      position: "absolute",
-                      top: 16,
-                      right: 16,
+                     
                       backgroundColor: item.trendColor,
-                      color: "white",
-                      fontWeight: "bold",
+                  
                     }}
+                    className="chip-icon-style"
                   />
 
                   <Typography

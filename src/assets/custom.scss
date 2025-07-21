@@ -34,9 +34,26 @@ body {
   top: 47px;
 }
 
-.dashboard-section-card-design {
+.card-design {
   position: relative;
-  min-Height: 120px ;
-  min-Width: 420px ;
-  box-Shadow: 6px ;
+  min-Height: 120px;
+  min-Width: 420px;
+  box-Shadow: 6px;
+}
+
+.avatar-icon-style {
+  position: absolute !important;
+  top: 14px;
+  left: 16px;
+  width: 32px;
+  height: 32px;
+}
+
+.chip-icon-style {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  color: white;
+  font-weight: bold;
+  padding: 32px;
 }

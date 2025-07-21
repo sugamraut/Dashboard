@@ -1,6 +1,5 @@
 import { useState } from "react";
 import Sidebar from "../sidebar";
-// import SaveIcon from "@mui/icons-material/Save";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {
@@ -33,7 +32,7 @@ import AddCircleIcon from "@mui/icons-material/AddCircle";
 import EditBranchForm from "./add_edit_page";
 
 interface Branch {
-    id: number;
+  id: number;
   branchName: string;
   code: string;
   telephone?: string;
@@ -80,7 +79,6 @@ export default function BranchesPage() {
     setEditDialogOpen(false);
     setSelectedBranch(null);
   };
-
 
   return (
     <Box sx={{ display: "flex" }}>
@@ -200,15 +198,20 @@ export default function BranchesPage() {
             </Typography>
 
             <EditBranchForm
-              initialData={selectedBranch }
+              initialData={selectedBranch ?? undefined}
               onClose={handleDialogClose}
             />
           </DialogContent>
 
           <DialogActions sx={{ justifyContent: "space-between", px: 3 }}>
-              <Button type="submit" variant="contained" color="primary"  id="branch-form-submit">
-                        Submit
-                      </Button>
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              id="branch-form-submit"
+            >
+              Submit
+            </Button>
 
             <Button onClick={handleDialogClose} color="error">
               Cancel
@@ -219,5 +222,3 @@ export default function BranchesPage() {
     </Box>
   );
 }
-
-

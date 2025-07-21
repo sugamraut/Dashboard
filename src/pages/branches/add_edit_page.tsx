@@ -9,8 +9,7 @@ import {
   Button,
 } from "@mui/material";
 import type { SelectChangeEvent } from "@mui/material";
-import { TextField } from "@mui/material"; 
-
+import { TextField } from "@mui/material";
 
 interface EditBranchFormProps {
   initialData?: Partial<FormDataState>;
@@ -62,28 +61,26 @@ const EditBranchForm: React.FC<EditBranchFormProps> = ({
     }));
   }, [initialData]);
 
-
-const handleChange = (
+  const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
       [name as string]: value,
-    }));
-  };
+    }));
+  };
 
   const handleSelectChange = (e: SelectChangeEvent<string>) => {
-  const name = e.target.name;
-  const value = e.target.value;
-  if (!name) return;
+    const name = e.target.name;
+    const value = e.target.value;
+    if (!name) return;
 
-  setFormData((prev) => ({
-    ...prev,
-    [name]: value,
-  }));
-};
-
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -99,12 +96,14 @@ const handleChange = (
   };
 
   return (
-    <Box  sx={{
+    <Box
+      sx={{
         maxWidth: 1000,
         mx: "auto",
         p: 3,
         borderRadius: 2,
-      }}>
+      }}
+    >
       {error && (
         <Alert severity="error" sx={{ mb: 2 }}>
           {error}
@@ -127,7 +126,7 @@ const handleChange = (
           value={formData.code}
           onChange={handleChange}
           required
-           fullWidth
+          fullWidth
           margin="normal"
         />
         <TextField
@@ -135,7 +134,7 @@ const handleChange = (
           name="telephone"
           value={formData.telephone}
           onChange={handleChange}
-           fullWidth
+          fullWidth
           margin="normal"
         />
         <TextField
@@ -144,7 +143,7 @@ const handleChange = (
           value={formData.email}
           onChange={handleChange}
           type="email"
-           fullWidth
+          fullWidth
           margin="normal"
         />
         <TextField
@@ -152,7 +151,7 @@ const handleChange = (
           name="fax"
           value={formData.fax}
           onChange={handleChange}
-           fullWidth
+          fullWidth
           margin="normal"
         />
 
@@ -164,7 +163,6 @@ const handleChange = (
             value={formData.state}
             onChange={handleSelectChange}
             label="State"
-            
           >
             <MenuItem value="">
               <em>None</em>
@@ -196,7 +194,7 @@ const handleChange = (
           name="city"
           value={formData.city}
           onChange={handleChange}
-           fullWidth
+          fullWidth
           margin="normal"
         />
         <TextField
@@ -204,7 +202,7 @@ const handleChange = (
           name="streetAddress"
           value={formData.streetAddress}
           onChange={handleChange}
-           fullWidth
+          fullWidth
           margin="normal"
         />
         <TextField
@@ -212,12 +210,18 @@ const handleChange = (
           name="wardNo"
           value={formData.wardNo}
           onChange={handleChange}
-           fullWidth
+          fullWidth
           margin="normal"
         />
 
         <Box mt={3}>
-          <Button type="submit" variant="contained" color="primary" fullWidth id="branch-form-submit">
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            fullWidth
+            id="branch-form-submit"
+          >
             Submit
           </Button>
         </Box>
@@ -227,7 +231,3 @@ const handleChange = (
 };
 
 export default EditBranchForm;
-
-
-
-
