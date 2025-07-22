@@ -1,11 +1,6 @@
 import React, { useState, useEffect } from "react";
 import image from "../../assets/image/company_name.png";
-import {
-  Box,
-  Button,
-  Typography,
-  Alert,
-} from "@mui/material";
+import { Box, Button, Typography, Alert } from "@mui/material";
 import LoginInput from "../../components/Login";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { z } from "zod";
@@ -13,22 +8,15 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchAuthAsync } from "../../store/auth/LoginSlice";
 import type { RootState, AppDispatch } from "../../store/store";
-import { useNavigate } from "react-router-dom";  
-import { Status } from "../../globals/status";   
+import { useNavigate } from "react-router-dom";
+import { Status } from "../../globals/status";
 
 const loginSchema = z.object({
   username: z.string().min(1, "Username is required"),
   password: z
     .string()
     .min(4, "Password must be at least 4 characters")
-    .max(15, "Password is too long")
-    .regex(
-      /^(?=.*[a-z])(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-      {
-        message:
-          "Must contain at least one  lowercase, digit, and special character",
-      }
-    ),
+    .max(15, "Password is too long"),
 });
 
 type LoginFormInputs = z.infer<typeof loginSchema>;
@@ -36,7 +24,7 @@ type LoginFormInputs = z.infer<typeof loginSchema>;
 const LoginPage: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
-  const { status, error } = useSelector((state: RootState) => state.auth);
+  const { status, error,accessToken } = useSelector((state: RootState) => state.auth);
   const navigate = useNavigate();
 
   const {
@@ -53,9 +41,10 @@ const LoginPage: React.FC = () => {
 
   useEffect(() => {
     if (status === Status.Success) {
+      localStorage.setItem('jwt',accessToken)
       navigate("/admin/dashboard");
     }
-  }, [status, navigate]);
+  }, [status]);
 
   return (
     <div className="login-section">
@@ -107,11 +96,7 @@ const LoginPage: React.FC = () => {
               </Alert>
             )}
 
-            <Button
-              type="submit"
-              variant="contained"
-              fullWidth
-            >
+            <Button type="submit" variant="contained" fullWidth>
               LOGIN
             </Button>
           </Box>

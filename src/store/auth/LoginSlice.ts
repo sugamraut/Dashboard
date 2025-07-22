@@ -3,7 +3,7 @@ import { Status, type StatusType } from "../../globals/status";
 import type { authItem } from "../../globals/typeDeclaration";
 import type { AppDispatch } from "../store";
 import axios from "axios";
-import { server_Url } from "../../globals/config";
+import {server_Url} from "../../globals/config"
 
 
 interface authState {
@@ -11,6 +11,7 @@ interface authState {
     loading: boolean;
     error: string | null;
     status: StatusType;
+    accessToken:string
 }
 
 const initialState: authState = {
@@ -18,6 +19,7 @@ const initialState: authState = {
     loading: false,
     error: null,
     status: Status.Loading,
+    accessToken: ""
 };
 
 const authSlice = createSlice({
@@ -39,24 +41,27 @@ const authSlice = createSlice({
             state.status = Status.Error;
             state.loading = false;
         },
+        setToken(state,action:PayloadAction<string>){
+            state.accessToken=action.payload
+        }
     },
 });
 
-export const { setAuth, setStatus, setError } = authSlice.actions;
+export const { setAuth, setStatus, setError,setToken } = authSlice.actions;
 
 export default authSlice.reducer;
 
 export function fetchAuthAsync(data: { username: string; password: string; }) {
-    return async function fetchauthThunk(dispatch: AppDispatch) {
+    return async function fetchAuthThunk(dispatch: AppDispatch) {
         dispatch(setStatus(Status.Loading));
         try {
-            console.log(server_Url)
             const response =await axios.post(`${server_Url}/api/v1/auth/login`,data)
-            console.log(response)
 
             if (response.status === 200 || response.status === 201) {
+                dispatch(setToken(response.data.accessToken))
                 console.log("Login successful", response.data);
-                dispatch(setAuth(data));
+                dispatch(setAuth(response.data));
+                dispatch(setStatus(Status.Success))
             } else {
                 console.warn("Login failed with status:", response.status);
                 dispatch(setError("Login failed with status: " + response.status));

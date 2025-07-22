@@ -29,7 +29,7 @@ import {
 import FilterAltOffIcon from "@mui/icons-material/FilterAltOff";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 
-import EditBranchForm from "./add_edit_page";
+import AddEditPage from "./add_edit_page";
 
 interface Branch {
   id: number;
@@ -59,7 +59,7 @@ const initialBranches: Branch[] = [
   { id: 11, branchName: "DHARAN BRANCH", code: "68" },
 ];
 
-export default function BranchesPage() {
+export default function DistrictPage() {
   const [branches, setBranches] = useState<Branch[]>(initialBranches);
   const [search, setSearch] = useState("");
   const [editDialogOpen, setEditDialogOpen] = useState(false);
@@ -94,12 +94,12 @@ export default function BranchesPage() {
           alignItems="end"
           mb={2}
         >
-          <Typography variant="h5" fontWeight="bold"  paddingBottom={2}>
+          <Typography variant="h5" fontWeight="bold" paddingBottom={2}>
             Branches
           </Typography>
           <Box display="flex" justifyContent="end" alignItems="center" mb={2}>
             <Stack direction="row" spacing={2}>
-              <FormControl size="small" sx={{ minWidth: 120 }}>
+              {/* <FormControl size="small" sx={{ minWidth: 120 }}>
                 <InputLabel>By State</InputLabel>
                 <Select label="By State" value="" onChange={() => {}}>
                   <MenuItem value="">
@@ -108,7 +108,7 @@ export default function BranchesPage() {
                   <MenuItem value="State1">State 1</MenuItem>
                   <MenuItem value="State2">State 2</MenuItem>
                 </Select>
-              </FormControl>
+              </FormControl> */}
               <FormControl size="small" sx={{ minWidth: 120 }}>
                 <InputLabel>District</InputLabel>
                 <Select label="District" value="" onChange={() => {}}>
@@ -197,7 +197,7 @@ export default function BranchesPage() {
                 : "Please fill in the details below"}
             </Typography>
 
-            <EditBranchForm
+            <AddEditPage
               initialData={selectedBranch ?? undefined}
               onClose={handleDialogClose}
             />
