@@ -18,7 +18,7 @@ interface EditBranchFormProps {
 }
 
 export interface FormDataState {
-  branchName: string;
+  Name: string;
   code: string;
   telephone: string;
   email: string;
@@ -31,7 +31,7 @@ export interface FormDataState {
 }
 
 const defaultFormData: FormDataState = {
-  branchName: "",
+  Name: "",
   code: "",
   telephone: "",
   email: "",
@@ -85,7 +85,7 @@ const AddEditPage: React.FC<EditBranchFormProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!formData.branchName || !formData.code) {
+    if (!formData.Name || !formData.code) {
       setError("Branch Name and Code are required.");
       return;
     }
@@ -111,50 +111,7 @@ const AddEditPage: React.FC<EditBranchFormProps> = ({
       )}
 
       <form onSubmit={handleSubmit}>
-        <TextField
-          label="Branch Name"
-          name="branchName"
-          value={formData.branchName}
-          onChange={handleChange}
-          required
-          fullWidth
-          margin="normal"
-        />
-        <TextField
-          label="Code"
-          name="code"
-          value={formData.code}
-          onChange={handleChange}
-          required
-          fullWidth
-          margin="normal"
-        />
-        <TextField
-          label="Telephone"
-          name="telephone"
-          value={formData.telephone}
-          onChange={handleChange}
-          fullWidth
-          margin="normal"
-        />
-        <TextField
-          label="Email"
-          name="email"
-          value={formData.email}
-          onChange={handleChange}
-          type="email"
-          fullWidth
-          margin="normal"
-        />
-        <TextField
-          label="Fax"
-          name="fax"
-          value={formData.fax}
-          onChange={handleChange}
-          fullWidth
-          margin="normal"
-        />
-
+        
         <FormControl fullWidth margin="normal">
           <InputLabel id="state-label">State</InputLabel>
           <Select
@@ -171,6 +128,25 @@ const AddEditPage: React.FC<EditBranchFormProps> = ({
             <MenuItem value="State 2">State 2</MenuItem>
           </Select>
         </FormControl>
+       <TextField
+          label="Name"
+          name="Name"
+          value={formData.Name}
+          onChange={handleChange}
+          required
+          fullWidth
+          margin="normal"
+        />
+        <TextField
+          label="Code"
+          name="code"
+          value={formData.code}
+          onChange={handleChange}
+          required
+          fullWidth
+          margin="normal"
+        />
+    
 
         <FormControl fullWidth margin="normal">
           <InputLabel id="district-label">District</InputLabel>
@@ -188,31 +164,6 @@ const AddEditPage: React.FC<EditBranchFormProps> = ({
             <MenuItem value="District 2">District 2</MenuItem>
           </Select>
         </FormControl>
-
-        <TextField
-          label="City"
-          name="city"
-          value={formData.city}
-          onChange={handleChange}
-          fullWidth
-          margin="normal"
-        />
-        <TextField
-          label="Street Address"
-          name="streetAddress"
-          value={formData.streetAddress}
-          onChange={handleChange}
-          fullWidth
-          margin="normal"
-        />
-        <TextField
-          label="Ward No."
-          name="wardNo"
-          value={formData.wardNo}
-          onChange={handleChange}
-          fullWidth
-          margin="normal"
-        />
 
         <Box mt={3}>
           <Button

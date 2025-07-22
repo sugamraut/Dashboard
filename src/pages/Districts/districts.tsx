@@ -30,17 +30,10 @@ import FilterAltOffIcon from "@mui/icons-material/FilterAltOff";
 import AddEditPage from "./add_edit_page";
 
 interface Branch {
+  district?: string;
   id: number;
   branchName: string;
   code: string;
-  telephone?: string;
-  email?: string;
-  fax?: string;
-  state?: string;
-  district?: string;
-  city?: string;
-  streetAddress?: string;
-  wardNo?: string;
 }
 
 const initialBranches: Branch[] = [
@@ -74,12 +67,10 @@ export default function DistrictPage() {
   };
 
   return (
-    <Box marginLeft={10} marginRight={4} padding={4}>
-      {/* <Sidebar /> */}
-
+    <Box marginLeft={7} marginRight={0} padding={2}>
       <Box
         component="main"
-        sx={{ flexGrow: 1, p: 3, backgroundColor: "#f9fbfd" }}
+        sx={{ flexGrow: 1, p: 3 }}
       >
         <Box
           display="flex"

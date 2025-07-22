@@ -5,7 +5,7 @@ import HomeIcon from "@mui/icons-material/Home";
 import FolderIcon from "@mui/icons-material/Folder";
 import TextSnippetIcon from "@mui/icons-material/TextSnippet";
 import SummarizeIcon from "@mui/icons-material/Summarize";
-import CategoryIcon from "@mui/icons-material/Category";
+// import CategoryIcon from "@mui/icons-material/Category";
 import PeopleIcon from "@mui/icons-material/People";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import FolderOpenIcon from "@mui/icons-material/FolderOpen";

@@ -1,5 +1,4 @@
 import { useState } from "react";
-import Sidebar from "../sidebar";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {
@@ -60,7 +59,7 @@ const initialBranches: Branch[] = [
 ];
 
 export default function BranchesPage() {
-  const [branches, setBranches] = useState<Branch[]>(initialBranches);
+  const [branches] = useState<Branch[]>(initialBranches);
   const [search, setSearch] = useState("");
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [selectedBranch, setSelectedBranch] = useState<Branch | null>(null);
@@ -81,12 +80,10 @@ export default function BranchesPage() {
   };
 
   return (
-    <Box marginLeft={10} marginRight={4} padding={4}>
-      {/* <Sidebar /> */}
-
+    <Box marginLeft={7} marginRight={0} padding={2}>
       <Box
         component="main"
-        sx={{ flexGrow: 1, p: 3, backgroundColor: "#f9fbfd" }}
+        sx={{ flexGrow: 1, p: 3}}
       >
         <Box
           display="flex"

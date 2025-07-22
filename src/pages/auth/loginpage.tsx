@@ -40,11 +40,11 @@ const LoginPage: React.FC = () => {
   };
 
   useEffect(() => {
-    if (status === Status.Success) {
-      localStorage.setItem('jwt',accessToken)
-      navigate("/admin/dashboard");
-    }
-  }, [status]);
+  if (status === Status.Success) {
+    localStorage.setItem("jwt", accessToken);
+    navigate("/admin/dashboard");
+  }
+}, [status, accessToken, navigate]);
 
   return (
     <div className="login-section">
