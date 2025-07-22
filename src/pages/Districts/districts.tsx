@@ -1,5 +1,4 @@
 import { useState } from "react";
-import Sidebar from "../sidebar";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {
@@ -27,7 +26,6 @@ import {
 } from "@mui/material";
 
 import FilterAltOffIcon from "@mui/icons-material/FilterAltOff";
-import AddCircleIcon from "@mui/icons-material/AddCircle";
 
 import AddEditPage from "./add_edit_page";
 
@@ -65,11 +63,6 @@ export default function DistrictPage() {
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [selectedBranch, setSelectedBranch] = useState<Branch | null>(null);
 
-  const handleAddClick = () => {
-    setSelectedBranch(null);
-    setEditDialogOpen(true);
-  };
-
   const handleEditClick = (branch: Branch) => {
     setSelectedBranch(branch);
     setEditDialogOpen(true);
@@ -99,16 +92,6 @@ export default function DistrictPage() {
           </Typography>
           <Box display="flex" justifyContent="end" alignItems="center" mb={2}>
             <Stack direction="row" spacing={2}>
-              {/* <FormControl size="small" sx={{ minWidth: 120 }}>
-                <InputLabel>By State</InputLabel>
-                <Select label="By State" value="" onChange={() => {}}>
-                  <MenuItem value="">
-                    <em>None</em>
-                  </MenuItem>
-                  <MenuItem value="State1">State 1</MenuItem>
-                  <MenuItem value="State2">State 2</MenuItem>
-                </Select>
-              </FormControl> */}
               <FormControl size="small" sx={{ minWidth: 120 }}>
                 <InputLabel>District</InputLabel>
                 <Select label="District" value="" onChange={() => {}}>
@@ -129,9 +112,6 @@ export default function DistrictPage() {
               <IconButton color="error" onClick={() => setSearch("")}>
                 <FilterAltOffIcon />
               </IconButton>
-              <IconButton color="primary" onClick={handleAddClick}>
-                <AddCircleIcon />
-              </IconButton>
             </Stack>
           </Box>
         </Box>
@@ -141,10 +121,8 @@ export default function DistrictPage() {
             <TableHead>
               <TableRow>
                 <TableCell>#</TableCell>
-                <TableCell>Branch Name</TableCell>
-                <TableCell>District</TableCell>
-                <TableCell>Location</TableCell>
-                <TableCell>Contact Details</TableCell>
+                <TableCell>Name</TableCell>
+                <TableCell>State</TableCell>
                 <TableCell align="center">Actions</TableCell>
               </TableRow>
             </TableHead>
@@ -160,10 +138,6 @@ export default function DistrictPage() {
                       {branch.branchName} ({branch.code})
                     </TableCell>
                     <TableCell>{branch.district || "Good District"}</TableCell>
-                    <TableCell>
-                      Phungling Municipality, {branch.branchName} -
-                    </TableCell>
-                    <TableCell>--</TableCell>
                     <TableCell align="center">
                       <IconButton
                         color="primary"
