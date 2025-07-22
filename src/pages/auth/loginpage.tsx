@@ -1,24 +1,66 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import image from "../../assets/image/company_name.png";
-import { Box, Button, Typography } from "@mui/material";
-import LoginInput from "../../components/Login"
+import {
+  Box,
+  Button,
+  Typography,
+  Alert,
+} from "@mui/material";
+import LoginInput from "../../components/Login";
+import { useForm, type SubmitHandler } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchAuthAsync } from "../../store/auth/LoginSlice";
+import type { RootState, AppDispatch } from "../../store/store";
+import { useNavigate } from "react-router-dom";  
+import { Status } from "../../globals/status";   
 
-const loginpage = () => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+const loginSchema = z.object({
+  username: z.string().min(1, "Username is required"),
+  password: z
+    .string()
+    .min(4, "Password must be at least 4 characters")
+    .max(15, "Password is too long")
+    .regex(
+      /^(?=.*[a-z])(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+      {
+        message:
+          "Must contain at least one  lowercase, digit, and special character",
+      }
+    ),
+});
+
+type LoginFormInputs = z.infer<typeof loginSchema>;
+
+const LoginPage: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const dispatch = useDispatch<AppDispatch>();
+  const { status, error } = useSelector((state: RootState) => state.auth);
+  const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Logging in:", username, password);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginFormInputs>({
+    resolver: zodResolver(loginSchema),
+  });
+
+  const onSubmit: SubmitHandler<LoginFormInputs> = (data) => {
+    dispatch(fetchAuthAsync(data));
   };
+
+  useEffect(() => {
+    if (status === Status.Success) {
+      navigate("/admin/dashboard");
+    }
+  }, [status, navigate]);
 
   return (
     <div className="login-section">
       <div className="login-container d-flex justify-content-center align-items-center">
-        <div
-          className="login-box p-4 rounded shadow"
-        >
+        <div className="login-box p-4 rounded shadow">
           <div className="text-center mb-3">
             <img src={image} alt="Sunlife Logo" className="mb-3" width="80" />
             <Typography variant="h5" fontWeight="bold" className="mb-2">
@@ -34,27 +76,42 @@ const loginpage = () => {
             </Typography>
           </div>
 
-          <Box component="form" onSubmit={handleSubmit} noValidate autoComplete="off">
+          <Box
+            component="form"
+            onSubmit={handleSubmit(onSubmit)}
+            noValidate
+            autoComplete="off"
+          >
             <LoginInput
               id="username"
               label="Username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              iconClass="fa-regular fa-circle-user"
+              {...register("username")}
+              error={!!errors.username}
+              helperText={errors.username?.message}
             />
 
             <LoginInput
               id="password"
               label="Password"
-              type="password"
-              value={password}
-              onChange={(e: { target: { value: React.SetStateAction<string>; }; }) => setPassword(e.target.value)}
+              type={showPassword ? "text" : "password"}
+              {...register("password")}
+              error={!!errors.password}
+              helperText={errors.password?.message}
               showPassword={showPassword}
               togglePasswordVisibility={() => setShowPassword(!showPassword)}
-              iconClass="fa-solid fa-fingerprint"
             />
 
-            <Button type="submit" variant="contained" fullWidth>
+            {error && (
+              <Alert severity="error" className="mt-2">
+                {error}
+              </Alert>
+            )}
+
+            <Button
+              type="submit"
+              variant="contained"
+              fullWidth
+            >
               LOGIN
             </Button>
           </Box>
@@ -64,4 +121,4 @@ const loginpage = () => {
   );
 };
 
-export default loginpage;
+export default LoginPage;
