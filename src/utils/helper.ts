@@ -1,7 +1,7 @@
 import { jwtDecode } from "jwt-decode"
 
 interface JwtPayload {
-  exp: number;  // expiration time in seconds since epoch
+  exp: number;  
 }
 
 export function isTokenValid(token: string | null): boolean {
@@ -9,7 +9,7 @@ export function isTokenValid(token: string | null): boolean {
   try {
     const decoded = jwtDecode<JwtPayload>(token);
     if (!decoded.exp) return false;
-    // exp is in seconds, Date.now() is milliseconds
+
     return decoded.exp * 1000 > Date.now();
   } catch {
     return false;
