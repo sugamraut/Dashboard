@@ -1,110 +1,124 @@
-import { useState } from "react";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
+import React, { useEffect, useState } from "react";
 import {
   Box,
+  Dialog,
+  DialogTitle,
   DialogContent,
   DialogActions,
   Button,
-  Dialog,
-  TableContainer,
   Table,
+  TableContainer,
   TableHead,
   TableRow,
   TableCell,
   TableBody,
   Paper,
   IconButton,
-  FormControl,
-  MenuItem,
+  Typography,
   TextField,
   Stack,
   Select,
+  MenuItem,
   InputLabel,
-  Typography,
-  DialogTitle,
+  FormControl,
+  TablePagination,
 } from "@mui/material";
 
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 import FilterAltOffIcon from "@mui/icons-material/FilterAltOff";
 
+import { useDispatch, useSelector } from "react-redux";
+import type { RootState, AppDispatch } from "../../store/store";
+import { fetchDistrictAsync } from "../../store/districts/DistrictsSlice";
 import AddEditPage from "./add_edit_page";
 
-interface Branch {
-  district?: string;
-  id: number;
-  branchName: string;
-  code: string;
-}
-
-const initialBranches: Branch[] = [
-  { id: 1, branchName: "KHUSIBU BRANCH", code: "59" },
-  { id: 2, branchName: "GOLBAZAR BRANCH", code: "55" },
-  { id: 3, branchName: "CHABAHIL BRANCH", code: "37" },
-  { id: 4, branchName: "JANAKPUR BRANCH", code: "44" },
-  { id: 5, branchName: "MID- BANESHWOR BRANCH", code: "29" },
-  { id: 6, branchName: "THAMEL BRANCH", code: "09" },
-  { id: 7, branchName: "DADELDHURA BRANCH", code: "19" },
-  { id: 8, branchName: "GWARKO BRANCH", code: "88" },
-  { id: 9, branchName: "SINAMANGAL BRANCH", code: "84" },
-  { id: 10, branchName: "CHAINPUR BRANCH", code: "69" },
-  { id: 11, branchName: "DHARAN BRANCH", code: "68" },
-];
-
 export default function DistrictPage() {
-  const [branches, setBranches] = useState<Branch[]>(initialBranches);
-  const [search, setSearch] = useState("");
-  const [editDialogOpen, setEditDialogOpen] = useState(false);
-  const [selectedBranch, setSelectedBranch] = useState<Branch | null>(null);
+  const dispatch: AppDispatch = useDispatch();
+  const { data: districtData } = useSelector((state: RootState) => state.distric);
 
-  const handleEditClick = (branch: Branch) => {
-    setSelectedBranch(branch);
+
+  const [search, setSearch] = useState("");
+  const [selectedDistrict, setSelectedDistrict] = useState("");
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [selectedDistrictItem, setSelectedDistrictItem] = useState<any | null>(null);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+
+
+  useEffect(() => {
+    dispatch(fetchDistrictAsync());
+  }, [dispatch]);
+
+
+  const filteredDistricts = districtData?.data.filter((d: any) => {
+    const matchesSearch = d.name.toLowerCase().includes(search.toLowerCase());
+    const matchesDistrictFilter = !selectedDistrict || String(d.id) === selectedDistrict;
+    return matchesSearch && matchesDistrictFilter;
+  }) || [];
+
+
+  const paginatedDistricts = filteredDistricts.slice(
+    page * rowsPerPage,
+    page * rowsPerPage + rowsPerPage
+  );
+
+
+  const handleEditClick = (district: any) => {
+    setSelectedDistrictItem(district);
     setEditDialogOpen(true);
   };
 
   const handleDialogClose = () => {
     setEditDialogOpen(false);
-    setSelectedBranch(null);
+    setSelectedDistrictItem(null);
+  };
+
+  const handleChangePage = (_: unknown, newPage: number) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
   };
 
   return (
-    <Box marginLeft={7} marginRight={0} padding={2}>
-      <Box
-        component="main"
-        sx={{ flexGrow: 1, p: 3 }}
-      >
-        <Box
-          display="flex"
-          justifyContent="space-between"
-          alignItems="end"
-          mb={2}
-        >
+    <Box marginLeft={7} padding={2}>
+      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+        <Box display="flex" justifyContent="space-between" alignItems="end" mb={2}>
           <Typography variant="h5" fontWeight="bold" paddingBottom={2}>
-            Branches
+            Districts
           </Typography>
-          <Box display="flex" justifyContent="end" alignItems="center" mb={2}>
-            <Stack direction="row" spacing={2}>
-              <FormControl size="small" sx={{ minWidth: 120 }}>
-                <InputLabel>District</InputLabel>
-                <Select label="District" value="" onChange={() => {}}>
-                  <MenuItem value="">
-                    <em>None</em>
+          <Stack direction="row" spacing={2}>
+            <FormControl size="small" sx={{ minWidth: 120 }}>
+              <InputLabel>District</InputLabel>
+              <Select
+                label="District"
+                value={selectedDistrict}
+                onChange={(e) => setSelectedDistrict(e.target.value)}
+              >
+                <MenuItem value="">
+                  <em>All</em>
+                </MenuItem>
+                {districtData?.data.map((d: any) => (
+                  <MenuItem key={d.id} value={String(d.id)}>
+                    {d.name}
                   </MenuItem>
-                  <MenuItem value="District1">District 1</MenuItem>
-                  <MenuItem value="District2">District 2</MenuItem>
-                </Select>
-              </FormControl>
-              <TextField
-                size="small"
-                variant="outlined"
-                placeholder="Search"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-              />
-              <IconButton color="error" onClick={() => setSearch("")}>
-                <FilterAltOffIcon />
-              </IconButton>
-            </Stack>
-          </Box>
+                ))}
+              </Select>
+            </FormControl>
+            <TextField
+              size="small"
+              variant="outlined"
+              placeholder="Search"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+            <IconButton color="error" onClick={() => setSearch("")}>
+              <FilterAltOffIcon />
+            </IconButton>
+          </Stack>
         </Box>
 
         <TableContainer component={Paper}>
@@ -114,70 +128,66 @@ export default function DistrictPage() {
                 <TableCell>#</TableCell>
                 <TableCell>Name</TableCell>
                 <TableCell>State</TableCell>
+                <TableCell>District</TableCell>
                 <TableCell align="center">Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {branches
-                .filter((b) =>
-                  b.branchName.toLowerCase().includes(search.toLowerCase())
-                )
-                .map((branch, index) => (
-                  <TableRow key={branch.id}>
-                    <TableCell>{index + 1}</TableCell>
-                    <TableCell>
-                      {branch.branchName} ({branch.code})
-                    </TableCell>
-                    <TableCell>{branch.district || "Good District"}</TableCell>
-                    <TableCell align="center">
-                      <IconButton
-                        color="primary"
-                        onClick={() => handleEditClick(branch)}
-                      >
-                        <EditIcon />
-                      </IconButton>
-                      <IconButton color="error">
-                        <DeleteIcon />
-                      </IconButton>
-                    </TableCell>
-                  </TableRow>
-                ))}
+              {paginatedDistricts.map((district: any, index: number) => (
+                <TableRow key={district.id}>
+                  <TableCell>{page * rowsPerPage + index + 1}</TableCell>
+                  <TableCell>{district.name}</TableCell>
+                  <TableCell>{district.state?.name || "N/A"}</TableCell>
+                  <TableCell>{district.nameCombined || district.name}</TableCell>
+                  <TableCell align="center">
+                    <IconButton color="primary" onClick={() => handleEditClick(district)}>
+                      <EditIcon />
+                    </IconButton>
+                    <IconButton color="error" onClick={() => alert(`Delete district ${district.name} (id: ${district.id})`)}>
+                      <DeleteIcon />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+              ))}
+
+              {paginatedDistricts.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={5} align="center">
+                    No districts found
+                  </TableCell>
+                </TableRow>
+              )}
             </TableBody>
           </Table>
+
+          <TablePagination
+            rowsPerPageOptions={[5, 10, 25,50]}
+            component="div"
+            count={filteredDistricts.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
         </TableContainer>
-        <Dialog
-          open={editDialogOpen}
-          onClose={handleDialogClose}
-          maxWidth="md"
-          fullWidth
-          disableEnforceFocus
-        >
-          <DialogTitle>
-            {selectedBranch ? "Edit Branch" : "Add Branch"}
-          </DialogTitle>
+
+        <Dialog open={editDialogOpen} onClose={handleDialogClose} maxWidth="md" fullWidth>
+          <DialogTitle>{selectedDistrictItem ? "Edit District" : "Add District"}</DialogTitle>
           <DialogContent dividers>
             <Typography variant="subtitle2" gutterBottom>
-              {selectedBranch
+              {selectedDistrictItem
                 ? "Edit the details below"
                 : "Please fill in the details below"}
             </Typography>
-
             <AddEditPage
-              initialData={selectedBranch ?? undefined}
+              initialData={selectedDistrictItem ?? undefined}
               onClose={handleDialogClose}
             />
           </DialogContent>
-
           <DialogActions sx={{ justifyContent: "space-between", px: 3 }}>
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              id="branch-form-submit"
-            >
+            <Button type="submit" variant="contained" color="primary" id="district-form-submit">
               Submit
             </Button>
-
             <Button onClick={handleDialogClose} color="error">
               Cancel
             </Button>

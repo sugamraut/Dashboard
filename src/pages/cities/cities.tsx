@@ -21,6 +21,7 @@ import {
   InputLabel,
   Typography,
   DialogTitle,
+  TablePagination,
 } from "@mui/material";
 
 import FilterAltOffIcon from "@mui/icons-material/FilterAltOff";
@@ -62,6 +63,10 @@ export default function BranchesPage() {
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [selectedBranch, setSelectedBranch] = useState<Branch | null>(null);
 
+  // Pagination states
+  const [page, setPage] = useState(0); // current page, 0-indexed
+  const [rowsPerPage, setRowsPerPage] = useState(5); // rows per page
+
   const handleAddClick = () => {
     setSelectedBranch(null);
     setEditDialogOpen(true);
@@ -76,6 +81,30 @@ export default function BranchesPage() {
     setEditDialogOpen(false);
     setSelectedBranch(null);
   };
+
+  // Handle page change
+  const handleChangePage = (_event: unknown, newPage: number) => {
+    setPage(newPage);
+  };
+
+  // Handle rows per page change
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0); // Reset to first page
+  };
+
+  // Filtered branches by search term
+  const filteredBranches = branches.filter((b) =>
+    b.branchName.toLowerCase().includes(search.toLowerCase())
+  );
+
+  // Paginated branches slice
+  const paginatedBranches = filteredBranches.slice(
+    page * rowsPerPage,
+    page * rowsPerPage + rowsPerPage
+  );
 
   return (
     <Box marginLeft={7} marginRight={0} padding={2}>
@@ -140,13 +169,10 @@ export default function BranchesPage() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {branches
-                .filter((b) =>
-                  b.branchName.toLowerCase().includes(search.toLowerCase())
-                )
-                .map((branch, index) => (
+              {paginatedBranches.length > 0 ? (
+                paginatedBranches.map((branch, index) => (
                   <TableRow key={branch.id}>
-                    <TableCell>{index + 1}</TableCell>
+                    <TableCell>{page * rowsPerPage + index + 1}</TableCell>
                     <TableCell>
                       {branch.branchName} ({branch.code})
                     </TableCell>
@@ -161,10 +187,29 @@ export default function BranchesPage() {
                       </IconButton>
                     </TableCell>
                   </TableRow>
-                ))}
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={5} align="center">
+                    No branches found
+                  </TableCell>
+                </TableRow>
+              )}
             </TableBody>
           </Table>
         </TableContainer>
+
+        {/* Pagination Controls */}
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25, 50]}
+          component="div"
+          count={filteredBranches.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
+
         <Dialog
           open={editDialogOpen}
           onClose={handleDialogClose}
