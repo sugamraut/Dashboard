@@ -6,5 +6,5 @@ export type authItem={
     id:number;
     name:string;
     nameNP:string
-    State:string;
+    States:string;
  }

@@ -21,12 +21,11 @@ const districtSlice = createSlice({
     name: "district",
     initialState,
     reducers: {
-        setDistrict(state, action: PayloadAction<districtState>) {
-            // state.data = action.payload;
-            state.status = Status.Success
+        setDistrict(state, action: PayloadAction<getDistricts>) {
+            state.data = action.payload;
+            state.status = Status.Success;
             state.error = null;
             state.loading = false;
-
         },
         setStatus(state, action: PayloadAction<StatusType>) {
             state.status = action.payload;
@@ -39,5 +38,5 @@ const districtSlice = createSlice({
         },
     }
 });
-export const {setDistrict,setStatus,setError}=districtSlice.actions;
+export const { setDistrict, setStatus, setError } = districtSlice.actions;
 export default districtSlice.reducer;
