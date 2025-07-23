@@ -20,7 +20,7 @@ const sidebarIcons = [
   { icon: <FolderIcon />, label: "Online Account", path: "/online-account" },
   { icon: <TextSnippetIcon />, label: "Account Type", path: "/account-type" },
   { icon: <SummarizeIcon />, label: "Branches", path: "/admin/branch" },
-  { icon: <SummarizeIcon/>, label: "District", path: "/admin/Disrict" },
+  { icon: <SummarizeIcon/>, label: "District", path: "/admin/district" },
   { icon: <PeopleIcon />, label: "Users", path: "/users" },
   { icon: <AdminPanelSettingsIcon />, label: "Roles & Access", path: "/roles-access" },
   { icon: <FolderOpenIcon />, label: "File Manager", path: "/file-manager" },

@@ -21,13 +21,12 @@ const router = createBrowserRouter([
       { index: true, element: <Login /> },
       {
         path: "",
-        element: <PrivateRoute />,  // protect the routes below
+        element: <PrivateRoute />,  
         children: [
           { path: "home", element: <Home /> },
           { path: "dashboard", element: <Dashboard /> },
           { path: "branch", element: <BrandingSignInPage /> },
-          { path: "District", element: <District /> },
-          // ... other protected routes
+          { path: "district", element: <District /> },
         ],
       },
     ],
