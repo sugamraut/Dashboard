@@ -1,7 +1,7 @@
 import { jwtDecode } from "jwt-decode"
 
 interface JwtPayload {
-  exp: number;  
+  exp: number;
 }
 
 export function isTokenValid(token: string | null): boolean {

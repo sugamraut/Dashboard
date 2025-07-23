@@ -1,6 +1,5 @@
 import { useState } from "react";
 import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
 import {
   Box,
   DialogContent,
@@ -13,7 +12,6 @@ import {
   TableRow,
   TableCell,
   TableBody,
-  Paper,
   IconButton,
   FormControl,
   MenuItem,
