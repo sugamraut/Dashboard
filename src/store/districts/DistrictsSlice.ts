@@ -1,6 +1,9 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { Status, type StatusType } from "../../globals/status";
 import type { getDistricts } from "../../globals/typeDeclaration";
+import type { AppDispatch } from "../store";
+import axios from "axios";
+import { server_Url } from "../../globals/config";
 
 
 interface districtState {
@@ -40,3 +43,24 @@ const districtSlice = createSlice({
 });
 export const { setDistrict, setStatus, setError } = districtSlice.actions;
 export default districtSlice.reducer;
+
+
+export function fetchDistrictAsync() {
+    return async function fectchDistrictThunk(dispatch: AppDispatch) {
+        dispatch(setStatus(Status.Loading));
+        try {
+            const response = await axios.get(`${server_Url}/api/v1/districts`)
+            if (response.status === 200 || response.status === 201) {
+                dispatch(setDistrict(response.data))
+                dispatch(setStatus(Status.Success))
+            } else {
+                dispatch(setError("district operation is fail" + response.status))
+            }
+        } catch (error: any) {
+            const message = error.response?.data?.message || error.message || "unknown error";
+            dispatch(setError(message));
+
+        }
+    }
+}
+

@@ -5,6 +5,7 @@ export type authItem={
  export type getDistricts={
     id:number;
     name:string;
-    nameNP:string
+    nameNP:string;
     States:string;
+    namecombine:string;
  }
