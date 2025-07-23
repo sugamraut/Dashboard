@@ -1,254 +1,180 @@
-import { useState } from "react";
-import EditIcon from "@mui/icons-material/Edit";
+import React, { useEffect, useState } from "react";
 import {
-  Box,
-  DialogContent,
-  DialogActions,
-  Button,
-  Dialog,
-  TableContainer,
-  Table,
-  TableHead,
-  TableRow,
-  TableCell,
-  TableBody,
-  IconButton,
-  FormControl,
-  MenuItem,
-  TextField,
-  Stack,
-  Select,
-  InputLabel,
-  Typography,
-  DialogTitle,
-  TablePagination,
+  Box, TableContainer, Table, TableHead, TableRow, TableCell,
+  TableBody, IconButton, Typography, TextField, Stack, FormControl,
+  InputLabel, Select, MenuItem, Dialog, DialogTitle, DialogContent,
+  DialogActions, Button, TablePagination
 } from "@mui/material";
 
-import FilterAltOffIcon from "@mui/icons-material/FilterAltOff";
+import EditIcon from "@mui/icons-material/Edit";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
-
+import FilterAltOffIcon from "@mui/icons-material/FilterAltOff";
+import { useDispatch, useSelector } from "react-redux";
+import type { RootState, AppDispatch } from "../../store/store";
+import { fetchCityAsync, type City } from "../../store/cities/CitiesSlice";
 import AddEditpage from "./add_edit_page";
 
-interface Branch {
-  id: number;
-  branchName: string;
-  code: string;
-  telephone?: string;
-  email?: string;
-  fax?: string;
-  state?: string;
-  district?: string;
-  city?: string;
-  streetAddress?: string;
-  wardNo?: string;
-}
+export default function CitiesPage() {
+  const dispatch = useDispatch<AppDispatch>();
+  const { data: cities, loading, error } = useSelector((state: RootState) => state.city);
 
-const initialBranches: Branch[] = [
-  { id: 1, branchName: "KHUSIBU BRANCH", code: "59" },
-  { id: 2, branchName: "GOLBAZAR BRANCH", code: "55" },
-  { id: 3, branchName: "CHABAHIL BRANCH", code: "37" },
-  { id: 4, branchName: "JANAKPUR BRANCH", code: "44" },
-  { id: 5, branchName: "MID- BANESHWOR BRANCH", code: "29" },
-  { id: 6, branchName: "THAMEL BRANCH", code: "09" },
-  { id: 7, branchName: "DADELDHURA BRANCH", code: "19" },
-  { id: 8, branchName: "GWARKO BRANCH", code: "88" },
-  { id: 9, branchName: "SINAMANGAL BRANCH", code: "84" },
-  { id: 10, branchName: "CHAINPUR BRANCH", code: "69" },
-  { id: 11, branchName: "DHARAN BRANCH", code: "68" },
-];
-
-export default function BranchesPage() {
-  const [branches] = useState<Branch[]>(initialBranches);
   const [search, setSearch] = useState("");
+  const [selectedState, setSelectedState] = useState("");
+  const [selectedDistrict, setSelectedDistrict] = useState("");
   const [editDialogOpen, setEditDialogOpen] = useState(false);
-  const [selectedBranch, setSelectedBranch] = useState<Branch | null>(null);
+  const [selectedCity, setSelectedCity] = useState<City | null>(null);
 
-  // Pagination states
-  const [page, setPage] = useState(0); // current page, 0-indexed
-  const [rowsPerPage, setRowsPerPage] = useState(5); // rows per page
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(25);
 
-  const handleAddClick = () => {
-    setSelectedBranch(null);
-    setEditDialogOpen(true);
-  };
+  useEffect(() => {
+    dispatch(fetchCityAsync());
+  }, [dispatch]);
 
-  const handleEditClick = (branch: Branch) => {
-    setSelectedBranch(branch);
+  const handleEditClick = (city: City | null) => {
+    setSelectedCity(city);
     setEditDialogOpen(true);
   };
 
   const handleDialogClose = () => {
     setEditDialogOpen(false);
-    setSelectedBranch(null);
+    setSelectedCity(null);
   };
 
-  // Handle page change
-  const handleChangePage = (_event: unknown, newPage: number) => {
-    setPage(newPage);
+  const handleChangePage = (_: unknown, newPage: number) => setPage(newPage);
+  const handleChangeRowsPerPage = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setRowsPerPage(parseInt(e.target.value, 10));
+    setPage(0);
   };
 
-  // Handle rows per page change
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0); // Reset to first page
+  const handleRefresh = () => {
+    dispatch(fetchCityAsync());
+    setSearch("");
+    setSelectedState("");
+    setSelectedDistrict("");
   };
 
-  // Filtered branches by search term
-  const filteredBranches = branches.filter((b) =>
-    b.branchName.toLowerCase().includes(search.toLowerCase())
-  );
+  const filtered = (cities || []).filter((city: City) => {
+    const matchSearch = city.name.toLowerCase().includes(search.toLowerCase());
+    const matchState = !selectedState || city.state === selectedState;
+    const matchDistrict = !selectedDistrict || city.district === selectedDistrict;
+    return matchSearch && matchState && matchDistrict;
+  });
 
-  // Paginated branches slice
-  const paginatedBranches = filteredBranches.slice(
-    page * rowsPerPage,
-    page * rowsPerPage + rowsPerPage
-  );
+  const paginated = filtered.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
   return (
-    <Box marginLeft={7} marginRight={0} padding={2}>
-      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-        <Box
-          display="flex"
-          justifyContent="space-between"
-          alignItems="end"
-          mb={2}
-        >
-          <Typography variant="h5" fontWeight="bold" paddingBottom={2}>
-            Cities
-          </Typography>
-          <Box display="flex" justifyContent="end" alignItems="center" mb={2}>
-            <Stack direction="row" spacing={2}>
-              <FormControl size="small" sx={{ minWidth: 120 }}>
-                <InputLabel>By State</InputLabel>
-                <Select label="By State" value="" onChange={() => {}}>
-                  <MenuItem value="">
-                    <em>None</em>
-                  </MenuItem>
-                  <MenuItem value="State1">State 1</MenuItem>
-                  <MenuItem value="State2">State 2</MenuItem>
-                </Select>
-              </FormControl>
-              <FormControl size="small" sx={{ minWidth: 120 }}>
-                <InputLabel>District</InputLabel>
-                <Select label="District" value="" onChange={() => {}}>
-                  <MenuItem value="">
-                    <em>None</em>
-                  </MenuItem>
-                  <MenuItem value="District1">District 1</MenuItem>
-                  <MenuItem value="District2">District 2</MenuItem>
-                </Select>
-              </FormControl>
-              <TextField
-                size="small"
-                variant="outlined"
-                placeholder="Search"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-              />
-              <IconButton color="error" onClick={() => setSearch("")}>
-                <FilterAltOffIcon />
-              </IconButton>
-              <IconButton color="primary" onClick={handleAddClick}>
-                <AddCircleIcon />
-              </IconButton>
-            </Stack>
-          </Box>
-        </Box>
+    <Box  marginLeft={9} marginRight={0} padding={2}>
+      <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+        <Typography variant="h5" fontWeight="bold">Cities</Typography>
+        <Stack direction="row" spacing={1}>
+             <Stack direction="row" spacing={2} mb={2}>
+        <FormControl size="small" sx={{ minWidth: 120 }}>
+          <InputLabel>State</InputLabel>
+          <Select
+            label="State"
+            value={selectedState}
+            onChange={(e) => setSelectedState(e.target.value)}
+          >
+            <MenuItem value=""><em>All</em></MenuItem>
+            {[...new Set((cities || []).map(c => c.state))].map((state, i) => (
+              <MenuItem key={i} value={state}>{state}</MenuItem>
+            ))}
+          </Select>
+        </FormControl>
 
-        <TableContainer>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>#</TableCell>
-                <TableCell>Name</TableCell>
-                <TableCell>State</TableCell>
-                <TableCell>District</TableCell>
-                <TableCell align="center">Actions</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {paginatedBranches.length > 0 ? (
-                paginatedBranches.map((branch, index) => (
-                  <TableRow key={branch.id}>
-                    <TableCell>{page * rowsPerPage + index + 1}</TableCell>
-                    <TableCell>
-                      {branch.branchName} ({branch.code})
-                    </TableCell>
-                    <TableCell>{branch.district || "Good District"}</TableCell>
-                    <TableCell>{branch.branchName} -</TableCell>
-                    <TableCell align="center">
-                      <IconButton
-                        color="primary"
-                        onClick={() => handleEditClick(branch)}
-                      >
-                        <EditIcon />
-                      </IconButton>
-                    </TableCell>
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={5} align="center">
-                    No branches found
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
+        <FormControl size="small" sx={{ minWidth: 120 }}>
+          <InputLabel>District</InputLabel>
+          <Select
+            label="District"
+            value={selectedDistrict}
+            onChange={(e) => setSelectedDistrict(e.target.value)}
+          >
+            <MenuItem value=""><em>All</em></MenuItem>
+            {[...new Set((cities || []).map(c => c.district))].map((district, i) => (
+              <MenuItem key={i} value={district}>{district}</MenuItem>
+            ))}
+          </Select>
+        </FormControl>
 
-        {/* Pagination Controls */}
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 25, 50]}
-          component="div"
-          count={filteredBranches.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
+        <TextField
+          label="Search"
+          size="small"
+          value={search}
+          onChange={e => setSearch(e.target.value)}
         />
-
-        <Dialog
-          open={editDialogOpen}
-          onClose={handleDialogClose}
-          maxWidth="md"
-          fullWidth
-          disableEnforceFocus
-        >
-          <DialogTitle>
-            {selectedBranch ? "Edit Branch" : "Add Branch"}
-          </DialogTitle>
-          <DialogContent dividers>
-            <Typography variant="subtitle2" gutterBottom>
-              {selectedBranch
-                ? "Edit the details below"
-                : "Please fill in the details below"}
-            </Typography>
-
-            <AddEditpage
-              initialData={selectedBranch ?? undefined}
-              onClose={handleDialogClose}
-            />
-          </DialogContent>
-
-          <DialogActions sx={{ justifyContent: "space-between", px: 3 }}>
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              id="branch-form-submit"
-            >
-              Submit
-            </Button>
-
-            <Button onClick={handleDialogClose} color="error">
-              Cancel
-            </Button>
-          </DialogActions>
-        </Dialog>
+        <IconButton color="error" onClick={handleRefresh}>
+          <FilterAltOffIcon />
+        </IconButton>
+      </Stack>
+          <IconButton color="primary" onClick={() => handleEditClick(null)}>
+            <AddCircleIcon />
+          </IconButton>
+        </Stack>
       </Box>
+
+     
+
+      {loading && <Typography>Loading...</Typography>}
+      {error && <Typography color="error">Error: {error}</Typography>}
+
+      <TableContainer>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>ID</TableCell>
+              <TableCell>Name</TableCell>
+              <TableCell>State</TableCell>
+              <TableCell>District</TableCell>
+              <TableCell align="center">Actions</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {paginated.map((city, index) => (
+              <TableRow key={city.id}>
+                <TableCell>{city.id}</TableCell>
+                <TableCell>{city.nameCombined || city.name}</TableCell>
+                <TableCell>{city.state || "-"}</TableCell>
+                <TableCell>{city.district || "-"}</TableCell>
+                <TableCell align="center">
+                  <IconButton color="primary" onClick={() => handleEditClick(city)}>
+                    <EditIcon />
+                  </IconButton>
+                </TableCell>
+              </TableRow>
+            ))}
+
+            {paginated.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={25} align="center">
+                  No cities found.
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </TableContainer>
+
+      <TablePagination
+        rowsPerPageOptions={[5, 10, 25, 50]}
+        component="div"
+        count={filtered.length}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+      />
+
+      <Dialog open={editDialogOpen} onClose={handleDialogClose} maxWidth="md" fullWidth>
+        <DialogTitle>{selectedCity ? "Edit City" : "Add City"}</DialogTitle>
+        <DialogContent dividers>
+          <AddEditpage initialData={selectedCity!} onClose={handleDialogClose} />
+        </DialogContent>
+        <DialogActions>
+          <Button form="city-form" type="submit" variant="contained">Submit</Button>
+          <Button onClick={handleDialogClose} color="error">Cancel</Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }
