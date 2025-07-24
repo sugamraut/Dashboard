@@ -50,7 +50,7 @@ export function fetchDistrictAsync() {
     try {
       const response = await axios.get(`${server_Url}/api/v1/districts/all`);
       if (response.status === 200 || response.status === 201) {
-        dispatch(setDistrict(response.data));
+        dispatch(setDistrict(response.data.data));
         dispatch(setStatus(Status.Success));
       } else {
         dispatch(setError("Failed to fetch districts: " + response.status));

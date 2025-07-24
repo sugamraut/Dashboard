@@ -83,21 +83,15 @@ export default function BranchesPage() {
   };
 
   return (
-    <Box marginLeft={7} marginRight={0} padding={2}>
-      <Box
-        component="main"
-        sx={{ flexGrow: 1, p: 3}}
-      >
+    <Box marginLeft={10} marginRight={0} padding={2}>
+
         <Box
-          display="flex"
-          justifyContent="space-between"
-          alignItems="end"
-          mb={2}
+          className="table-header"
         >
           <Typography variant="h5" fontWeight="bold"  paddingBottom={2}>
             Branches
           </Typography>
-          <Box display="flex" justifyContent="end" alignItems="center" mb={2}>
+          <Box  mb={2}>
             <Stack direction="row" spacing={2}>
               <FormControl size="small" sx={{ minWidth: 120 }}>
                 <InputLabel>By State</InputLabel>
@@ -220,6 +214,5 @@ export default function BranchesPage() {
           </DialogActions>
         </Dialog>
       </Box>
-    </Box>
   );
 }

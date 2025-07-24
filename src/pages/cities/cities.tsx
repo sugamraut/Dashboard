@@ -1,9 +1,26 @@
 import React, { useEffect, useState } from "react";
 import {
-  Box, TableContainer, Table, TableHead, TableRow, TableCell,
-  TableBody, IconButton, Typography, TextField, Stack, FormControl,
-  InputLabel, Select, MenuItem, Dialog, DialogTitle, DialogContent,
-  DialogActions, Button, TablePagination
+  Box,
+  TableContainer,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+  IconButton,
+  Typography,
+  TextField,
+  Stack,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  TablePagination,
 } from "@mui/material";
 
 import EditIcon from "@mui/icons-material/Edit";
@@ -16,7 +33,11 @@ import AddEditpage from "./add_edit_page";
 
 export default function CitiesPage() {
   const dispatch = useDispatch<AppDispatch>();
-  const { data: cities, loading, error } = useSelector((state: RootState) => state.city);
+  const {
+    data: cities,
+    loading,
+    error,
+  } = useSelector((state: RootState) => state.city);
 
   const [search, setSearch] = useState("");
   const [selectedState, setSelectedState] = useState("");
@@ -47,9 +68,9 @@ export default function CitiesPage() {
     setPage(0);
   };
 
-  const handleFormSubmit=()=>{
-    handleDialogClose()
-  }
+  const handleFormSubmit = () => {
+    handleDialogClose();
+  };
 
   const handleRefresh = () => {
     dispatch(fetchCityAsync());
@@ -61,63 +82,76 @@ export default function CitiesPage() {
   const filtered = (cities || []).filter((city: City) => {
     const matchSearch = city.name.toLowerCase().includes(search.toLowerCase());
     const matchState = !selectedState || city.state === selectedState;
-    const matchDistrict = !selectedDistrict || city.district === selectedDistrict;
+    const matchDistrict =
+      !selectedDistrict || city.district === selectedDistrict;
     return matchSearch && matchState && matchDistrict;
   });
 
-  const paginated = filtered.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+  const paginated = filtered.slice(
+    page * rowsPerPage,
+    page * rowsPerPage + rowsPerPage
+  );
 
   return (
-    <Box  marginLeft={9} marginRight={0} padding={2}>
-      <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-        <Typography variant="h5" fontWeight="bold">Cities</Typography>
+    <Box marginLeft={9} marginRight={0} padding={2}>
+      <Box className="table-header">
+        <Typography variant="h5" fontWeight="bold">
+          Cities
+        </Typography>
         <Stack direction="row" spacing={1}>
-             <Stack direction="row" spacing={2} mb={2}>
-        <FormControl size="small" sx={{ minWidth: 120 }}>
-          <InputLabel>State</InputLabel>
-          <Select
-            label="State"
-            value={selectedState}
-            onChange={(e) => setSelectedState(e.target.value)}
-          >
-            <MenuItem value=""><em>All</em></MenuItem>
-            {[...new Set((cities || []).map(c => c.state))].map((state, i) => (
-              <MenuItem key={i} value={state}>{state}</MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+          <Stack direction="row" spacing={2} mb={2}>
+            <FormControl size="small" sx={{ minWidth: 120 }}>
+              <InputLabel>State</InputLabel>
+              <Select
+                label="State"
+                value={selectedState}
+                onChange={(e) => setSelectedState(e.target.value)}
+              >
+                <MenuItem value="">
+                  <em>All</em>
+                </MenuItem>
+                {cities?.map((d:any)=>(
+                  <MenuItem key={d.id} value={String(d.id)}>
+                    {d.name}
+                  </MenuItem>
+                ))}
+             
+              </Select>
+            </FormControl>
 
-        <FormControl size="small" sx={{ minWidth: 120 }}>
-          <InputLabel>District</InputLabel>
-          <Select
-            label="District"
-            value={selectedDistrict}
-            onChange={(e) => setSelectedDistrict(e.target.value)}
-          >
-            <MenuItem value=""><em>All</em></MenuItem>
-            {[...new Set((cities || []).map(c => c.district))].map((district, i) => (
-              <MenuItem key={i} value={district}>{district}</MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+            <FormControl size="small" sx={{ minWidth: 120 }}>
+              <InputLabel>District</InputLabel>
+              <Select
+                label="District"
+                value={selectedDistrict}
+                onChange={(e) => setSelectedDistrict(e.target.value)}
+              >
+                <MenuItem value="">
+                  <em>All</em>
+                </MenuItem>
+                {cities?.map((e:any)=>(
+                  <MenuItem key={e.id} value={e.district}>
+                    {e.district}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
 
-        <TextField
-          label="Search"
-          size="small"
-          value={search}
-          onChange={e => setSearch(e.target.value)}
-        />
-        <IconButton color="error" onClick={handleRefresh}>
-          <FilterAltOffIcon />
-        </IconButton>
-      </Stack>
+            <TextField
+              label="Search"
+              size="small"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+            <IconButton color="error" onClick={handleRefresh}>
+              <FilterAltOffIcon />
+            </IconButton>
+          </Stack>
           <IconButton color="primary" onClick={() => handleEditClick(null)}>
             <AddCircleIcon />
           </IconButton>
         </Stack>
       </Box>
-
-     
 
       {loading && <Typography>Loading...</Typography>}
       {error && <Typography color="error">Error: {error}</Typography>}
@@ -141,7 +175,10 @@ export default function CitiesPage() {
                 <TableCell>{city.state || "-"}</TableCell>
                 <TableCell>{city.district || "-"}</TableCell>
                 <TableCell align="center">
-                  <IconButton color="primary" onClick={() => handleEditClick(city)}>
+                  <IconButton
+                    color="primary"
+                    onClick={() => handleEditClick(city)}
+                  >
                     <EditIcon />
                   </IconButton>
                 </TableCell>
@@ -169,22 +206,32 @@ export default function CitiesPage() {
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
 
-      <Dialog open={editDialogOpen} onClose={handleDialogClose} maxWidth="md" fullWidth>
+      <Dialog
+        open={editDialogOpen}
+        onClose={handleDialogClose}
+        maxWidth="md"
+        fullWidth
+      >
         <DialogTitle>{selectedCity ? "Edit City" : "Add City"}</DialogTitle>
         <DialogContent dividers>
-          <AddEditpage initialData={selectedCity!} onClose={handleDialogClose} />
+          <AddEditpage
+            initialData={selectedCity!}
+            onClose={handleDialogClose}
+          />
         </DialogContent>
-        <DialogActions sx={{justifyContent:"space-between",px:3}}>
+        <DialogActions sx={{ justifyContent: "space-between", px: 3 }}>
           <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              id="branch-form-submit"
-              onClick={handleFormSubmit}
-            >
-              Submit
-            </Button>
-          <Button onClick={handleDialogClose} color="error">Cancel</Button>
+            type="submit"
+            variant="contained"
+            color="primary"
+            id="branch-form-submit"
+            onClick={handleFormSubmit}
+          >
+            Submit
+          </Button>
+          <Button onClick={handleDialogClose} color="error">
+            Cancel
+          </Button>
         </DialogActions>
       </Dialog>
     </Box>

@@ -90,14 +90,9 @@ export default function DistrictPage() {
   };
 
   return (
-    <Box marginLeft={7} padding={2}>
-      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-        <Box
-          display="flex"
-          justifyContent="space-between"
-          alignItems="end"
-          mb={2}
-        >
+    <Box marginLeft={10} padding={2}>
+      {/* <Box component="main" sx={{ flexGrow: 1, p: 3 }}> */}
+        <Box className="table-header">
           <Typography variant="h5" fontWeight="bold" paddingBottom={2}>
             Districts
           </Typography>
@@ -230,6 +225,6 @@ export default function DistrictPage() {
           </DialogActions>
         </Dialog>
       </Box>
-    </Box>
+    // </Box>
   );
 }

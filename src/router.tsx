@@ -9,7 +9,7 @@ import Cities from "./pages/cities/cities";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
-import "./assets/custom.scss";
+import "./assets/custom.css";
 import BrandingSignInPage from "./pages/branches/branchpage";
 const router = createBrowserRouter([
   {
