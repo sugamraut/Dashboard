@@ -110,12 +110,11 @@ export default function CitiesPage() {
                 <MenuItem value="">
                   <em>All</em>
                 </MenuItem>
-                {cities?.map((d:any)=>(
+                {cities?.map((d: any) => (
                   <MenuItem key={d.id} value={String(d.id)}>
                     {d.name}
                   </MenuItem>
                 ))}
-             
               </Select>
             </FormControl>
 
@@ -129,11 +128,13 @@ export default function CitiesPage() {
                 <MenuItem value="">
                   <em>All</em>
                 </MenuItem>
-                {cities?.map((e:any)=>(
-                  <MenuItem key={e.id} value={e.district}>
-                    {e.district}
-                  </MenuItem>
-                ))}
+                {Array.from(new Set(cities?.map((e: any) => e.district))).map(
+                  (district) => (
+                    <MenuItem key={district} value={district}>
+                      {district}
+                    </MenuItem>
+                  )
+                )}
               </Select>
             </FormControl>
 

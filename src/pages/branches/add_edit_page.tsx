@@ -6,10 +6,10 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  Button,
+
 } from "@mui/material";
 import type { SelectChangeEvent } from "@mui/material";
-import { TextField } from "@mui/material";
+
 import InputField from "../../components/Input_field";
 
 interface EditBranchFormProps {
@@ -46,7 +46,6 @@ const defaultFormData: FormDataState = {
 
 const EditBranchForm: React.FC<EditBranchFormProps> = ({
   initialData = {},
-  onClose,
   onSubmit,
 }) => {
   const [formData, setFormData] = useState<FormDataState>({

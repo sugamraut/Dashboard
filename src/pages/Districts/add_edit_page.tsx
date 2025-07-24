@@ -1,45 +1,36 @@
 import React, { useEffect, useState } from "react";
 import {
   Box,
-  Alert,
   FormControl,
   InputLabel,
-  Select,
   MenuItem,
+  Select,
+
+  Alert,
 } from "@mui/material";
+import { useSelector } from "react-redux";
+import { type RootState } from "../../store/store";
 import type { SelectChangeEvent } from "@mui/material";
 import InputField from "../../components/Input_field";
 
+
+export interface FormDataState {
+  Name: string;
+  name: string;
+  state: string;
+  district: string;
+}
 interface EditBranchFormProps {
   initialData?: Partial<FormDataState>;
   onClose?: () => void;
   onSubmit?: (data: FormDataState) => void;
 }
 
-export interface FormDataState {
-  Name: string;
-  code: string;
-  telephone: string;
-  email: string;
-  fax: string;
-  state: string;
-  district: string;
-  city: string;
-  streetAddress: string;
-  wardNo: string;
-}
-
 const defaultFormData: FormDataState = {
   Name: "",
-  code: "",
-  telephone: "",
-  email: "",
-  fax: "",
   state: "",
   district: "",
-  city: "",
-  streetAddress: "",
-  wardNo: "",
+  name: "",
 };
 
 const AddEditPage: React.FC<EditBranchFormProps> = ({
@@ -53,18 +44,22 @@ const AddEditPage: React.FC<EditBranchFormProps> = ({
   });
   const [error, setError] = useState<string | null>(null);
 
+  const districts = useSelector((state: RootState) => state.distric.data);
+
   useEffect(() => {
-    setFormData((prev) => ({
-      ...prev,
-      ...initialData,
-    }));
+    if (initialData) {
+      setFormData((prev: any) => ({
+        ...prev,
+        ...initialData,
+      }));
+    }
   }, [initialData]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>
   ) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
+    setFormData((prev: any) => ({
       ...prev,
       [name as string]: value,
     }));
@@ -74,8 +69,7 @@ const AddEditPage: React.FC<EditBranchFormProps> = ({
     const name = e.target.name;
     const value = e.target.value;
     if (!name) return;
-
-    setFormData((prev) => ({
+    setFormData((prev: any) => ({
       ...prev,
       [name]: value,
     }));
@@ -83,37 +77,22 @@ const AddEditPage: React.FC<EditBranchFormProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!formData.Name || !formData.code) {
+    if (!formData.Name || !formData.name) {
       setError("Branch Name and Code are required.");
       return;
     }
-
     setError(null);
     onSubmit?.(formData);
     onClose?.();
   };
 
   return (
-    <Box
-      sx={{
-        maxWidth: 1000,
-        mx: "auto",
-        p: 3,
-        borderRadius: 2,
-      }}
-    >
-      {error && (
-        <Alert severity="error" sx={{ mb: 2 }}>
-          {error}
-        </Alert>
-      )}
-
+    <Box>
+      {error && <Alert severity="error">{error}</Alert>}
       <form onSubmit={handleSubmit}>
         <FormControl fullWidth margin="normal">
-          <InputLabel id="state-label">State</InputLabel>
+          <InputLabel>State</InputLabel>
           <Select
-            labelId="state-label"
             name="state"
             value={formData.state}
             onChange={handleSelectChange}
@@ -122,33 +101,22 @@ const AddEditPage: React.FC<EditBranchFormProps> = ({
             <MenuItem value="">
               <em>None</em>
             </MenuItem>
-            <MenuItem value="State 1">State 1</MenuItem>
-            <MenuItem value="State 2">State 2</MenuItem>
+            {districts &&
+              [
+                ...new Map(
+                  districts.map((d) => [d.state.id, d.state])
+                ).values(),
+              ].map((state) => (
+                <MenuItem key={state.id} value={String(state.id)}>
+                  {state.nameNp || state.name}
+                </MenuItem>
+              ))}
           </Select>
         </FormControl>
-        <InputField
-          label="Name"
-          name="Name"
-          value={formData.Name}
-          onChange={handleChange}
-          required
-          fullWidth
-          margin="normal"
-        />
-        <InputField
-          label="Code"
-          name="code"
-          value={formData.code}
-          onChange={handleChange}
-          required
-          fullWidth
-          margin="normal"
-        />
 
         <FormControl fullWidth margin="normal">
-          <InputLabel id="district-label">District</InputLabel>
+          <InputLabel>District</InputLabel>
           <Select
-            labelId="district-label"
             name="district"
             value={formData.district}
             onChange={handleSelectChange}
@@ -157,10 +125,32 @@ const AddEditPage: React.FC<EditBranchFormProps> = ({
             <MenuItem value="">
               <em>None</em>
             </MenuItem>
-            <MenuItem value="District 1">District 1</MenuItem>
-            <MenuItem value="District 2">District 2</MenuItem>
+            {Array.isArray(districts) &&
+              districts.map((d) => (
+                <MenuItem key={d.id} value={String(d.id)}>
+                  {d.nameNp ? `${d.nameNp} (${d.name})` : d.name}
+                </MenuItem>
+              ))}
           </Select>
         </FormControl>
+
+        <InputField
+          label="Name"
+          name="Name"
+          value={formData.Name}
+          onChange={handleChange}
+          required
+          fullWidth
+        />
+
+        <InputField
+          label="Code"
+          name="code"
+          value={formData.name}
+          onChange={handleChange}
+          required
+          fullWidth
+        />
       </form>
     </Box>
   );

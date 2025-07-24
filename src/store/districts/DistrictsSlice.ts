@@ -62,3 +62,37 @@ export function fetchDistrictAsync() {
     }
   };
 }
+
+
+// export function updateDistrictAsync(district: {
+//   id: number;
+//   name: string;
+//   nameCombined: string;
+//   stateId: number;
+// }) {
+//   return async function updateDistrictThunk(dispatch: AppDispatch) {
+//     dispatch(setStatus(Status.Loading));
+//     try {
+//       const response = await axios.put(
+//         `${server_Url}/api/v1/districts/${district.id}`,
+//         {
+//           name: district.name,
+//           nameCombined: district.nameCombined,
+//           stateId: district.stateId,
+//         }
+//       );
+//       if (response.status === 200 || response.status === 201) {
+//         dispatch(fetchDistrictAsync());
+//         dispatch(setStatus(Status.Success));
+//       } else {
+//         dispatch(setError("Failed to update district"));
+//       }
+//     } catch (error: any) {
+//       const message =
+//         error.response?.data?.message || error.message || "Unknown error";
+//       dispatch(setError(message));
+//     }
+//   };
+// }
+  
+

@@ -20,7 +20,4 @@ export type DistrictType = {
   stateId: number;
 };
 
-export type getDistricts = {
-  data: DistrictType[];
-
-};
+export type getDistricts = DistrictType[];

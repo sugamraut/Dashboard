@@ -35,8 +35,8 @@ import AddEditPage from "./add_edit_page";
 
 export default function DistrictPage() {
   const dispatch: AppDispatch = useDispatch();
-  const { data: districtData } = useSelector(
-    (state: RootState) => state.distric
+   const districtList = useSelector(
+    (state: RootState) => state.distric.data
   );
 
   const [search, setSearch] = useState("");
@@ -53,13 +53,13 @@ export default function DistrictPage() {
   }, [dispatch]);
 
   const filteredDistricts =
-    districtData?.data.filter((d: any) => {
+    districtList?.filter((d: any) => {
       const matchesSearch = d.name.toLowerCase().includes(search.toLowerCase());
       const matchesDistrictFilter =
         !selectedDistrict || String(d.id) === selectedDistrict;
       return matchesSearch && matchesDistrictFilter;
     }) || [];
-
+    
   const paginatedDistricts = filteredDistricts.slice(
     page * rowsPerPage,
     page * rowsPerPage + rowsPerPage
@@ -91,7 +91,6 @@ export default function DistrictPage() {
 
   return (
     <Box marginLeft={10} padding={2}>
-      {/* <Box component="main" sx={{ flexGrow: 1, p: 3 }}> */}
         <Box className="table-header">
           <Typography variant="h5" fontWeight="bold" paddingBottom={2}>
             Districts
@@ -107,11 +106,11 @@ export default function DistrictPage() {
                 <MenuItem value="">
                   <em>All</em>
                 </MenuItem>
-                {districtData?.data.map((d: any) => (
-                  <MenuItem key={d.id} value={String(d.id)}>
-                    {d.name}
-                  </MenuItem>
-                ))}
+                  {(districtList ?? []).map((d: any) => (
+                <MenuItem key={d.id} value={String(d.id)}>
+                  {d.name}
+                </MenuItem>
+              ))}
               </Select>
             </FormControl>
             <TextField
