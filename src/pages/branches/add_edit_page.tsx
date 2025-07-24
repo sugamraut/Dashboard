@@ -10,6 +10,7 @@ import {
 } from "@mui/material";
 import type { SelectChangeEvent } from "@mui/material";
 import { TextField } from "@mui/material";
+import InputField from "../../components/Input_field";
 
 interface EditBranchFormProps {
   initialData?: Partial<FormDataState>;
@@ -92,7 +93,6 @@ const EditBranchForm: React.FC<EditBranchFormProps> = ({
 
     setError(null);
     onSubmit?.(formData);
-    onClose?.();
   };
 
   return (
@@ -111,7 +111,7 @@ const EditBranchForm: React.FC<EditBranchFormProps> = ({
       )}
 
       <form onSubmit={handleSubmit}>
-        <TextField
+        <InputField
           label="Branch Name"
           name="branchName"
           value={formData.branchName}
@@ -120,7 +120,7 @@ const EditBranchForm: React.FC<EditBranchFormProps> = ({
           fullWidth
           margin="normal"
         />
-        <TextField
+        <InputField
           label="Code"
           name="code"
           value={formData.code}
@@ -129,7 +129,7 @@ const EditBranchForm: React.FC<EditBranchFormProps> = ({
           fullWidth
           margin="normal"
         />
-        <TextField
+        <InputField
           label="Telephone"
           name="telephone"
           value={formData.telephone}
@@ -137,7 +137,7 @@ const EditBranchForm: React.FC<EditBranchFormProps> = ({
           fullWidth
           margin="normal"
         />
-        <TextField
+        <InputField
           label="Email"
           name="email"
           value={formData.email}
@@ -146,7 +146,7 @@ const EditBranchForm: React.FC<EditBranchFormProps> = ({
           fullWidth
           margin="normal"
         />
-        <TextField
+        <InputField
           label="Fax"
           name="fax"
           value={formData.fax}
@@ -189,7 +189,7 @@ const EditBranchForm: React.FC<EditBranchFormProps> = ({
           </Select>
         </FormControl>
 
-        <TextField
+        <InputField
           label="City"
           name="city"
           value={formData.city}
@@ -197,7 +197,7 @@ const EditBranchForm: React.FC<EditBranchFormProps> = ({
           fullWidth
           margin="normal"
         />
-        <TextField
+        <InputField
           label="Street Address"
           name="streetAddress"
           value={formData.streetAddress}
@@ -205,7 +205,7 @@ const EditBranchForm: React.FC<EditBranchFormProps> = ({
           fullWidth
           margin="normal"
         />
-        <TextField
+        <InputField
           label="Ward No."
           name="wardNo"
           value={formData.wardNo}
@@ -213,18 +213,6 @@ const EditBranchForm: React.FC<EditBranchFormProps> = ({
           fullWidth
           margin="normal"
         />
-
-        <Box mt={3}>
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            fullWidth
-            id="branch-form-submit"
-          >
-            Submit
-          </Button>
-        </Box>
       </form>
     </Box>
   );

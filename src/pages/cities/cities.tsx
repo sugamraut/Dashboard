@@ -47,6 +47,10 @@ export default function CitiesPage() {
     setPage(0);
   };
 
+  const handleFormSubmit=()=>{
+    handleDialogClose()
+  }
+
   const handleRefresh = () => {
     dispatch(fetchCityAsync());
     setSearch("");
@@ -170,8 +174,16 @@ export default function CitiesPage() {
         <DialogContent dividers>
           <AddEditpage initialData={selectedCity!} onClose={handleDialogClose} />
         </DialogContent>
-        <DialogActions>
-          <Button form="city-form" type="submit" variant="contained">Submit</Button>
+        <DialogActions sx={{justifyContent:"space-between",px:3}}>
+          <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              id="branch-form-submit"
+              onClick={handleFormSubmit}
+            >
+              Submit
+            </Button>
           <Button onClick={handleDialogClose} color="error">Cancel</Button>
         </DialogActions>
       </Dialog>

@@ -39,12 +39,18 @@ const LoginPage: React.FC = () => {
     dispatch(fetchAuthAsync(data));
   };
 
-  useEffect(() => {
-  if (status === Status.Success) {
+ useEffect(() => {
+  if (status === Status.Success && accessToken) {
     localStorage.setItem("jwt", accessToken);
-    navigate("/admin/dashboard");
+
+    const hasNavigated = sessionStorage.getItem("alreadyNavigated");
+    if (!hasNavigated) {
+      navigate("/admin/dashboard");
+      sessionStorage.setItem("alreadyNavigated", "true");
+    }
   }
 }, [status, accessToken, navigate]);
+
 
   return (
     <div className="login-section">

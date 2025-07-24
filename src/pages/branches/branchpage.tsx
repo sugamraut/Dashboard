@@ -59,7 +59,7 @@ const initialBranches: Branch[] = [
 ];
 
 export default function BranchesPage() {
-  const [branches] = useState<Branch[]>(initialBranches);
+  const [branches,setBranches] = useState<Branch[]>(initialBranches);
   const [search, setSearch] = useState("");
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [selectedBranch, setSelectedBranch] = useState<Branch | null>(null);
@@ -77,6 +77,9 @@ export default function BranchesPage() {
   const handleDialogClose = () => {
     setEditDialogOpen(false);
     setSelectedBranch(null);
+  };
+  const handleFormSubmit = () => {
+    handleDialogClose();
   };
 
   return (
@@ -206,6 +209,7 @@ export default function BranchesPage() {
               variant="contained"
               color="primary"
               id="branch-form-submit"
+              onClick={handleFormSubmit}
             >
               Submit
             </Button>

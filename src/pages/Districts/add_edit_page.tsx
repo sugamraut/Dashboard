@@ -6,10 +6,9 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  Button,
 } from "@mui/material";
 import type { SelectChangeEvent } from "@mui/material";
-import { TextField } from "@mui/material";
+import InputField from "../../components/Input_field";
 
 interface EditBranchFormProps {
   initialData?: Partial<FormDataState>;
@@ -111,7 +110,6 @@ const AddEditPage: React.FC<EditBranchFormProps> = ({
       )}
 
       <form onSubmit={handleSubmit}>
-        
         <FormControl fullWidth margin="normal">
           <InputLabel id="state-label">State</InputLabel>
           <Select
@@ -128,7 +126,7 @@ const AddEditPage: React.FC<EditBranchFormProps> = ({
             <MenuItem value="State 2">State 2</MenuItem>
           </Select>
         </FormControl>
-       <TextField
+        <InputField
           label="Name"
           name="Name"
           value={formData.Name}
@@ -137,7 +135,7 @@ const AddEditPage: React.FC<EditBranchFormProps> = ({
           fullWidth
           margin="normal"
         />
-        <TextField
+        <InputField
           label="Code"
           name="code"
           value={formData.code}
@@ -146,7 +144,6 @@ const AddEditPage: React.FC<EditBranchFormProps> = ({
           fullWidth
           margin="normal"
         />
-    
 
         <FormControl fullWidth margin="normal">
           <InputLabel id="district-label">District</InputLabel>
@@ -164,18 +161,6 @@ const AddEditPage: React.FC<EditBranchFormProps> = ({
             <MenuItem value="District 2">District 2</MenuItem>
           </Select>
         </FormControl>
-
-        <Box mt={3}>
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            fullWidth
-            id="branch-form-submit"
-          >
-            Submit
-          </Button>
-        </Box>
       </form>
     </Box>
   );

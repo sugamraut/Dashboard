@@ -35,34 +35,35 @@ import AddEditPage from "./add_edit_page";
 
 export default function DistrictPage() {
   const dispatch: AppDispatch = useDispatch();
-  const { data: districtData } = useSelector((state: RootState) => state.distric);
-
+  const { data: districtData } = useSelector(
+    (state: RootState) => state.distric
+  );
 
   const [search, setSearch] = useState("");
   const [selectedDistrict, setSelectedDistrict] = useState("");
   const [editDialogOpen, setEditDialogOpen] = useState(false);
-  const [selectedDistrictItem, setSelectedDistrictItem] = useState<any | null>(null);
+  const [selectedDistrictItem, setSelectedDistrictItem] = useState<any | null>(
+    null
+  );
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
-
+  const [rowsPerPage, setRowsPerPage] = useState(25);
 
   useEffect(() => {
     dispatch(fetchDistrictAsync());
   }, [dispatch]);
 
-
-  const filteredDistricts = districtData?.data.filter((d: any) => {
-    const matchesSearch = d.name.toLowerCase().includes(search.toLowerCase());
-    const matchesDistrictFilter = !selectedDistrict || String(d.id) === selectedDistrict;
-    return matchesSearch && matchesDistrictFilter;
-  }) || [];
-
+  const filteredDistricts =
+    districtData?.data.filter((d: any) => {
+      const matchesSearch = d.name.toLowerCase().includes(search.toLowerCase());
+      const matchesDistrictFilter =
+        !selectedDistrict || String(d.id) === selectedDistrict;
+      return matchesSearch && matchesDistrictFilter;
+    }) || [];
 
   const paginatedDistricts = filteredDistricts.slice(
     page * rowsPerPage,
     page * rowsPerPage + rowsPerPage
   );
-
 
   const handleEditClick = (district: any) => {
     setSelectedDistrictItem(district);
@@ -78,15 +79,25 @@ export default function DistrictPage() {
     setPage(newPage);
   };
 
-  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
+  };
+  const handleFormSubmit = () => {
+    handleDialogClose();
   };
 
   return (
     <Box marginLeft={7} padding={2}>
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-        <Box display="flex" justifyContent="space-between" alignItems="end" mb={2}>
+        <Box
+          display="flex"
+          justifyContent="space-between"
+          alignItems="end"
+          mb={2}
+        >
           <Typography variant="h5" fontWeight="bold" paddingBottom={2}>
             Districts
           </Typography>
@@ -138,12 +149,24 @@ export default function DistrictPage() {
                   <TableCell>{page * rowsPerPage + index + 1}</TableCell>
                   <TableCell>{district.name}</TableCell>
                   <TableCell>{district.state?.name || "N/A"}</TableCell>
-                  <TableCell>{district.nameCombined || district.name}</TableCell>
+                  <TableCell>
+                    {district.nameCombined || district.name}
+                  </TableCell>
                   <TableCell align="center">
-                    <IconButton color="primary" onClick={() => handleEditClick(district)}>
+                    <IconButton
+                      color="primary"
+                      onClick={() => handleEditClick(district)}
+                    >
                       <EditIcon />
                     </IconButton>
-                    <IconButton color="error" onClick={() => alert(`Delete district ${district.name} (id: ${district.id})`)}>
+                    <IconButton
+                      color="error"
+                      onClick={() =>
+                        alert(
+                          `Delete district ${district.name} (id: ${district.id})`
+                        )
+                      }
+                    >
                       <DeleteIcon />
                     </IconButton>
                   </TableCell>
@@ -161,7 +184,7 @@ export default function DistrictPage() {
           </Table>
 
           <TablePagination
-            rowsPerPageOptions={[5, 10, 25,50]}
+            rowsPerPageOptions={[5, 10, 25, 50]}
             component="div"
             count={filteredDistricts.length}
             rowsPerPage={rowsPerPage}
@@ -171,8 +194,15 @@ export default function DistrictPage() {
           />
         </TableContainer>
 
-        <Dialog open={editDialogOpen} onClose={handleDialogClose} maxWidth="md" fullWidth>
-          <DialogTitle>{selectedDistrictItem ? "Edit District" : "Add District"}</DialogTitle>
+        <Dialog
+          open={editDialogOpen}
+          onClose={handleDialogClose}
+          maxWidth="md"
+          fullWidth
+        >
+          <DialogTitle>
+            {selectedDistrictItem ? "Edit District" : "Add District"}
+          </DialogTitle>
           <DialogContent dividers>
             <Typography variant="subtitle2" gutterBottom>
               {selectedDistrictItem
@@ -185,7 +215,13 @@ export default function DistrictPage() {
             />
           </DialogContent>
           <DialogActions sx={{ justifyContent: "space-between", px: 3 }}>
-            <Button type="submit" variant="contained" color="primary" id="district-form-submit">
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              id="branch-form-submit"
+              onClick={handleFormSubmit}
+            >
               Submit
             </Button>
             <Button onClick={handleDialogClose} color="error">

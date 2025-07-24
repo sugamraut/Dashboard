@@ -3,11 +3,18 @@ import { Navigate, Outlet } from "react-router-dom";
 import { useSelector } from "react-redux";
 import type { RootState } from "../store/store";
 import { isTokenValid } from "../utils/helper";
+import { Status } from "../globals/status";
 
 const PrivateRoute: React.FC = () => {
   const { accessToken, status } = useSelector((state: RootState) => state.auth);
 
-  const loggedIn = status === "success" && isTokenValid(accessToken);
+
+  if (status === Status.Loading) {
+    return <div>Loading...</div>;
+  }
+
+
+  const loggedIn = status === Status.Success && isTokenValid(accessToken);
 
   return loggedIn ? <Outlet /> : <Navigate to="/admin" replace />;
 };
