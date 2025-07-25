@@ -13,7 +13,6 @@ import { type RootState } from "../../store/store";
 import type { SelectChangeEvent } from "@mui/material";
 import InputField from "../../components/Input_field";
 
-
 export interface FormDataState {
   Name: string;
   name: string;
@@ -91,8 +90,9 @@ const AddEditPage: React.FC<EditBranchFormProps> = ({
       {error && <Alert severity="error">{error}</Alert>}
       <form onSubmit={handleSubmit}>
         <FormControl fullWidth margin="normal">
-          <InputLabel>State</InputLabel>
+          <InputLabel id="state-label">State</InputLabel>
           <Select
+           labelId="state-label"
             name="state"
             value={formData.state}
             onChange={handleSelectChange}

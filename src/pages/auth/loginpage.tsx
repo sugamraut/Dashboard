@@ -42,12 +42,12 @@ const LoginPage: React.FC = () => {
  useEffect(() => {
   if (status === Status.Success && accessToken) {
     localStorage.setItem("jwt", accessToken);
-
+   navigate("/admin/dashboard");
     const hasNavigated = sessionStorage.getItem("alreadyNavigated");
-    if (!hasNavigated) {
-      navigate("/admin/dashboard");
-      sessionStorage.setItem("alreadyNavigated", "true");
-    }
+    // // if (!hasNavigated) {
+    // //   navigate("/admin/dashboard");
+    // //   sessionStorage.setItem("alreadyNavigated", "true");
+    // // }
   }
 }, [status, accessToken, navigate]);
 
