@@ -5,7 +5,6 @@ import {
   InputLabel,
   MenuItem,
   Select,
-
   Alert,
 } from "@mui/material";
 import { useSelector } from "react-redux";
@@ -14,6 +13,7 @@ import type { SelectChangeEvent } from "@mui/material";
 import InputField from "../../components/Input_field";
 
 export interface FormDataState {
+  nameCombined: string;
   Name: string;
   name: string;
   state: string;
@@ -30,6 +30,7 @@ const defaultFormData: FormDataState = {
   state: "",
   district: "",
   name: "",
+  nameCombined: ""
 };
 
 const AddEditPage: React.FC<EditBranchFormProps> = ({
@@ -92,7 +93,7 @@ const AddEditPage: React.FC<EditBranchFormProps> = ({
         <FormControl fullWidth margin="normal">
           <InputLabel id="state-label">State</InputLabel>
           <Select
-           labelId="state-label"
+            labelId="state-label"
             name="state"
             value={formData.state}
             onChange={handleSelectChange}
@@ -137,18 +138,21 @@ const AddEditPage: React.FC<EditBranchFormProps> = ({
         <InputField
           label="Name"
           name="Name"
-          value={formData.Name}
-          onChange={handleChange}
-          required
-          fullWidth
-        />
-
-        <InputField
-          label="Code"
-          name="code"
           value={formData.name}
           onChange={handleChange}
           required
+          margin="normal"
+          fullWidth
+          className="fs-1"
+        />
+
+        <InputField
+          label="Name "
+          name="Name"
+          value={formData.nameCombined}
+          onChange={handleChange}
+          required
+          margin="normal"
           fullWidth
         />
       </form>

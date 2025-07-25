@@ -9,6 +9,7 @@ interface InputFieldProps {
   required?: boolean;
   fullWidth?: boolean;
   type?:string;
+  className?:string;
   margin?: "none" | "dense" | "normal";
 }
 
@@ -21,6 +22,7 @@ const InputField: React.FC<InputFieldProps> = ({
   required = false,
   fullWidth = false,
   margin = "none",
+  className,
 }) => {
   return (
     <TextField
@@ -32,6 +34,7 @@ const InputField: React.FC<InputFieldProps> = ({
       required={required}
       fullWidth={fullWidth}
       margin={margin}
+      className={className}
       
     />
   );

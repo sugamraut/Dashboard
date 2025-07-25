@@ -12,9 +12,9 @@ import FolderOpenIcon from "@mui/icons-material/FolderOpen";
 import PublicIcon from "@mui/icons-material/Public";
 import SettingsIcon from "@mui/icons-material/Settings";
 import LogoutIcon from "@mui/icons-material/Logout";
-import ApartmentIcon from '@mui/icons-material/Apartment';
-import AccountTreeIcon from '@mui/icons-material/AccountTree';
-import ArticleIcon from '@mui/icons-material/Article';
+import ApartmentIcon from "@mui/icons-material/Apartment";
+import AccountTreeIcon from "@mui/icons-material/AccountTree";
+import ArticleIcon from "@mui/icons-material/Article";
 
 import companyLogo from "../assets/image/company_name.png";
 
@@ -23,10 +23,14 @@ const sidebarIcons = [
   { icon: <FolderIcon />, label: "Online Account", path: "/online-account" },
   { icon: <TextSnippetIcon />, label: "Account Type", path: "/account-type" },
   { icon: <AccountTreeIcon />, label: "Branches", path: "/admin/branch" },
-  { icon: <ArticleIcon/>, label: "District", path: "/admin/district" },
-  {icon: <ApartmentIcon/>,label:"Citites",path:"/admin/cities"},
+  { icon: <ArticleIcon />, label: "District", path: "/admin/district" },
+  { icon: <ApartmentIcon />, label: "Citites", path: "/admin/cities" },
   { icon: <PeopleIcon />, label: "Users", path: "/users" },
-  { icon: <AdminPanelSettingsIcon />, label: "Roles & Access", path: "/roles-access" },
+  {
+    icon: <AdminPanelSettingsIcon />,
+    label: "Roles & Access",
+    path: "/roles-access",
+  },
   { icon: <FolderOpenIcon />, label: "File Manager", path: "/file-manager" },
   { icon: <PublicIcon />, label: "Web Portal", path: "/web-portal" },
   { icon: <SettingsIcon />, label: "Settings", path: "/settings" },
@@ -58,18 +62,29 @@ export default function Sidebar() {
         {sidebarIcons.map(({ icon, label, path }, index) => {
           const isActive = location.pathname === path;
           return (
-            <Tooltip title={label} placement="right" arrow key={index}>
-              <ListItem disablePadding sx={{ mt: 2 }}>
+            <Tooltip
+              title={label}
+              placement="right"
+              arrow
+              key={index}
+              
+            >
+              <ListItem
+                disablePadding
+                sx={{ mt: 2 }}
+                style={{ fontSize: "55px" }}
+              >
                 <Link to={path}>
                   <IconButton
                     sx={{
-                      color: isActive ? "#877d43ff" : "white", 
-                      backgroundColor: isActive ? "rgba(255, 255, 255, 0.15)" : "transparent",
+                      color: isActive ? "#877d43ff" : "white",
+                      backgroundColor: isActive
+                        ? "rgba(255, 255, 255, 0.15)"
+                        : "transparent",
                       "&:hover": {
                         backgroundColor: "rgba(255, 255, 255, 0.2)",
                       },
                     }}
-                    className="p-2" 
                   >
                     {icon}
                   </IconButton>

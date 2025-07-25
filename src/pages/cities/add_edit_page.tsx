@@ -120,7 +120,7 @@ const AddEditpage: React.FC<EditBranchFormProps> = ({
             <MenuItem value="District 2">District 2</MenuItem>
           </Select>
         </FormControl>
-        <InputField
+        {/* <InputField
           label="Name"
           name="branchName"
           value={formData.Name}
@@ -128,7 +128,7 @@ const AddEditpage: React.FC<EditBranchFormProps> = ({
           required
           fullWidth
           margin="normal"
-        />
+        /> */}
         <InputField
           label="name"
           name="name"

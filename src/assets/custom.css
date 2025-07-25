@@ -51,6 +51,7 @@ body {
   right: 16px;
   color: white;
   font-weight: bold;
+      font-size: 2.5rem;
 }
 
 .table-header{
