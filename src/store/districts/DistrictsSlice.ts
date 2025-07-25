@@ -10,6 +10,7 @@ interface DistrictState {
   loading: boolean;
   error: string | null;
   status: StatusType;
+  totalCount: number; 
 }
 
 const initialState: DistrictState = {
@@ -17,6 +18,7 @@ const initialState: DistrictState = {
   loading: false,
   error: null,
   status: Status.Loading,
+  totalCount: 0,
 };
 
 const districtSlice = createSlice({
@@ -28,6 +30,9 @@ const districtSlice = createSlice({
       state.status = Status.Success;
       state.loading = false;
       state.error = null;
+    },
+    setTotalCount(state, action: PayloadAction<number>) { // ✅ NEW
+      state.totalCount = action.payload;
     },
     setStatus(state, action: PayloadAction<StatusType>) {
       state.status = action.payload;
@@ -41,16 +46,23 @@ const districtSlice = createSlice({
   },
 });
 
-export const { setDistrict, setStatus, setError } = districtSlice.actions;
+export const { setDistrict, setStatus, setError, setTotalCount } = districtSlice.actions;
 export default districtSlice.reducer;
 
-export function fetchDistrictAsync() {
+export function fetchDistrictAsync(page = 1, rowsPerPage = 10, p0: string) {
   return async function fetchDistrictThunk(dispatch: AppDispatch) {
     dispatch(setStatus(Status.Loading));
     try {
-      const response = await axios.get(`${server_Url}/api/v1/districts/all`);
+      const response = await axios.get(`${server_Url}/api/v1/districts`, {
+        params: {
+          page,
+          rowsPerPage,
+        },
+      });
+
       if (response.status === 200 || response.status === 201) {
         dispatch(setDistrict(response.data.data));
+        dispatch(setTotalCount(response.data.metaData.total));
         dispatch(setStatus(Status.Success));
       } else {
         dispatch(setError("Failed to fetch districts: " + response.status));
@@ -62,37 +74,3 @@ export function fetchDistrictAsync() {
     }
   };
 }
-
-
-// export function updateDistrictAsync(district: {
-//   id: number;
-//   name: string;
-//   nameCombined: string;
-//   stateId: number;
-// }) {
-//   return async function updateDistrictThunk(dispatch: AppDispatch) {
-//     dispatch(setStatus(Status.Loading));
-//     try {
-//       const response = await axios.put(
-//         `${server_Url}/api/v1/districts/${district.id}`,
-//         {
-//           name: district.name,
-//           nameCombined: district.nameCombined,
-//           stateId: district.stateId,
-//         }
-//       );
-//       if (response.status === 200 || response.status === 201) {
-//         dispatch(fetchDistrictAsync());
-//         dispatch(setStatus(Status.Success));
-//       } else {
-//         dispatch(setError("Failed to update district"));
-//       }
-//     } catch (error: any) {
-//       const message =
-//         error.response?.data?.message || error.message || "Unknown error";
-//       dispatch(setError(message));
-//     }
-//   };
-// }
-  
-

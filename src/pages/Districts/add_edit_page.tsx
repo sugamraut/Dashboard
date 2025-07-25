@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from "react";
 import {
   Box,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
   Alert,
+  TextField,
+  Autocomplete,
 } from "@mui/material";
 import { useSelector } from "react-redux";
 import { type RootState } from "../../store/store";
 import type { SelectChangeEvent } from "@mui/material";
 import InputField from "../../components/Input_field";
+import type { StateType } from "../../globals/typeDeclaration";
 
 export interface FormDataState {
   nameCombined: string;
@@ -30,7 +29,7 @@ const defaultFormData: FormDataState = {
   state: "",
   district: "",
   name: "",
-  nameCombined: ""
+  nameCombined: "",
 };
 
 const AddEditPage: React.FC<EditBranchFormProps> = ({
@@ -89,73 +88,75 @@ const AddEditPage: React.FC<EditBranchFormProps> = ({
   return (
     <Box>
       {error && <Alert severity="error">{error}</Alert>}
-      <form onSubmit={handleSubmit}>
-        <FormControl fullWidth margin="normal">
-          <InputLabel id="state-label">State</InputLabel>
-          <Select
-            labelId="state-label"
-            name="state"
-            value={formData.state}
-            onChange={handleSelectChange}
-            label="State"
-          >
-            <MenuItem value="">
-              <em>None</em>
-            </MenuItem>
-            {districts &&
-              [
-                ...new Map(
-                  districts.map((d) => [d.state.id, d.state])
-                ).values(),
-              ].map((state) => (
-                <MenuItem key={state.id} value={String(state.id)}>
-                  {state.nameNp || state.name}
-                </MenuItem>
-              ))}
-          </Select>
-        </FormControl>
 
-        <FormControl fullWidth margin="normal">
-          <InputLabel>District</InputLabel>
-          <Select
-            name="district"
-            value={formData.district}
-            onChange={handleSelectChange}
-            label="District"
-          >
-            <MenuItem value="">
-              <em>None</em>
-            </MenuItem>
-            {Array.isArray(districts) &&
-              districts.map((d) => (
-                <MenuItem key={d.id} value={String(d.id)}>
-                  {d.nameNp ? `${d.nameNp} (${d.name})` : d.name}
-                </MenuItem>
-              ))}
-          </Select>
-        </FormControl>
+      <Autocomplete
+        fullWidth
+        options={
+          districts
+            ? Array.from(
+                new Map(districts.map((d) => [d.state.id, d.state])).values()
+              )
+            : []
+        }
+        getOptionLabel={(option: StateType) =>
+          option.nameNp || option.name || ""
+        }
+        value={
+          districts
+            ?.map((d) => d.state)
+            .find((s) => String(s.id) === formData.state) || null
+        }
+        onChange={(_: React.SyntheticEvent, newValue: StateType | null) => {
+          setFormData((prev) => ({
+            ...prev,
+            state: newValue ? String(newValue.id) : "",
+          }));
+        }}
+        renderInput={(params) => (
+          <TextField {...params} label="State" margin="normal" />
+        )}
+      />
 
-        <InputField
-          label="Name"
-          name="Name"
-          value={formData.name}
-          onChange={handleChange}
-          required
-          margin="normal"
-          fullWidth
-          className="fs-1"
-        />
+      <Autocomplete
+        fullWidth
+        options={districts ?? []}
+        getOptionLabel={(option: any) =>
+          option.nameNp ? `${option.nameNp} (${option.name})` : option.name
+        }
+        value={
+          districts?.find((d) => String(d.id) === formData.district) || null
+        }
+        onChange={(_, newValue) => {
+          setFormData((prev) => ({
+            ...prev,
+            district: newValue ? String(newValue.id) : "",
+          }));
+        }}
+        renderInput={(params) => (
+          <TextField {...params} label="District" margin="normal" />
+        )}
+      />
 
-        <InputField
-          label="Name "
-          name="Name"
-          value={formData.nameCombined}
-          onChange={handleChange}
-          required
-          margin="normal"
-          fullWidth
-        />
-      </form>
+      <InputField
+        label="Name"
+        name="Name"
+        value={formData.name}
+        onChange={handleChange}
+        required
+        margin="normal"
+        fullWidth
+        className="fs-1"
+      />
+
+      <InputField
+        label="Name "
+        name="Name"
+        value={formData.nameCombined}
+        onChange={handleChange}
+        required
+        margin="normal"
+        fullWidth
+      />
     </Box>
   );
 };

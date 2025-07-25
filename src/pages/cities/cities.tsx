@@ -29,7 +29,8 @@ import FilterAltOffIcon from "@mui/icons-material/FilterAltOff";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState, AppDispatch } from "../../store/store";
 import { fetchCityAsync, type City } from "../../store/cities/CitiesSlice";
-import AddEditpage from "./add_edit_page";
+import AddEditpage from "./edit _page";
+import LoadingButtons from "../demo";
 
 export default function CitiesPage() {
   const dispatch = useDispatch<AppDispatch>();
@@ -154,28 +155,43 @@ export default function CitiesPage() {
         </Stack>
       </Box>
 
-      {loading && <Typography>Loading...</Typography>}
+      {loading && <Typography><LoadingButtons/></Typography>}
       {error && <Typography color="error">Error: {error}</Typography>}
 
       <TableContainer>
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>ID</TableCell>
-              <TableCell>Name</TableCell>
-              <TableCell>State</TableCell>
-              <TableCell>District</TableCell>
-              <TableCell align="center">Actions</TableCell>
+              <TableCell className="fs-3 text-primary text-opacity-50">
+                #
+              </TableCell>
+              <TableCell className="fs-3 text-primary text-opacity-50">
+                Name
+              </TableCell>
+              <TableCell className="fs-3 text-primary text-opacity-50">
+                State
+              </TableCell>
+              <TableCell className="fs-3 text-primary text-opacity-50">
+                District
+              </TableCell>
+              <TableCell
+                align="center"
+                className="fs-3 text-primary text-opacity-50"
+              >
+                Actions
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {paginated.map((city, index) => (
               <TableRow key={city.id}>
-                <TableCell>{city.id}</TableCell>
-                <TableCell>{city.nameCombined || city.name}</TableCell>
-                <TableCell>{city.state || "-"}</TableCell>
-                <TableCell>{city.district || "-"}</TableCell>
-                <TableCell align="center">
+                <TableCell className="fs-5">{city.id}</TableCell>
+                <TableCell className="fs-5">
+                  {city.nameCombined || city.name}
+                </TableCell>
+                <TableCell className="fs-5">{city.state || "-"}</TableCell>
+                <TableCell className="fs-5">{city.district || "-"}</TableCell>
+                <TableCell align="center" className="fs-5">
                   <IconButton
                     color="primary"
                     onClick={() => handleEditClick(city)}

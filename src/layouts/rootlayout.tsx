@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { Status } from "../globals/status";
 import Sidebar from "../pages/sidebar";
 import { Outlet } from "react-router-dom";
+import LoadingButtons from "../pages/demo";
 const RootLayout = () => {
   const dispatch = useDispatch();
   const [authenticated, setAuthenticated] = useState(false);
@@ -26,7 +27,7 @@ const RootLayout = () => {
     setLoading(false); 
   }, [dispatch]);
 
-  if (loading) return <div>Loading...</div>; 
+  if (loading) return <div><LoadingButtons/></div>; 
 
   return (
     <>
