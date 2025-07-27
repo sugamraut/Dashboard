@@ -1,164 +1,195 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Box,
   Alert,
   TextField,
   Autocomplete,
+  Button,
+  Typography,
 } from "@mui/material";
-import { useSelector } from "react-redux";
-import { type RootState } from "../../store/store";
-import type { SelectChangeEvent } from "@mui/material";
-import InputField from "../../components/Input_field";
-import type { StateType } from "../../globals/typeDeclaration";
 
-export interface FormDataState {
-  nameCombined: string;
-  Name: string;
-  name: string;
-  state: string;
-  district: string;
-}
-interface EditBranchFormProps {
-  initialData?: Partial<FormDataState>;
+import { useAppDispatch, useAppSelector } from "../../store/hook";
+import {
+  fetchDistrictAsync,
+  updateDistrictAsync,
+} from "../../store/districts/DistrictsSlice";
+import InputField from "../../components/Input_field";
+
+import type { DistrictType, StateType } from "../../globals/typeDeclaration";
+
+interface EditDistrictFormProps {
+  initialData?: Partial<DistrictType> & {
+    nameCombined?: string;
+  };
   onClose?: () => void;
-  onSubmit?: (data: FormDataState) => void;
+}
+
+interface FormDataState {
+  nameCombined: string;
+  name: string;
+  state: string; 
+  district: string; 
 }
 
 const defaultFormData: FormDataState = {
-  Name: "",
-  state: "",
-  district: "",
   name: "",
   nameCombined: "",
+  state: "",
+  district: "",
 };
 
-const AddEditPage: React.FC<EditBranchFormProps> = ({
+const EditDistrictForm: React.FC<EditDistrictFormProps> = ({
   initialData = {},
   onClose,
-  onSubmit,
 }) => {
+  const dispatch = useAppDispatch();
+  const { data: districts, status, error } = useAppSelector(
+    (state) => state.distric
+  );
+
   const [formData, setFormData] = useState<FormDataState>({
     ...defaultFormData,
-    ...initialData,
+    name: initialData.name || "",
+    nameCombined: initialData.nameCombined || "",
+    state: initialData.state?.id ? String(initialData.state.id) : "",
+    district: initialData.id ? String(initialData.id) : "",
   });
-  const [error, setError] = useState<string | null>(null);
 
-  const districts = useSelector((state: RootState) => state.distric.data);
+  const [localError, setLocalError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (initialData) {
-      setFormData((prev: any) => ({
-        ...prev,
-        ...initialData,
-      }));
+    if (!districts) {
+      dispatch(fetchDistrictAsync());
     }
-  }, [initialData]);
+  }, [dispatch, districts]);
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>
-  ) => {
+  const uniqueStates = useMemo(() => {
+  const ids = new Set<number>();
+  return (districts || [])
+    .map((d) => d.state)
+    .filter((state): state is StateType => {
+      if (!state || ids.has(state.id)) return false;
+      ids.add(state.id);
+      return true;
+    });
+}, [districts]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData((prev: any) => ({
-      ...prev,
-      [name as string]: value,
-    }));
-  };
-
-  const handleSelectChange = (e: SelectChangeEvent<string>) => {
-    const name = e.target.name;
-    const value = e.target.value;
-    if (!name) return;
-    setFormData((prev: any) => ({
+    setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.Name || !formData.name) {
-      setError("Branch Name and Code are required.");
+
+    if (!formData.name || !formData.state) {
+      setLocalError("Name and state are required.");
       return;
     }
-    setError(null);
-    onSubmit?.(formData);
-    onClose?.();
+
+    setLocalError(null);
+
+    try {
+      if (initialData?.id) {
+        await dispatch(
+          updateDistrictAsync(initialData.id, {
+            name: formData.name,
+            nameCombined: formData.nameCombined,
+            state: Number(formData.state),
+            district: Number(formData.district),
+          })
+        );
+
+        onClose?.();
+      } else {
+        setLocalError("No district ID provided for update.");
+      }
+    } catch (err) {
+      setLocalError("Failed to update district.");
+    }
   };
 
   return (
-    <Box>
+    <Box component="form" onSubmit={handleSubmit} noValidate>
+      <Typography variant="h6" gutterBottom>
+        Edit District
+      </Typography>
+
+      {localError && <Alert severity="error">{localError}</Alert>}
       {error && <Alert severity="error">{error}</Alert>}
 
       <Autocomplete
         fullWidth
-        options={
-          districts
-            ? Array.from(
-                new Map(districts.map((d) => [d.state.id, d.state])).values()
-              )
-            : []
-        }
-        getOptionLabel={(option: StateType) =>
-          option.nameNp || option.name || ""
-        }
+        options={uniqueStates}
+        getOptionLabel={(option) => option?.nameNp || option?.name || ""}
         value={
-          districts
-            ?.map((d) => d.state)
-            .find((s) => String(s.id) === formData.state) || null
+          uniqueStates.find((s) => String(s.id) === formData.state) || null
         }
-        onChange={(_: React.SyntheticEvent, newValue: StateType | null) => {
+        onChange={(_, newValue) =>
           setFormData((prev) => ({
             ...prev,
             state: newValue ? String(newValue.id) : "",
-          }));
-        }}
+          }))
+        }
         renderInput={(params) => (
-          <TextField {...params} label="State" margin="normal" />
+          <TextField {...params} label="State" margin="normal" required />
         )}
       />
 
       <Autocomplete
         fullWidth
-        options={districts ?? []}
-        getOptionLabel={(option: any) =>
-          option.nameNp ? `${option.nameNp} (${option.name})` : option.name
+        options={districts || []}
+        getOptionLabel={(option) =>
+          option?.nameNp
+            ? `${option.nameNp} (${option.name})`
+            : option?.name || ""
         }
         value={
           districts?.find((d) => String(d.id) === formData.district) || null
         }
-        onChange={(_, newValue) => {
+        onChange={(_, newValue) =>
           setFormData((prev) => ({
             ...prev,
             district: newValue ? String(newValue.id) : "",
-          }));
-        }}
+          }))
+        }
         renderInput={(params) => (
           <TextField {...params} label="District" margin="normal" />
         )}
       />
 
       <InputField
-        label="Name"
-        name="Name"
+        label="District Name"
+        name="name"
         value={formData.name}
         onChange={handleChange}
         required
-        margin="normal"
         fullWidth
-        className="fs-1"
+        margin="normal"
       />
 
       <InputField
-        label="Name "
-        name="Name"
+        label="Name Combined"
+        name="nameCombined"
         value={formData.nameCombined}
         onChange={handleChange}
-        required
-        margin="normal"
         fullWidth
+        margin="normal"
       />
+
+      <Box mt={2} display="flex" justifyContent="flex-end" gap={2}>
+        <Button variant="outlined" color="secondary" onClick={onClose}>
+          Cancel
+        </Button>
+        <Button variant="contained" color="primary" type="submit">
+          Update
+        </Button>
+      </Box>
     </Box>
   );
 };
 
-export default AddEditPage;
+export default EditDistrictForm;
