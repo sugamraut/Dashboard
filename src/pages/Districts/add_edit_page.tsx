@@ -27,8 +27,8 @@ interface EditDistrictFormProps {
 interface FormDataState {
   nameCombined: string;
   name: string;
-  state: string; 
-  district: string; 
+  state: string;
+  district: string;
 }
 
 const defaultFormData: FormDataState = {
@@ -43,8 +43,8 @@ const EditDistrictForm: React.FC<EditDistrictFormProps> = ({
   onClose,
 }) => {
   const dispatch = useAppDispatch();
-  const { data: districts, status, error } = useAppSelector(
-    (state) => state.distric
+  const { fullList: districts, error } = useAppSelector(
+    (state) => state.distric 
   );
 
   const [formData, setFormData] = useState<FormDataState>({
@@ -58,21 +58,21 @@ const EditDistrictForm: React.FC<EditDistrictFormProps> = ({
   const [localError, setLocalError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!districts) {
+    if (!districts || districts.length === 0) {
       dispatch(fetchDistrictAsync());
     }
   }, [dispatch, districts]);
 
   const uniqueStates = useMemo(() => {
-  const ids = new Set<number>();
-  return (districts || [])
-    .map((d) => d.state)
-    .filter((state): state is StateType => {
-      if (!state || ids.has(state.id)) return false;
-      ids.add(state.id);
-      return true;
-    });
-}, [districts]);
+    const ids = new Set<number>();
+    return (districts || [])
+      .map((d: { state: any; }) => d.state)
+      .filter((state: { id: number; }): state is StateType => {
+        if (!state || ids.has(state.id)) return false;
+        ids.add(state.id);
+        return true;
+      });
+  }, [districts]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -86,26 +86,27 @@ const EditDistrictForm: React.FC<EditDistrictFormProps> = ({
     e.preventDefault();
 
     if (!formData.name || !formData.state) {
-      setLocalError("Name and state are required.");
+      setLocalError("Name and State are required.");
       return;
     }
-
-    setLocalError(null);
 
     try {
       if (initialData?.id) {
         await dispatch(
-          updateDistrictAsync(initialData.id, {
-            name: formData.name,
-            nameCombined: formData.nameCombined,
-            state: Number(formData.state),
-            district: Number(formData.district),
+          updateDistrictAsync({
+            id: initialData.id,
+            data: {
+              name: formData.name,
+              nameCombined: formData.nameCombined,
+              // state: Number(formData.state),
+              // district: Number(formData.district),
+            },
           })
-        );
+        ); 
 
         onClose?.();
       } else {
-        setLocalError("No district ID provided for update.");
+        setLocalError("Missing district ID.");
       }
     } catch (err) {
       setLocalError("Failed to update district.");
@@ -125,9 +126,7 @@ const EditDistrictForm: React.FC<EditDistrictFormProps> = ({
         fullWidth
         options={uniqueStates}
         getOptionLabel={(option) => option?.nameNp || option?.name || ""}
-        value={
-          uniqueStates.find((s) => String(s.id) === formData.state) || null
-        }
+        value={uniqueStates.find((s: { id: any; }) => String(s.id) === formData.state) || null}
         onChange={(_, newValue) =>
           setFormData((prev) => ({
             ...prev,
@@ -143,13 +142,9 @@ const EditDistrictForm: React.FC<EditDistrictFormProps> = ({
         fullWidth
         options={districts || []}
         getOptionLabel={(option) =>
-          option?.nameNp
-            ? `${option.nameNp} (${option.name})`
-            : option?.name || ""
+          option?.nameNp ? `${option.nameNp} (${option.name})` : option?.name || ""
         }
-        value={
-          districts?.find((d) => String(d.id) === formData.district) || null
-        }
+        value={districts?.find((d: { id: any; }) => String(d.id) === formData.district) || null}
         onChange={(_, newValue) =>
           setFormData((prev) => ({
             ...prev,

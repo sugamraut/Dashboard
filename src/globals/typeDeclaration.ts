@@ -10,14 +10,15 @@ export type StateType = {
 };
 
 export type DistrictType = {
+  data: any;
+  metaData: { total: number; };
   id: number;
   name: string;
   nameNp: string;
   nameCombined: string;
   code: string;
   cbsCode: string;
-  state: StateType;
   stateId: number;
+  state:StateType
 };
 
-// export type getDistricts = DistrictType[];

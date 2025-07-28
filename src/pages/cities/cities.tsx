@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Box,
   TableContainer,
@@ -21,37 +21,104 @@ import {
   DialogActions,
   Button,
   TablePagination,
+  Autocomplete,
 } from "@mui/material";
 
 import EditIcon from "@mui/icons-material/Edit";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import FilterAltOffIcon from "@mui/icons-material/FilterAltOff";
+
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState, AppDispatch } from "../../store/store";
-import { fetchCityAsync, type City } from "../../store/cities/CitiesSlice";
+import {
+  fetchAllCitiesAsync,
+  fetchCityByDistrictIdAsync,
+  type City,
+} from "../../store/cities/CitiesSlice";
+
 import AddEditpage from "./edit _page";
 import LoadingButtons from "../demo";
 
+interface DistrictOption {
+  id: number;
+  name: string;
+}
+
 export default function CitiesPage() {
   const dispatch = useDispatch<AppDispatch>();
-  const {
-    data: cities,
-    loading,
-    error,
-  } = useSelector((state: RootState) => state.city);
+
+  const allCities = useSelector(
+    (state: RootState) => state.city.fullList ?? []
+  );
+  const loading = useSelector((state: RootState) => state.city.loading);
+  const error = useSelector((state: RootState) => state.city.error);
+
+  const districtCities = useSelector(
+    (state: RootState) => state.city.list ?? []
+  );
 
   const [search, setSearch] = useState("");
-  const [selectedState, setSelectedState] = useState("");
-  const [selectedDistrict, setSelectedDistrict] = useState("");
+  const [selectedState, setSelectedState] = useState<string>("");
+  const [selectedDistrict, setSelectedDistrict] =
+    useState<DistrictOption | null>(null);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [selectedCity, setSelectedCity] = useState<City | null>(null);
-
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(25);
 
   useEffect(() => {
-    dispatch(fetchCityAsync());
+    dispatch(fetchAllCitiesAsync());
   }, [dispatch]);
+
+  useEffect(() => {
+    if (selectedDistrict) {
+      dispatch(fetchCityByDistrictIdAsync(selectedDistrict.id));
+      setPage(0);
+    }
+  }, [dispatch, selectedDistrict]);
+
+  const districtList: DistrictOption[] = useMemo(() => {
+    if (!allCities) return [];
+    const seen = new Set<number>();
+    return allCities
+      .filter((city) => {
+        if (city.districtId && !seen.has(city.districtId)) {
+          seen.add(city.districtId);
+          return true;
+        }
+        return false;
+      })
+      .map((city) => ({
+        id: city.districtId,
+        name: city.district,
+      }));
+  }, [allCities]);
+
+  const stateOptions = useMemo(() => {
+    if (!allCities) return [];
+    return Array.from(
+      new Set(allCities.map((city) => city.state).filter(Boolean))
+    ).sort();
+  }, [allCities]);
+
+  const citiesToDisplay = selectedDistrict ? districtCities : allCities;
+
+  const filtered = useMemo(() => {
+    if (!citiesToDisplay) return [];
+
+    return citiesToDisplay.filter((city) => {
+      const matchesSearch = city.name
+        .toLowerCase()
+        .includes(search.toLowerCase());
+      const matchesState = selectedState === "" || city.state === selectedState;
+      return matchesSearch && matchesState;
+    });
+  }, [citiesToDisplay, search, selectedState]);
+
+  const paginated = filtered.slice(
+    page * rowsPerPage,
+    page * rowsPerPage + rowsPerPage
+  );
 
   const handleEditClick = (city: City | null) => {
     setSelectedCity(city);
@@ -64,6 +131,7 @@ export default function CitiesPage() {
   };
 
   const handleChangePage = (_: unknown, newPage: number) => setPage(newPage);
+
   const handleChangeRowsPerPage = (e: React.ChangeEvent<HTMLInputElement>) => {
     setRowsPerPage(parseInt(e.target.value, 10));
     setPage(0);
@@ -74,140 +142,121 @@ export default function CitiesPage() {
   };
 
   const handleRefresh = () => {
-    dispatch(fetchCityAsync());
     setSearch("");
     setSelectedState("");
-    setSelectedDistrict("");
+    setSelectedDistrict(null);
+    setPage(0);
+    dispatch(fetchAllCitiesAsync());
   };
-
-  const filtered = (cities || []).filter((city: City) => {
-    const matchSearch = city.name.toLowerCase().includes(search.toLowerCase());
-    const matchState = !selectedState || city.state === selectedState;
-    const matchDistrict =
-      !selectedDistrict || city.district === selectedDistrict;
-    return matchSearch && matchState && matchDistrict;
-  });
-
-  const paginated = filtered.slice(
-    page * rowsPerPage,
-    page * rowsPerPage + rowsPerPage
-  );
 
   return (
     <Box marginLeft={9} marginRight={0} padding={2}>
-      <Box className="table-header">
+      <Box className="table-header" mb={2}>
         <Typography variant="h5" fontWeight="bold">
           Cities
         </Typography>
-        <Stack direction="row" spacing={1}>
-          <Stack direction="row" spacing={2} mb={2}>
-            <FormControl size="small" sx={{ minWidth: 120 }}>
-              <InputLabel>State</InputLabel>
-              <Select
-                label="State"
-                value={selectedState}
-                onChange={(e) => setSelectedState(e.target.value)}
-              >
-                <MenuItem value="">
-                  <em>All</em>
+        <Stack direction="row" spacing={2} alignItems="center">
+          <FormControl size="small" sx={{ minWidth: 140 }}>
+            <InputLabel>State</InputLabel>
+            <Select
+              label="State"
+              value={selectedState}
+              onChange={(e) => setSelectedState(e.target.value)}
+            >
+              <MenuItem value="">
+                <em>All States</em>
+              </MenuItem>
+              {stateOptions.map((state) => (
+                <MenuItem key={state} value={state}>
+                  {state}
                 </MenuItem>
-                {cities?.map((d: any) => (
-                  <MenuItem key={d.id} value={String(d.id)}>
-                    {d.name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+              ))}
+            </Select>
+          </FormControl>
 
-            <FormControl size="small" sx={{ minWidth: 120 }}>
-              <InputLabel>District</InputLabel>
-              <Select
-                label="District"
-                value={selectedDistrict}
-                onChange={(e) => setSelectedDistrict(e.target.value)}
-              >
-                <MenuItem value="">
-                  <em>All</em>
-                </MenuItem>
-                {Array.from(new Set(cities?.map((e: any) => e.district))).map(
-                  (district) => (
-                    <MenuItem key={district} value={district}>
-                      {district}
-                    </MenuItem>
-                  )
-                )}
-              </Select>
-            </FormControl>
+          <Autocomplete
+            size="small"
+            sx={{ minWidth: 220 }}
+            options={districtList}
+            getOptionLabel={(option) => option.name}
+            value={selectedDistrict}
+            onChange={(_, newValue) => setSelectedDistrict(newValue)}
+            renderInput={(params) => (
+              <TextField {...params} label="District" size="small" />
+            )}
+          />
 
-            <TextField
-              label="Search"
-              size="small"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-            <IconButton color="error" onClick={handleRefresh}>
-              <FilterAltOffIcon />
-            </IconButton>
-          </Stack>
-          <IconButton color="primary" onClick={() => handleEditClick(null)}>
+          <TextField
+            label="Search"
+            size="small"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+
+          <IconButton
+            color="error"
+            onClick={handleRefresh}
+            title="Reset filters"
+          >
+            <FilterAltOffIcon />
+          </IconButton>
+
+          <IconButton
+            color="primary"
+            onClick={() => handleEditClick(null)}
+            title="Add City"
+          >
             <AddCircleIcon />
           </IconButton>
         </Stack>
       </Box>
 
-      {loading && <Typography><LoadingButtons/></Typography>}
-      {error && <Typography color="error">Error: {error}</Typography>}
+      {loading && <LoadingButtons />}
+
+      {error && (
+        <Typography color="error" variant="body2" mb={1}>
+          Error: {error}
+        </Typography>
+      )}
 
       <TableContainer>
-        <Table>
+        <Table size="small" aria-label="Cities Table">
           <TableHead>
             <TableRow>
-              <TableCell className="fs-3 text-primary text-opacity-50">
-                #
-              </TableCell>
-              <TableCell className="fs-3 text-primary text-opacity-50">
-                Name
-              </TableCell>
-              <TableCell className="fs-3 text-primary text-opacity-50">
-                State
-              </TableCell>
-              <TableCell className="fs-3 text-primary text-opacity-50">
-                District
-              </TableCell>
-              <TableCell
-                align="center"
-                className="fs-3 text-primary text-opacity-50"
-              >
-                Actions
-              </TableCell>
+              <TableCell>#ID</TableCell>
+              <TableCell>Name</TableCell>
+              <TableCell>State</TableCell>
+              <TableCell>District</TableCell>
+              <TableCell align="center">Actions</TableCell>
             </TableRow>
           </TableHead>
-          <TableBody>
-            {paginated.map((city, index) => (
-              <TableRow key={city.id}>
-                <TableCell className="fs-5">{city.id}</TableCell>
-                <TableCell className="fs-5">
-                  {city.nameCombined || city.name}
-                </TableCell>
-                <TableCell className="fs-5">{city.state || "-"}</TableCell>
-                <TableCell className="fs-5">{city.district || "-"}</TableCell>
-                <TableCell align="center" className="fs-5">
-                  <IconButton
-                    color="primary"
-                    onClick={() => handleEditClick(city)}
-                  >
-                    <EditIcon />
-                  </IconButton>
-                </TableCell>
-              </TableRow>
-            ))}
 
-            {paginated.length === 0 && (
+          <TableBody>
+            {paginated.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={25} align="center">
+                <TableCell colSpan={5} align="center">
                   No cities found.
                 </TableCell>
               </TableRow>
+            ) : (
+              paginated.map((city) => (
+                <TableRow key={city.id}>
+                  <TableCell>{city.id}</TableCell>
+                  <TableCell>{city.name || city.nameCombined}</TableCell>
+                  <TableCell>{city.state || "N/A"}</TableCell>
+                  <TableCell>{city.district || "N/A"}</TableCell>
+                  <TableCell align="center">
+                    <IconButton
+                      color="primary"
+                      onClick={() => handleEditClick(city)}
+                      aria-label={`Edit city ${city.name}`}
+                      size="small"
+                    >
+                      <EditIcon />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+              ))
             )}
           </TableBody>
         </Table>
@@ -238,15 +287,13 @@ export default function CitiesPage() {
         </DialogContent>
         <DialogActions sx={{ justifyContent: "space-between", px: 3 }}>
           <Button
-            type="submit"
             variant="contained"
             color="primary"
-            id="branch-form-submit"
             onClick={handleFormSubmit}
           >
             Submit
           </Button>
-          <Button onClick={handleDialogClose} color="error">
+          <Button color="error" onClick={handleDialogClose}>
             Cancel
           </Button>
         </DialogActions>

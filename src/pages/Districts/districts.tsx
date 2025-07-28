@@ -1,32 +1,59 @@
 import React, { useEffect, useMemo, useState } from "react";
 import {
-  Box, Table, TableContainer, TableHead, TableRow, TableCell, TableBody,
-  Paper, IconButton, Typography, TextField, Stack, TablePagination,
-  Dialog, DialogTitle, DialogContent, DialogActions, Button, Autocomplete,
+  Box,
+  Table,
+  TableContainer,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+  Paper,
+  IconButton,
+  Typography,
+  TextField,
+  Stack,
+  TablePagination,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  Autocomplete,
 } from "@mui/material";
 
 import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
 import FilterAltOffIcon from "@mui/icons-material/FilterAltOff";
-
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState, AppDispatch } from "../../store/store";
-import { fetchAllDistrictsAsync, fetchDistrictAsync } from "../../store/districts/DistrictsSlice";
+import {
+  fetchAllDistrictsAsync,
+  fetchDistrictAsync,
+  fetchDistrictByIdAsync,
+  fetchDistrictsByStateIdAsync,
+} from "../../store/districts/DistrictsSlice";
 import AddEditPage from "./add_edit_page";
 import type { DistrictType } from "../../globals/typeDeclaration";
 
 export default function DistrictPage() {
   const dispatch = useDispatch<AppDispatch>();
 
-  const fullDistrictList = useSelector((state: RootState) => state.distric.fullList ?? []);
-  const districtList = useSelector((state: RootState) => Array.isArray(state.distric.list) ? state.distric.list : []);
-  const totalCount = useSelector((state: RootState) => state.distric.totalCount ?? 0);
+  const fullDistrictList = useSelector(
+    (state: RootState) => state.distric.fullList
+  );
+  const districtList = useSelector((state: RootState) =>
+    Array.isArray(state.distric.list) ? state.distric.list : []
+  );
+  const totalCount = useSelector(
+    (state: RootState) => state.distric.totalCount ?? 0
+  );
 
-  // UI state
   const [search, setSearch] = useState("");
-  const [selectedState, setSelectedState] = useState<null | { id: number; name: string; nameNp?: string }>(null);
+  const [selectedState, setSelectedState] = useState<null | {
+    id: number;
+    name: string;
+    nameNp?: string;
+  }>(null);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
-  const [selectedDistrictItem, setSelectedDistrictItem] = useState<DistrictType | null>(null);
+  const [selectedDistrictItem, setSelectedDistrictItem] =
+    useState<DistrictType | null>(null);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(25);
 
@@ -35,8 +62,21 @@ export default function DistrictPage() {
   }, [dispatch]);
 
   useEffect(() => {
-    dispatch(fetchDistrictAsync(page + 1, rowsPerPage));
-  }, [dispatch, page, rowsPerPage, selectedState, search]);
+    if (selectedState) {
+      dispatch(fetchDistrictsByStateIdAsync(selectedState.id));
+    }
+  }, [dispatch, selectedState]);
+
+  useEffect(() => {
+    if (!selectedState) {
+      const id = parseInt(search);
+      if (!isNaN(id)) {
+        dispatch(fetchDistrictByIdAsync(id));
+      } else {
+        dispatch(fetchDistrictAsync(page + 1, rowsPerPage, "", search.trim()));
+      }
+    }
+  }, [search, page, rowsPerPage, selectedState, dispatch]);
 
   const states = useMemo(() => {
     const ids = new Set<number>();
@@ -57,15 +97,12 @@ export default function DistrictPage() {
 
   const handleChangePage = (_: unknown, newPage: number) => setPage(newPage);
 
-  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
-
-  const handleFormSubmit = () => {
-    handleDialogClose();
-  };
-
   const handleClearFilters = () => {
     setSelectedState(null);
     setSearch("");
@@ -79,7 +116,7 @@ export default function DistrictPage() {
 
   return (
     <Box marginLeft={10} padding={2}>
-      <Box sx={{ marginBottom: 2 }}>
+      <Box className="table-header">
         <Typography variant="h5" fontWeight="bold" paddingBottom={2}>
           Districts
         </Typography>
@@ -93,19 +130,24 @@ export default function DistrictPage() {
             value={selectedState}
             onChange={handleStateFilterChange}
             isOptionEqualToValue={(option, value) => option.id === value?.id}
-            renderInput={(params) => <TextField {...params} label="Filter by State" />}
-            clearOnEscape
+            renderInput={(params) => (
+              <TextField {...params} label="Filter by State" />
+            )}
           />
 
           <TextField
             size="small"
             variant="outlined"
-            placeholder="Search district name"
+            placeholder="Search by district name or ID"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
 
-          <IconButton color="error" onClick={handleClearFilters} title="Clear Filters">
+          <IconButton
+            color="error"
+            onClick={handleClearFilters}
+            title="Clear Filters"
+          >
             <FilterAltOffIcon />
           </IconButton>
         </Stack>
@@ -125,25 +167,26 @@ export default function DistrictPage() {
           <TableBody>
             {districtList.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={5} align="center">No districts found</TableCell>
+                <TableCell colSpan={5} align="center">
+                  No districts found
+                </TableCell>
               </TableRow>
             ) : (
-              districtList.map((district,index) => (
+              districtList.map((district) => (
                 <TableRow key={district.id}>
                   <TableCell>{district.id}</TableCell>
-                  
+
                   <TableCell>{district.name}</TableCell>
                   <TableCell>{district.state?.name || "N/A"}</TableCell>
-                  <TableCell>{district.nameCombined || district.name}</TableCell>
+                  <TableCell>
+                    {district.nameCombined || district.name}
+                  </TableCell>
                   <TableCell align="center">
-                    <IconButton color="primary" onClick={() => handleEditClick(district)}>
-                      <EditIcon />
-                    </IconButton>
                     <IconButton
-                      color="error"
-                      onClick={() => alert(`Delete district ${district.name} (id: ${district.id})`)}
+                      color="primary"
+                      onClick={() => handleEditClick(district)}
                     >
-                      <DeleteIcon />
+                      <EditIcon />
                     </IconButton>
                   </TableCell>
                 </TableRow>
@@ -163,23 +206,26 @@ export default function DistrictPage() {
         />
       </TableContainer>
 
-      {/* Add/Edit Modal */}
-      <Dialog open={editDialogOpen} onClose={handleDialogClose} maxWidth="md" fullWidth>
-        <DialogTitle>{selectedDistrictItem ? "Edit District" : "Add District"}</DialogTitle>
+      <Dialog
+        open={editDialogOpen}
+        onClose={handleDialogClose}
+        maxWidth="md"
+        fullWidth
+      >
+        <DialogTitle>
+          {selectedDistrictItem ? "Edit District" : "Add District"}
+        </DialogTitle>
         <DialogContent dividers>
           <Typography variant="subtitle2" gutterBottom>
-            {selectedDistrictItem ? "Edit the details below" : "Please fill in the details below"}
+            {selectedDistrictItem
+              ? "Edit the details below"
+              : "Please fill in the details below"}
           </Typography>
-          <AddEditPage initialData={selectedDistrictItem ?? undefined} onClose={handleDialogClose} />
+          <AddEditPage
+            initialData={selectedDistrictItem ?? undefined}
+            onClose={handleDialogClose}
+          />
         </DialogContent>
-        <DialogActions sx={{ justifyContent: "space-between", px: 3 }}>
-          <Button type="submit" variant="contained" color="primary" onClick={handleFormSubmit}>
-            Submit
-          </Button>
-          <Button onClick={handleDialogClose} color="error">
-            Cancel
-          </Button>
-        </DialogActions>
       </Dialog>
     </Box>
   );

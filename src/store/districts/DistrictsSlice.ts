@@ -29,7 +29,7 @@ const districtSlice = createSlice({
   reducers: {
     setDistrict(
       state,
-      action: PayloadAction<{ data: DistrictType[]; metaData: { total: number } }>
+      action: PayloadAction<{ data: DistrictType[]; metaData: { total: number }}>
     ) {
       state.list = action.payload.data;
       state.totalCount = action.payload.metaData.total;
@@ -39,6 +39,10 @@ const districtSlice = createSlice({
     },
     setFullList(state, action: PayloadAction<DistrictType[]>) {
       state.fullList = action.payload;
+    },
+     setDistrictById(state, action:PayloadAction<DistrictType>) {
+      state.list = [action.payload];
+        state.totalCount = 1; 
     },
     setStatus(state, action: PayloadAction<StatusType>) {
       state.status = action.payload;
@@ -64,6 +68,7 @@ export const {
   setFullList,
   setStatus,
   setError,
+  setDistrictById,
   updateDistrictInStore,
 } = districtSlice.actions;
 
@@ -73,9 +78,10 @@ const getToken = (): string | null => localStorage.getItem("jwt");
 
 export const fetchDistrictAsync = (
   page = 1,
-  rowsPerPage = 10,
-  Id: string = "",
-  search: string = ""
+  rowsPerPage = 25,
+  stateId: string | number = "",
+  search: string = "",
+  id?: number
 ) => {
   return async (dispatch: AppDispatch) => {
     dispatch(setStatus(Status.Loading));
@@ -83,46 +89,68 @@ export const fetchDistrictAsync = (
     const token = getToken();
     if (!token) {
       dispatch(setError("No auth token found."));
+      dispatch(setStatus(Status.Error));
       return;
     }
 
     try {
-      const response = await axios.get(`${server_Url}/api/v1/districts`, {
-        headers: { Authorization: `Bearer ${token}` },
-        params: {
-          page,
-          rowsPerPage,
-          id: Id || undefined,
-          search: search || undefined,
-        },
-      });
+      const params: any = {
+        page,
+        rowsPerPage,
+        stateId: stateId || undefined,
+      };
 
-      const sortedData = response.data.data.sort((a: DistrictType, b: DistrictType) => a.id - b.id);
+      if (id !== undefined) {
+        params.id = id;
+      } else if (search) {
+        params.search = search;
+      }
 
-      dispatch(setDistrict({
-        data: sortedData,
-        metaData: response.data.metaData,
-      }));
+      const response = await axios.get<DistrictType>(
+        `${server_Url}/api/v1/districts`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          params,
+        }
+      );
+
+      const sortedData = response.data.data.sort(
+        (a: { id: number }, b: { id: number }) => a.id - b.id
+      );
+
+      dispatch(
+        setDistrict({
+          data: sortedData,
+          metaData: response.data.metaData,
+        })
+      );
 
       dispatch(setStatus(Status.Success));
     } catch (error: any) {
       const message =
         error.response?.data?.message || error.message || "Fetch error";
       dispatch(setError(message));
+      dispatch(setStatus(Status.Error));
     }
   };
 };
 
 
-
-export const updateDistrictAsync = (
-  id: number | string,
-  data: Partial<DistrictType>
-) => {
+export const updateDistrictAsync = ({
+  id,
+  data,
+}: {
+  id: number | string;
+  data: Partial<DistrictType>;
+}) => {
   return async (dispatch: AppDispatch) => {
+    console.log("Dispatching updateDistrictAsync with:", { id, data });
+
     dispatch(setStatus(Status.Loading));
 
-    const token = getToken();
+    const token = localStorage.getItem("jwt");
     if (!token) {
       dispatch(setError("No auth token found."));
       return Promise.reject("No token");
@@ -141,10 +169,13 @@ export const updateDistrictAsync = (
         }
       );
 
+      console.log("Update success:", response.data);
+
       dispatch(updateDistrictInStore(response.data));
       dispatch(setStatus(Status.Success));
       return Promise.resolve(response.data);
     } catch (error: any) {
+      console.error("Update failed:", error.response?.data || error.message);
       const message =
         error.response?.data?.message || error.message || "Update error";
       dispatch(setError(message));
@@ -152,6 +183,7 @@ export const updateDistrictAsync = (
     }
   };
 };
+
 
 export const fetchAllDistrictsAsync = () => {
   return async (dispatch: AppDispatch) => {
@@ -173,3 +205,42 @@ export const fetchAllDistrictsAsync = () => {
     }
   };
 };
+export const fetchDistrictsByStateIdAsync = (stateId: number) => {
+  return async (dispatch: AppDispatch) => {
+    dispatch(setStatus(Status.Loading));
+
+    try {
+      const token = getToken(); 
+      const response = await axios.get(`${server_Url}/api/v1/districts/state/${stateId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const sortedData = response.data.sort((a: DistrictType, b: DistrictType) => a.id - b.id);
+
+      dispatch(setDistrict({ data: sortedData, metaData: { total: sortedData.length } }));
+      dispatch(setStatus(Status.Success));
+    } catch (error: any) {
+      const message = error.response?.data?.message || error.message || "Unknown error";
+      dispatch(setError(message));
+    }
+  };
+};
+  
+
+export const fetchDistrictByIdAsync = (districtId: number) => {
+  return async (dispatch: AppDispatch) => {
+    dispatch(setStatus(Status.Loading));
+
+    try {
+      const response = await axios.get<DistrictType>(
+        `${server_Url}/api/v1/districts/${districtId}`
+      );
+      dispatch(setDistrictById(response.data));
+      dispatch(setStatus(Status.Success));
+    } catch (error: any) {
+      const message = error.response?.data?.message || error.message || "Unknown error";
+      dispatch(setError(message));
+    }
+  };
+};
+
