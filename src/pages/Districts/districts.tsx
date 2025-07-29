@@ -116,7 +116,7 @@ export default function DistrictPage() {
 
   return (
     <Box marginLeft={10} padding={2}>
-      <Box className="table-header">
+      <Box className="header">
         <Typography variant="h5" fontWeight="bold" paddingBottom={2}>
           Districts
         </Typography>
@@ -138,7 +138,7 @@ export default function DistrictPage() {
           <TextField
             size="small"
             variant="outlined"
-            placeholder="Search by district name or ID"
+            placeholder="Search by ID"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -157,11 +157,11 @@ export default function DistrictPage() {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>#</TableCell>
-              <TableCell>Name</TableCell>
-              <TableCell>State</TableCell>
-              <TableCell>District</TableCell>
-              <TableCell align="center">Actions</TableCell>
+              <TableCell className="table-header">#</TableCell>
+              <TableCell className="table-header">Name</TableCell>
+              <TableCell className="table-header">State</TableCell>
+              <TableCell className="table-header">District</TableCell>
+              <TableCell align="center" className="table-header">Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>

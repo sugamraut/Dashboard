@@ -1,3 +1,4 @@
+// src/store/cities/CitiesSlice.ts
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
 import { server_Url } from "../../globals/config";
@@ -5,18 +6,17 @@ import { Status, type StatusType } from "../../globals/status";
 import type { AppDispatch } from "../store";
 
 export interface City {
-  state: string;
   id: number;
   name: string;
   nameNp: string;
   nameCombined: string;
   districtId: number;
-  code: string;
+  code: string | null;
   district: string;
+  state:string;
 }
 
 interface CityState {
-  data: City[] | null;
   fullList: City[] | null;
   list: City[] | null;
   loading: boolean;
@@ -26,7 +26,6 @@ interface CityState {
 }
 
 const initialState: CityState = {
-  data: null,
   fullList: null,
   list: null,
   loading: false,
@@ -40,47 +39,52 @@ const citySlice = createSlice({
   initialState,
   reducers: {
     setCity(
-      state,
+      states,
       action: PayloadAction<{ data: City[]; metaData: { total: number } }>
     ) {
-      state.list = action.payload.data;
-      state.totalCount = action.payload.metaData.total;
-      state.loading = false;
-      state.status = Status.Success;
-      state.error = null;
+      states.list= action.payload.data;
+      states.totalCount = action.payload.metaData.total;
+      states.loading = false;
+      states.status=Status.Success;
+      states.error=null
     },
-    setFullList(state, action: PayloadAction<City[]>) {
-      state.fullList = action.payload;
+    setFullList(states, action: PayloadAction<City[]>) {
+      states.fullList = action.payload;
     },
-    setCityById(state, action: PayloadAction<City[]>) {
-      state.list = action.payload;
-      state.totalCount = action.payload.length;
+    setCityStatus(states, action: PayloadAction<StatusType>) {
+      states.status = action.payload;
+      states.loading = action.payload === Status.Loading;
     },
-    setCityStatus(state, action: PayloadAction<StatusType>) {
-      state.status = action.payload;
-      state.loading = action.payload === Status.Loading;
-    },
-    setCityError(state, action: PayloadAction<string>) {
-      state.error = action.payload;
-      state.status = Status.Error;
-      state.loading = false;
+    setCityError(states, action: PayloadAction<string>) {
+      states.error = action.payload;
+      states.status = Status.Error;
+      states.loading = false;
     },
   },
 });
 
-export const {
-  setCity,
-  setFullList,
-  setCityById,
-  setCityError,
-  setCityStatus,
-} = citySlice.actions;
+export const { setCity, setFullList, setCityError, setCityStatus } = citySlice.actions;
 
 export default citySlice.reducer;
 
+export function fetchAllCitiesAsync() {
+  return async (dispatch: AppDispatch) => {
+    dispatch(setCityStatus(Status.Loading));
+    try {
+      const response = await axios.get(`${server_Url}/api/v1/cities/all`);
+      const data: City[] = response.data.data;
+      dispatch(setFullList(data));
+      dispatch(setCity({ data, metaData: { total: data.length } }));
+      dispatch(setCityStatus(Status.Success));
+    } catch (err: any) {
+      dispatch(setCityError(err.message || "Failed to fetch all cities"));
+    }
+  };
+}
+
 
 export function fetchCityByDistrictIdAsync(districtId: number) {
-  return async function fetchCityByDistrictThunk(dispatch: AppDispatch) {
+  return async (dispatch: AppDispatch) => {
     dispatch(setCityStatus(Status.Loading));
     try {
       const response = await axios.get(`${server_Url}/api/v1/cities`, {
@@ -90,41 +94,13 @@ export function fetchCityByDistrictIdAsync(districtId: number) {
           filters: JSON.stringify({ districtId }),
         },
       });
-
-      if (response.status === 200 || response.status === 201) {
-        const { data, metaData } = response.data;
-        dispatch(setCity({ data, metaData }));
-        dispatch(setCityStatus(Status.Success));
-      } else {
-        dispatch(
-          setCityError("Failed to fetch district cities: " + response.status)
-        );
-      }
+      console.log(response)
+      const { data, metaData } = response.data;
+      dispatch(setCity({ data, metaData }));
+      dispatch(setCityStatus(Status.Success));
+      console.log(setCity);
     } catch (error: any) {
-      const message =
-        error.response?.data?.message || error.message || "Unknown error";
-      dispatch(setCityError(message));
-    }
-  };
-}
-
-
-export function fetchAllCitiesAsync() {
-  return async function fetchAllCitiesThunk(dispatch: AppDispatch) {
-    dispatch(setCityStatus(Status.Loading));
-    try {
-      const response = await axios.get(`${server_Url}/api/v1/cities/all`);
-      if (response.status === 200) {
-        const data = response.data.data;
-        const metaData = response.data.metaData || { total: data.length }; 
-        dispatch(setFullList(data));
-        dispatch(setCity({ data, metaData }));
-        dispatch(setCityStatus(Status.Success));
-      } else {
-        dispatch(setCityError("Failed to fetch cities"));
-      }
-    } catch (err: any) {
-      dispatch(setCityError(err.message));
+      dispatch(setCityError(error.message || "Failed to fetch cities by district"));
     }
   };
 }

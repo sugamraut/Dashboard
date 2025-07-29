@@ -11,10 +11,6 @@ import {
   Typography,
   TextField,
   Stack,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -42,25 +38,20 @@ import LoadingButtons from "../demo";
 interface DistrictOption {
   id: number;
   name: string;
+  state: string;
 }
 
 export default function CitiesPage() {
   const dispatch = useDispatch<AppDispatch>();
 
-  const allCities = useSelector(
-    (state: RootState) => state.city.fullList ?? []
-  );
+  const allCities = useSelector((state: RootState) => state.city.fullList ?? []);
+  const districtCities = useSelector((state: RootState) => state.city.list ?? []);
   const loading = useSelector((state: RootState) => state.city.loading);
   const error = useSelector((state: RootState) => state.city.error);
 
-  const districtCities = useSelector(
-    (state: RootState) => state.city.list ?? []
-  );
-
   const [search, setSearch] = useState("");
   const [selectedState, setSelectedState] = useState<string>("");
-  const [selectedDistrict, setSelectedDistrict] =
-    useState<DistrictOption | null>(null);
+  const [selectedDistrict, setSelectedDistrict] = useState<DistrictOption | null>(null);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [selectedCity, setSelectedCity] = useState<City | null>(null);
   const [page, setPage] = useState(0);
@@ -78,7 +69,6 @@ export default function CitiesPage() {
   }, [dispatch, selectedDistrict]);
 
   const districtList: DistrictOption[] = useMemo(() => {
-    if (!allCities) return [];
     const seen = new Set<number>();
     return allCities
       .filter((city) => {
@@ -91,26 +81,33 @@ export default function CitiesPage() {
       .map((city) => ({
         id: city.districtId,
         name: city.district,
+        state: city.state,
       }));
   }, [allCities]);
 
   const stateOptions = useMemo(() => {
-    if (!allCities) return [];
-    return Array.from(
-      new Set(allCities.map((city) => city.state).filter(Boolean))
-    ).sort();
+    const states = allCities.map((city) => city.state?.trim()).filter(Boolean);
+    return Array.from(new Set(states)).sort();
   }, [allCities]);
 
-  const citiesToDisplay = selectedDistrict ? districtCities : allCities;
+  const citiesToDisplay = useMemo(() => {
+  if (!selectedDistrict) return allCities;
+
+  return districtCities.map((city) => {
+    const fullInfo = allCities.find((c) => Number(c.id) === Number(city.id));
+    return {
+      ...city,
+      state: fullInfo?.state ?? "N/A",
+      district: fullInfo?.district ?? city.district ?? "N/A",
+    };
+  });
+}, [selectedDistrict, districtCities, allCities]);
+
 
   const filtered = useMemo(() => {
-    if (!citiesToDisplay) return [];
-
     return citiesToDisplay.filter((city) => {
-      const matchesSearch = city.name
-        .toLowerCase()
-        .includes(search.toLowerCase());
-      const matchesState = selectedState === "" || city.state === selectedState;
+      const matchesSearch = city.name?.toLowerCase().includes(search.toLowerCase());
+      const matchesState = !selectedState || city.state === selectedState;
       return matchesSearch && matchesState;
     });
   }, [citiesToDisplay, search, selectedState]);
@@ -137,10 +134,6 @@ export default function CitiesPage() {
     setPage(0);
   };
 
-  const handleFormSubmit = () => {
-    handleDialogClose();
-  };
-
   const handleRefresh = () => {
     setSearch("");
     setSelectedState("");
@@ -148,31 +141,24 @@ export default function CitiesPage() {
     setPage(0);
     dispatch(fetchAllCitiesAsync());
   };
+  // console.log(districtCities)
+  // console.log(allCities);
+  
 
   return (
-    <Box marginLeft={9} marginRight={0} padding={2}>
-      <Box className="table-header" mb={2}>
-        <Typography variant="h5" fontWeight="bold">
-          Cities
-        </Typography>
+    <Box marginLeft={9} padding={2}>
+      <Box className="header" mb={2}>
+        <Typography variant="h5" fontWeight="bold">Cities</Typography>
         <Stack direction="row" spacing={2} alignItems="center">
-          <FormControl size="small" sx={{ minWidth: 140 }}>
-            <InputLabel>State</InputLabel>
-            <Select
-              label="State"
-              value={selectedState}
-              onChange={(e) => setSelectedState(e.target.value)}
-            >
-              <MenuItem value="">
-                <em>All States</em>
-              </MenuItem>
-              {stateOptions.map((state) => (
-                <MenuItem key={state} value={state}>
-                  {state}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+          <Autocomplete
+            size="small"
+            sx={{ minWidth: 200 }}
+            options={stateOptions}
+            getOptionLabel={(option) => option}
+            value={selectedState}
+            onChange={(_, newValue) => setSelectedState(newValue || "")}
+            renderInput={(params) => <TextField {...params} label="State" size="small" />}
+          />
 
           <Autocomplete
             size="small"
@@ -181,9 +167,7 @@ export default function CitiesPage() {
             getOptionLabel={(option) => option.name}
             value={selectedDistrict}
             onChange={(_, newValue) => setSelectedDistrict(newValue)}
-            renderInput={(params) => (
-              <TextField {...params} label="District" size="small" />
-            )}
+            renderInput={(params) => <TextField {...params} label="District" size="small" />}
           />
 
           <TextField
@@ -193,19 +177,11 @@ export default function CitiesPage() {
             onChange={(e) => setSearch(e.target.value)}
           />
 
-          <IconButton
-            color="error"
-            onClick={handleRefresh}
-            title="Reset filters"
-          >
+          <IconButton color="error" onClick={handleRefresh} title="Reset filters">
             <FilterAltOffIcon />
           </IconButton>
 
-          <IconButton
-            color="primary"
-            onClick={() => handleEditClick(null)}
-            title="Add City"
-          >
+          <IconButton color="primary" onClick={() => handleEditClick(null)} title="Add City">
             <AddCircleIcon />
           </IconButton>
         </Stack>
@@ -220,26 +196,25 @@ export default function CitiesPage() {
       )}
 
       <TableContainer>
-        <Table size="small" aria-label="Cities Table">
+        <Table size="small">
           <TableHead>
             <TableRow>
-              <TableCell>#ID</TableCell>
+              <TableCell>#</TableCell>
               <TableCell>Name</TableCell>
               <TableCell>State</TableCell>
               <TableCell>District</TableCell>
               <TableCell align="center">Actions</TableCell>
             </TableRow>
           </TableHead>
-
           <TableBody>
-            {paginated.length === 0 ? (
+            {districtCities.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={5} align="center">
                   No cities found.
                 </TableCell>
               </TableRow>
             ) : (
-              paginated.map((city) => (
+              districtCities.map((city) => (
                 <TableRow key={city.id}>
                   <TableCell>{city.id}</TableCell>
                   <TableCell>{city.name || city.nameCombined}</TableCell>
@@ -249,9 +224,9 @@ export default function CitiesPage() {
                     <IconButton
                       color="primary"
                       onClick={() => handleEditClick(city)}
-                      aria-label={`Edit city ${city.name}`}
                       size="small"
                     >
+                 
                       <EditIcon />
                     </IconButton>
                   </TableCell>
@@ -272,25 +247,13 @@ export default function CitiesPage() {
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
 
-      <Dialog
-        open={editDialogOpen}
-        onClose={handleDialogClose}
-        maxWidth="md"
-        fullWidth
-      >
+      <Dialog open={editDialogOpen} onClose={handleDialogClose} maxWidth="md" fullWidth>
         <DialogTitle>{selectedCity ? "Edit City" : "Add City"}</DialogTitle>
         <DialogContent dividers>
-          <AddEditpage
-            initialData={selectedCity!}
-            onClose={handleDialogClose}
-          />
+          <AddEditpage initialData={selectedCity!} onClose={handleDialogClose} />
         </DialogContent>
         <DialogActions sx={{ justifyContent: "space-between", px: 3 }}>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleFormSubmit}
-          >
+          <Button variant="contained" color="primary" onClick={handleDialogClose}>
             Submit
           </Button>
           <Button color="error" onClick={handleDialogClose}>
@@ -299,5 +262,5 @@ export default function CitiesPage() {
         </DialogActions>
       </Dialog>
     </Box>
-  );
+  );  
 }
