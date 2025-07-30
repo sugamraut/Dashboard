@@ -4,6 +4,7 @@ import axios from "axios";
 import { server_Url } from "../../globals/config";
 import { Status, type StatusType } from "../../globals/status";
 import type { AppDispatch } from "../store";
+import type { StateType } from "../../globals/typeDeclaration";
 
 export interface City {
   id: number;
@@ -23,6 +24,7 @@ interface CityState {
   error: string | null;
   status: StatusType;
   totalCount: number;
+  state:StateType
 }
 
 const initialState: CityState = {
@@ -32,6 +34,12 @@ const initialState: CityState = {
   error: null,
   status: Status.Loading,
   totalCount: 0,
+  state: {
+    id: 0,
+    name: "",
+    nameNp: "",
+    nameCombined: ""
+  }
 };
 
 const citySlice = createSlice({
@@ -67,7 +75,7 @@ export const { setCity, setFullList, setCityError, setCityStatus } = citySlice.a
 
 export default citySlice.reducer;
 
-export function fetchAllCitiesAsync() {
+export function fetchAllCities() {
   return async (dispatch: AppDispatch) => {
     dispatch(setCityStatus(Status.Loading));
     try {
@@ -83,7 +91,7 @@ export function fetchAllCitiesAsync() {
 }
 
 
-export function fetchCityByDistrictIdAsync(districtId: number) {
+export function fetchCityByDistrictId(districtId: number) {
   return async (dispatch: AppDispatch) => {
     dispatch(setCityStatus(Status.Loading));
     try {

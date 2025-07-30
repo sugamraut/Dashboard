@@ -25,7 +25,7 @@ interface EditDistrictFormProps {
 }
 
 interface FormDataState {
-  nameCombined: string;
+  nameNp: string;
   name: string;
   state: string;
   district: string;
@@ -33,7 +33,7 @@ interface FormDataState {
 
 const defaultFormData: FormDataState = {
   name: "",
-  nameCombined: "",
+  nameNp: "",
   state: "",
   district: "",
 };
@@ -50,7 +50,7 @@ const EditDistrictForm: React.FC<EditDistrictFormProps> = ({
   const [formData, setFormData] = useState<FormDataState>({
     ...defaultFormData,
     name: initialData.name || "",
-    nameCombined: initialData.nameCombined || "",
+    nameNp: initialData.nameNp || "",
     state: initialData.state?.id ? String(initialData.state.id) : "",
     district: initialData.id ? String(initialData.id) : "",
   });
@@ -97,7 +97,7 @@ const EditDistrictForm: React.FC<EditDistrictFormProps> = ({
             id: initialData.id,
             data: {
               name: formData.name,
-              nameCombined: formData.nameCombined,
+              nameNp: formData.nameNp,
               // state: Number(formData.state),
               // district: Number(formData.district),
             },
@@ -138,7 +138,7 @@ const EditDistrictForm: React.FC<EditDistrictFormProps> = ({
         )}
       />
 
-      <Autocomplete
+      {/* <Autocomplete
         fullWidth
         options={districts || []}
         getOptionLabel={(option) =>
@@ -154,7 +154,7 @@ const EditDistrictForm: React.FC<EditDistrictFormProps> = ({
         renderInput={(params) => (
           <TextField {...params} label="District" margin="normal" />
         )}
-      />
+      /> */}
 
       <InputField
         label="District Name"
@@ -169,7 +169,7 @@ const EditDistrictForm: React.FC<EditDistrictFormProps> = ({
       <InputField
         label="Name Combined"
         name="nameCombined"
-        value={formData.nameCombined}
+        value={formData.nameNp}
         onChange={handleChange}
         fullWidth
         margin="normal"

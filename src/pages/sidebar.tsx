@@ -4,8 +4,6 @@ import { Link, useLocation } from "react-router-dom";
 import HomeIcon from "@mui/icons-material/Home";
 import FolderIcon from "@mui/icons-material/Folder";
 import TextSnippetIcon from "@mui/icons-material/TextSnippet";
-// import SummarizeIcon from "@mui/icons-material/Summarize";
-// import CategoryIcon from "@mui/icons-material/Category";
 import PeopleIcon from "@mui/icons-material/People";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import FolderOpenIcon from "@mui/icons-material/FolderOpen";
@@ -34,7 +32,7 @@ const sidebarIcons = [
   { icon: <FolderOpenIcon />, label: "File Manager", path: "/file-manager" },
   { icon: <PublicIcon />, label: "Web Portal", path: "/web-portal" },
   { icon: <SettingsIcon />, label: "Settings", path: "/settings" },
-  { icon: <LogoutIcon />, label: "Logout", path: "/logout" },
+  { icon: <LogoutIcon />, label: "Logout", path: "/admin/logout" },
 ];
 
 export default function Sidebar() {
@@ -47,7 +45,7 @@ export default function Sidebar() {
         width: 70,
         flexShrink: 0,
         "& .MuiDrawer-paper": {
-          width: 85,
+          width: 80,
           boxSizing: "border-box",
           background: "linear-gradient(to bottom, #002b5c, #8b0000)",
           color: "white",
@@ -62,17 +60,10 @@ export default function Sidebar() {
         {sidebarIcons.map(({ icon, label, path }, index) => {
           const isActive = location.pathname === path;
           return (
-            <Tooltip
-              title={label}
-              placement="right"
-              arrow
-              key={index}
-              
-            >
+            <Tooltip title={label} placement="right" arrow key={index}>
               <ListItem
                 disablePadding
-                sx={{ mt: 2 }}
-                style={{ fontSize: "55px" }}
+                sx={{ mt: 1 }}
               >
                 <Link to={path}>
                   <IconButton

@@ -20,7 +20,7 @@ type LoginInputProps = {
   helperText?: React.ReactNode;
 } ;
 
-const LoginInput = React.forwardRef<HTMLInputElement, LoginInputProps>(
+const LoginInput:React.FC<LoginInputProps> =(
   (
     {
       id,
@@ -30,9 +30,7 @@ const LoginInput = React.forwardRef<HTMLInputElement, LoginInputProps>(
       togglePasswordVisibility,
       error,
       helperText,
-      ...rest
     },
-    ref
   ) => {
     const inputType =
       type === "password" && showPassword !== undefined
@@ -53,8 +51,6 @@ const LoginInput = React.forwardRef<HTMLInputElement, LoginInputProps>(
         <FilledInput
           id={id}
           type={inputType}
-          inputRef={ref}
-          {...rest}
           endAdornment={
             type === "password" && togglePasswordVisibility ? (
               <InputAdornment position="end">

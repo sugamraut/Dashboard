@@ -17,7 +17,6 @@ export type DistrictType = {
   nameNp: string;
   nameCombined: string;
   code: string;
-  cbsCode: string;
   stateId: number;
   state:StateType
 };

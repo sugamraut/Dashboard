@@ -6,36 +6,33 @@ import RootLayout from "../layouts/rootlayout";
 import Login from "../pages/auth/loginpage";
 import LoadingButtons from "../pages/demo";
 
-
-import "bootstrap/dist/css/bootstrap.min.css";
-import "bootstrap/dist/js/bootstrap.bundle.min.js";
-import "../assets/custom.css";
-
-
 const lazyWithDelay = (importFunc: () => Promise<any>, delay: number = 800) =>
-  React.lazy(() =>
-    new Promise(resolve => {
-      setTimeout(() => {
-        resolve(importFunc());
-      }, delay);
-    })
+  React.lazy(
+    () =>
+      new Promise((resolve) => {
+        setTimeout(() => {
+          resolve(importFunc());
+        }, delay);
+      })
   );
-
 
 const Dashboard = lazyWithDelay(() => import("../pages/dashboard/dashboard"));
 const Sidebar = lazyWithDelay(() => import("../pages/sidebar"));
-const BrandingSignInPage = lazyWithDelay(() => import("../pages/branches/branchpage"));
+const BrandingSignInPage = lazyWithDelay(
+  () => import("../pages/branches/branchpage")
+);
 const District = lazyWithDelay(() => import("../pages/Districts/districts"));
 const Cities = lazyWithDelay(() => import("../pages/cities/cities"));
 const Demo = lazyWithDelay(() => import("../pages/demo"));
 
 
-const withSuspense = (Component: React.LazyExoticComponent<React.ComponentType<any>>) => (
+const withSuspense = (
+  Component: React.LazyExoticComponent<React.ComponentType<any>>
+) => (
   <Suspense fallback={<LoadingButtons />}>
     <Component />
   </Suspense>
 );
-
 
 const router = createBrowserRouter([
   {

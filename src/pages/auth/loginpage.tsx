@@ -43,7 +43,7 @@ const LoginPage: React.FC = () => {
   if (status === Status.Success && accessToken) {
     localStorage.setItem("jwt", accessToken);
    navigate("/admin/dashboard");
-    const hasNavigated = sessionStorage.getItem("alreadyNavigated");
+     sessionStorage.getItem("alreadyNavigated");
     // // if (!hasNavigated) {
     // //   navigate("/admin/dashboard");
     // //   sessionStorage.setItem("alreadyNavigated", "true");
@@ -101,7 +101,6 @@ const LoginPage: React.FC = () => {
                 {error}
               </Alert>
             )}
-
             <Button type="submit" variant="contained" fullWidth>
               LOGIN
             </Button>
