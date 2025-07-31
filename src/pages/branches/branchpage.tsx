@@ -25,12 +25,13 @@ import AddCircleIcon from "@mui/icons-material/AddCircle";
 import EditIcon from "@mui/icons-material/Edit";
 import FilterAltOffIcon from "@mui/icons-material/FilterAltOff";
 import BranchFormModal from "./add_edit_page";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 export default function BranchesPage() {
   const dispatch = useDispatch<AppDispatch>();
   const branches = useSelector((state: RootState) => state.branch.list) || [];
   const loading = useSelector((state: RootState) => state.branch.loading);
-  const error = useSelector((state: RootState) => state.branch.error);
+  // const error = useSelector((state: RootState) => state.branch.error);
 
   const [search, setSearch] = useState("");
   const [Edit, setEdit] = useState(false);
@@ -126,6 +127,9 @@ export default function BranchesPage() {
                   <IconButton onClick={() => openModal(branch)}>
                     <EditIcon />
                   </IconButton>
+                   <IconButton color="error">
+                        <DeleteIcon />
+                      </IconButton>
                 </TableCell>
               </TableRow>
             ))}
