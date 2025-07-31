@@ -1,4 +1,4 @@
-// src/store/cities/CitiesSlice.ts
+
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
 import { server_Url } from "../../globals/config";

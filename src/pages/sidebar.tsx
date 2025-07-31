@@ -23,7 +23,7 @@ const sidebarIcons = [
   { icon: <AccountTreeIcon />, label: "Branches", path: "/admin/branch" },
   { icon: <ArticleIcon />, label: "District", path: "/admin/district" },
   { icon: <ApartmentIcon />, label: "Citites", path: "/admin/cities" },
-  { icon: <PeopleIcon />, label: "Users", path: "/users" },
+  { icon: <PeopleIcon />, label: "Users", path: "/admin/User" },
   {
     icon: <AdminPanelSettingsIcon />,
     label: "Roles & Access",

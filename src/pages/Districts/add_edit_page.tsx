@@ -67,7 +67,7 @@ const EditDistrictForm: React.FC<EditDistrictFormProps> = ({
     const ids = new Set<number>();
     return (districts || [])
       .map((d: { state: any; }) => d.state)
-      .filter((state: { id: number; }): state is StateType => {
+      .filter((state: { id: number; }) => {
         if (!state || ids.has(state.id)) return false;
         ids.add(state.id);
         return true;

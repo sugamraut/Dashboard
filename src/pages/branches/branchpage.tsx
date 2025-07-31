@@ -33,7 +33,7 @@ export default function BranchesPage() {
   const error = useSelector((state: RootState) => state.branch.error);
 
   const [search, setSearch] = useState("");
-  const [modalOpen, setModalOpen] = useState(false);
+  const [Edit, setEdit] = useState(false);
   const [editBranch, setEditBranch] = useState<Branch | null>(null);
 
   const [states, setStates] = useState<string[]>([]);
@@ -52,7 +52,7 @@ export default function BranchesPage() {
     } else {
       setEditBranch(null);
     }
-    setModalOpen(true);
+    setEdit(true);
   }
 
   async function handleFormSubmit(formData: any) {
@@ -114,13 +114,7 @@ export default function BranchesPage() {
                 <TableCell colSpan={6}>Loading...</TableCell>
               </TableRow>
             )}
-            {error && (
-              <TableRow>
-                <TableCell colSpan={6} style={{ color: "red" }}>
-                  {error}
-                </TableCell>
-              </TableRow>
-            )}
+
             {filteredBranches.map((branch, i) => (
               <TableRow key={branch.id}>
                 <TableCell>{i + 1}</TableCell>
@@ -145,14 +139,13 @@ export default function BranchesPage() {
       </TableContainer>
 
       <BranchFormModal
-        open={modalOpen}
-        onClose={() => setModalOpen(false)}
+        open={Edit}
+        onClose={() => setEdit(false)}
         initialData={
           editBranch
             ? {
                 branchName: editBranch.name,
                 code: editBranch.code || "",
-
                 state: editBranch.state,
                 district: editBranch.district,
               }

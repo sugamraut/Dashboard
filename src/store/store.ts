@@ -3,6 +3,7 @@ import auth from './auth/LoginSlice'
 import district from './districts/DistrictsSlice'
 import city from "./cities/CitiesSlice"
 import branch from "./branchSlice/BranchSlice"
+import User from "./user/userSlice"
 
 const store=configureStore({
     reducer:{
@@ -10,6 +11,7 @@ const store=configureStore({
       district:district,
       city:city,
       branch:branch,
+      User:User,
 
     }
 })
