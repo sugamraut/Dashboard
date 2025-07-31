@@ -35,7 +35,10 @@ const UserSlice = createSlice({
   name: "User",
   initialState,
   reducers: {
-    setUser(state, action: PayloadAction<{ data: User[]; metaData: { total: number } }>) {
+    setUser(
+      state,
+      action: PayloadAction<{ data: User[]; metaData: { total: number } }>
+    ) {
       state.list = action.payload.data;
       state.totalCount = action.payload.metaData.total;
       state.status = Status.Success;
@@ -44,6 +47,11 @@ const UserSlice = createSlice({
     },
     setFullList(state, action: PayloadAction<User[]>) {
       state.fullList = action.payload;
+    },
+    setError(state, action: PayloadAction<string>) {
+      state.error = action.payload;
+      state.status = Status.Error;
+      state.loading = false;
     },
     setUserStatus(state, action: PayloadAction<StatusType>) {
       state.status = action.payload;
@@ -83,6 +91,25 @@ export function fetchalluser() {
     } catch (error) {
       dispatch(setUserStatus(Status.Error));
       dispatch(setError("Failed to fetch users"));
+    }
+  };
+}
+
+export function fetchUserById(Userid:number) {
+  return async function fetchUserByIdThunk(dispatch: AppDispatch) {
+    dispatch(setUserStatus(Status.Loading));
+    const token = localStorage.getItem("jwt");
+    if (!token) {
+      dispatch(setError("Please login..."));
+      return Promise.reject("No Token");
+    }
+    try {
+      const response = await axios.get(`${server_Url}/api/v1/users/${Userid}`);
+      dispatch(setUser(response.data.data));
+      dispatch(setUserStatus(Status.Success))
+    } catch (error:any) {
+   const message= error?.message||"failed to fetch branch by id"
+   dispatch(setError(message))
     }
   };
 }

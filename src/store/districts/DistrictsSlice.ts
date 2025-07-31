@@ -146,8 +146,6 @@ export const updateDistrictAsync = ({
   data: Partial<DistrictType>;
 }) => {
   return async (dispatch: AppDispatch) => {
-    console.log("Dispatching updateDistrictAsync with:", { id, data });
-
     dispatch(setStatus(Status.Loading));
 
     const token = localStorage.getItem("jwt");

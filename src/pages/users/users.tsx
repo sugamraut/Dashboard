@@ -16,6 +16,7 @@ import FilterAltOffIcon from "@mui/icons-material/FilterAltOff";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState, AppDispatch } from "../../store/store";
 import { fetchalluser } from "../../store/user/userSlice";
+import EditIcon from "@mui/icons-material/Edit";
 
 const User = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -57,7 +58,11 @@ const User = () => {
                 <TableCell>{user.username}</TableCell>
                 <TableCell>{user.mobilenumber}</TableCell>
                 <TableCell>{user.email}</TableCell>
-                <TableCell>--</TableCell>
+                <TableCell >
+                  <IconButton  color="primary">
+                     <EditIcon />
+                  </IconButton>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
