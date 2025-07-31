@@ -36,13 +36,13 @@ export default function DistrictPage() {
   const dispatch = useDispatch<AppDispatch>();
 
   const fullDistrictList = useSelector(
-    (state: RootState) => state.distric.fullList
+    (state: RootState) => state.district.fullList
   );
   const districtList = useSelector((state: RootState) =>
-    Array.isArray(state.distric.list) ? state.distric.list : []
+    Array.isArray(state.district.list) ? state.district.list : []
   );
   const totalCount = useSelector(
-    (state: RootState) => state.distric.totalCount ?? 0
+    (state: RootState) => state.district.totalCount ?? 0
   );
 
   const [search, setSearch] = useState("");
@@ -69,12 +69,7 @@ export default function DistrictPage() {
 
   useEffect(() => {
     if (!selectedState) {
-      const id = parseInt(search);
-      if (!isNaN(id)) {
-        dispatch(fetchDistrictByIdAsync(id));
-      } else {
-        dispatch(fetchDistrictAsync(page + 1, rowsPerPage, "", search.trim()));
-      }
+      dispatch(fetchDistrictAsync(page + 1, rowsPerPage, "", search.trim()));
     }
   }, [search, page, rowsPerPage, selectedState, dispatch]);
 
@@ -107,6 +102,7 @@ export default function DistrictPage() {
     setSelectedState(null);
     setSearch("");
     setPage(0);
+    dispatch(fetchDistrictAsync(1, rowsPerPage, "", "")); 
   };
 
   const handleStateFilterChange = (_: any, newValue: any) => {
@@ -137,10 +133,24 @@ export default function DistrictPage() {
 
           <TextField
             size="small"
-            variant="outlined"
-            placeholder="Search by ID"
+            sx={{ minWidth: 250 }}
+            label="Search by District Name"
+            placeholder="Type a district name"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                const district = fullDistrictList.find(
+                  (d) => d.name.toLowerCase() === search.trim().toLowerCase()
+                );
+                if (district) {
+                  dispatch(fetchDistrictByIdAsync(district.id));
+                  setSelectedState(null);
+                } else {
+                  dispatch(fetchDistrictAsync(1, rowsPerPage, "", ""));
+                }
+              }
+            }}
           />
 
           <IconButton
@@ -160,8 +170,10 @@ export default function DistrictPage() {
               <TableCell className="table-header">#</TableCell>
               <TableCell className="table-header">Name</TableCell>
               <TableCell className="table-header">State</TableCell>
-              <TableCell className="table-header">District</TableCell>
-              <TableCell align="center" className="table-header">Actions</TableCell>
+              {/* <TableCell className="table-header">District</TableCell> */}
+              <TableCell align="center" className="table-header">
+                Actions
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -178,9 +190,9 @@ export default function DistrictPage() {
 
                   <TableCell>{district.name}</TableCell>
                   <TableCell>{district.state?.name || "N/A"}</TableCell>
-                  <TableCell>
+                  {/* <TableCell>
                     {district.nameCombined || district.name}
-                  </TableCell>
+                  </TableCell> */}
                   <TableCell align="center">
                     <IconButton
                       color="primary"
@@ -216,11 +228,6 @@ export default function DistrictPage() {
           {selectedDistrictItem ? "Edit District" : "Add District"}
         </DialogTitle>
         <DialogContent dividers>
-          <Typography variant="subtitle2" gutterBottom>
-            {selectedDistrictItem
-              ? "Edit the details below"
-              : "Please fill in the details below"}
-          </Typography>
           <AddEditPage
             initialData={selectedDistrictItem ?? undefined}
             onClose={handleDialogClose}

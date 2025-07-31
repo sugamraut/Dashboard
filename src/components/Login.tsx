@@ -7,8 +7,7 @@ import {
   IconButton,
   FormHelperText,
 } from "@mui/material";
-import Visibility from "@mui/icons-material/Visibility";
-import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 type LoginInputProps = {
   id: string;
@@ -18,9 +17,9 @@ type LoginInputProps = {
   togglePasswordVisibility?: () => void;
   error?: boolean;
   helperText?: React.ReactNode;
-} ;
+};
 
-const LoginInput:React.FC<LoginInputProps> =(
+const LoginInput = React.forwardRef<HTMLInputElement, LoginInputProps>(
   (
     {
       id,
@@ -30,39 +29,34 @@ const LoginInput:React.FC<LoginInputProps> =(
       togglePasswordVisibility,
       error,
       helperText,
+      ...rest
     },
+    ref
   ) => {
-    const inputType =
-      type === "password" && showPassword !== undefined
-        ? showPassword
-          ? "text"
-          : "password"
-        : type;
+    const isPassword = type === "password";
+    const inputType = isPassword && showPassword !== undefined
+      ? showPassword ? "text" : "password"
+      : type;
 
     return (
       <FormControl variant="filled" fullWidth sx={{ mb: 3 }} error={error}>
-        <InputLabel
-          htmlFor={id}
-          style={{ fontSize: 18, fontWeight: "bolder" }}
-        >
+        <InputLabel htmlFor={id} sx={{ fontSize: 18, fontWeight: "bold" }}>
           {label}
         </InputLabel>
 
         <FilledInput
           id={id}
           type={inputType}
+          inputRef={ref}
+          {...rest}
           endAdornment={
-            type === "password" && togglePasswordVisibility ? (
+            isPassword && togglePasswordVisibility && (
               <InputAdornment position="end">
-                <IconButton
-                  onClick={togglePasswordVisibility}
-                  edge="end"
-                  size="small"
-                >
+                <IconButton onClick={togglePasswordVisibility} edge="end" size="small">
                   {showPassword ? <VisibilityOff /> : <Visibility />}
                 </IconButton>
               </InputAdornment>
-            ) : undefined
+            )
           }
         />
 

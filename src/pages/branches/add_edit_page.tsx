@@ -1,69 +1,72 @@
 import React, { useEffect, useState } from "react";
 import {
   Box,
-  Alert,
+  Typography,
+  TextField,
+  Button,
+  Modal,
   FormControl,
   InputLabel,
   Select,
   MenuItem,
-
+  Alert,
+  type SelectChangeEvent,
 } from "@mui/material";
-import type { SelectChangeEvent } from "@mui/material";
 
-import InputField from "../../components/Input_field";
-
-interface EditBranchFormProps {
-  initialData?: Partial<FormDataState>;
-  onClose?: () => void;
-  onSubmit?: (data: FormDataState) => void;
-}
-
-export interface FormDataState {
+interface FormDataState {
   branchName: string;
   code: string;
-  telephone: string;
-  email: string;
-  fax: string;
   state: string;
   district: string;
-  city: string;
-  streetAddress: string;
-  wardNo: string;
 }
 
 const defaultFormData: FormDataState = {
   branchName: "",
   code: "",
-  telephone: "",
-  email: "",
-  fax: "",
   state: "",
   district: "",
-  city: "",
-  streetAddress: "",
-  wardNo: "",
 };
 
-const EditBranchForm: React.FC<EditBranchFormProps> = ({
-  initialData = {},
+interface BranchFormModalProps {
+  open: boolean;
+  onClose: () => void;
+  initialData?: FormDataState | null;
+  onSubmit: (data: FormDataState) => Promise<void>;
+  states: string[];
+  districts: string[];
+}
+
+const BranchFormModal: React.FC<BranchFormModalProps> = ({
+  open,
+  onClose,
+  initialData = null,
   onSubmit,
+  states,
+  districts,
 }) => {
-  const [formData, setFormData] = useState<FormDataState>({
-    ...defaultFormData,
-    ...initialData,
-  });
-  const [error, setError] = useState<string | null>(null);
+  const [formData, setFormData] = useState<FormDataState>(defaultFormData);
+  const [formError, setFormError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
+    if (initialData) {
+      setFormData(initialData);
+    } else {
+      setFormData(defaultFormData);
+    }
+    setFormError(null);
+  }, [initialData, open]);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      ...initialData,
+      [name]: value,
     }));
-  }, [initialData]);
+  };
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>
-  ) => {
+ 
+  const handleSelectChange = (e: SelectChangeEvent<string>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -71,150 +74,126 @@ const EditBranchForm: React.FC<EditBranchFormProps> = ({
     }));
   };
 
-  const handleSelectChange = (e: SelectChangeEvent<string>) => {
-    const name = e.target.name;
-    const value = e.target.value;
-    if (!name) return;
-
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!formData.branchName || !formData.code) {
-      setError("Branch Name and Code are required.");
+      setFormError("Branch Name and Code are required.");
       return;
     }
 
-    setError(null);
-    onSubmit?.(formData);
+    setFormError(null);
+    setSubmitting(true);
+
+    try {
+      await onSubmit(formData);
+      onClose();
+    } catch (err: any) {
+      setFormError(err.message || "Failed to save branch.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
-    <Box
-      sx={{
-        maxWidth: 1000,
-        mx: "auto",
-        p: 3,
-        borderRadius: 2,
-      }}
-    >
-      {error && (
-        <Alert severity="error" sx={{ mb: 2 }}>
-          {error}
-        </Alert>
-      )}
+    <Modal open={open} onClose={onClose}>
+      <Box
+        sx={{
+          bgcolor: "background.paper",
+          margin: "auto",
+          mt: 5,
+          p: 4,
+          maxWidth: 600,
+          borderRadius: 2,
+          boxShadow: 24,
+        }}
+      >
+        <Typography variant="h6" mb={2}>
+          {initialData ? "Edit Branch" : "Add Branch"}
+        </Typography>
 
-      <form onSubmit={handleSubmit}>
-        <InputField
-          label="Branch Name"
-          name="branchName"
-          value={formData.branchName}
-          onChange={handleChange}
-          required
-          fullWidth
-          margin="normal"
-        />
-        <InputField
-          label="Code"
-          name="code"
-          value={formData.code}
-          onChange={handleChange}
-          required
-          fullWidth
-          margin="normal"
-        />
-        <InputField
-          label="Telephone"
-          name="telephone"
-          value={formData.telephone}
-          onChange={handleChange}
-          fullWidth
-          margin="normal"
-        />
-        <InputField
-          label="Email"
-          name="email"
-          value={formData.email}
-          onChange={handleChange}
-          type="email"
-          fullWidth
-          margin="normal"
-        />
-        <InputField
-          label="Fax"
-          name="fax"
-          value={formData.fax}
-          onChange={handleChange}
-          fullWidth
-          margin="normal"
-        />
+        {formError && (
+          <Alert severity="error" sx={{ mb: 2 }}>
+            {formError}
+          </Alert>
+        )}
 
-        <FormControl fullWidth margin="normal">
-          <InputLabel id="state-label">State</InputLabel>
-          <Select
-            labelId="state-label"
-            name="state"
-            value={formData.state}
-            onChange={handleSelectChange}
-            label="State"
-          >
-            <MenuItem value="">
-              <em>None</em>
-            </MenuItem>
-            <MenuItem value="State 1">State 1</MenuItem>
-            <MenuItem value="State 2">State 2</MenuItem>
-          </Select>
-        </FormControl>
+        <form onSubmit={handleSubmit}>
+          <TextField
+            label="Branch Name"
+            name="branchName"
+            value={formData.branchName}
+            onChange={handleInputChange}
+            required
+            fullWidth
+            margin="normal"
+            disabled={submitting}
+          />
+          <TextField
+            label="Code"
+            name="code"
+            value={formData.code}
+            onChange={handleInputChange}
+            required
+            fullWidth
+            margin="normal"
+            disabled={submitting}
+          />
 
-        <FormControl fullWidth margin="normal">
-          <InputLabel id="district-label">District</InputLabel>
-          <Select
-            labelId="district-label"
-            name="district"
-            value={formData.district}
-            onChange={handleSelectChange}
-            label="District"
-          >
-            <MenuItem value="">
-              <em>None</em>
-            </MenuItem>
-            <MenuItem value="District 1">District 1</MenuItem>
-            <MenuItem value="District 2">District 2</MenuItem>
-          </Select>
-        </FormControl>
+          <FormControl fullWidth margin="normal" disabled={submitting}>
+            <InputLabel id="state-label">State</InputLabel>
+            <Select
+              labelId="state-label"
+              name="state"
+              value={formData.state}
+              onChange={handleSelectChange}
+              label="State"
+              required
+            >
+              <MenuItem value="">
+                <em>None</em>
+              </MenuItem>
+              {states.map((st) => (
+                <MenuItem key={st} value={st}>
+                  {st}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
 
-        <InputField
-          label="City"
-          name="city"
-          value={formData.city}
-          onChange={handleChange}
-          fullWidth
-          margin="normal"
-        />
-        <InputField
-          label="Street Address"
-          name="streetAddress"
-          value={formData.streetAddress}
-          onChange={handleChange}
-          fullWidth
-          margin="normal"
-        />
-        <InputField
-          label="Ward No."
-          name="wardNo"
-          value={formData.wardNo}
-          onChange={handleChange}
-          fullWidth
-          margin="normal"
-        />
-      </form>
-    </Box>
+          <FormControl fullWidth margin="normal" disabled={submitting}>
+            <InputLabel id="district-label">District</InputLabel>
+            <Select
+              labelId="district-label"
+              name="district"
+              value={formData.district}
+              onChange={handleSelectChange}
+              label="District"
+              required
+            >
+              <MenuItem value="">
+                <em>None</em>
+              </MenuItem>
+              {districts.map((dist) => (
+                <MenuItem key={dist} value={dist}>
+                  {dist}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
+          <Box mt={3} textAlign="right">
+            <Button onClick={onClose} sx={{ mr: 2 }} disabled={submitting}>
+              Cancel
+            </Button>
+            <Button variant="contained" type="submit" disabled={submitting}>
+              {initialData ? "Update" : "Add"}
+            </Button>
+          </Box>
+        </form>
+      </Box>
+    </Modal>
   );
 };
 
-export default EditBranchForm;
+export default BranchFormModal;

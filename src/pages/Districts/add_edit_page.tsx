@@ -44,7 +44,7 @@ const EditDistrictForm: React.FC<EditDistrictFormProps> = ({
 }) => {
   const dispatch = useAppDispatch();
   const { fullList: districts, error } = useAppSelector(
-    (state) => state.distric 
+    (state) => state.district 
   );
 
   const [formData, setFormData] = useState<FormDataState>({
@@ -98,8 +98,6 @@ const EditDistrictForm: React.FC<EditDistrictFormProps> = ({
             data: {
               name: formData.name,
               nameNp: formData.nameNp,
-              // state: Number(formData.state),
-              // district: Number(formData.district),
             },
           })
         ); 
@@ -115,17 +113,13 @@ const EditDistrictForm: React.FC<EditDistrictFormProps> = ({
 
   return (
     <Box component="form" onSubmit={handleSubmit} noValidate>
-      <Typography variant="h6" gutterBottom>
-        Edit District
-      </Typography>
-
       {localError && <Alert severity="error">{localError}</Alert>}
       {error && <Alert severity="error">{error}</Alert>}
 
       <Autocomplete
         fullWidth
         options={uniqueStates}
-        getOptionLabel={(option) => option?.nameNp || option?.name || ""}
+        getOptionLabel={(option) => option?.name || option?.nameNp || ""}
         value={uniqueStates.find((s: { id: any; }) => String(s.id) === formData.state) || null}
         onChange={(_, newValue) =>
           setFormData((prev) => ({
@@ -137,24 +131,6 @@ const EditDistrictForm: React.FC<EditDistrictFormProps> = ({
           <TextField {...params} label="State" margin="normal" required />
         )}
       />
-
-      {/* <Autocomplete
-        fullWidth
-        options={districts || []}
-        getOptionLabel={(option) =>
-          option?.nameNp ? `${option.nameNp} (${option.name})` : option?.name || ""
-        }
-        value={districts?.find((d: { id: any; }) => String(d.id) === formData.district) || null}
-        onChange={(_, newValue) =>
-          setFormData((prev) => ({
-            ...prev,
-            district: newValue ? String(newValue.id) : "",
-          }))
-        }
-        renderInput={(params) => (
-          <TextField {...params} label="District" margin="normal" />
-        )}
-      /> */}
 
       <InputField
         label="District Name"
