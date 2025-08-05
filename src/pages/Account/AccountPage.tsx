@@ -49,7 +49,7 @@ const AccountPage: React.FC = () => {
       fetchAccountTypes({
         page: 1,
         rowsPerPage: 10,
-        sortBy: "name",
+        sortBy: "id",
         sortOrder: "asc",
       })
     );
