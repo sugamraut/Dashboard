@@ -153,7 +153,7 @@ const AddEditPage = ({ initialData, onSave, onCancel }: AddEditPageProps) => {
         helperText={errors.interest?.message}
       />
 
-      <Box sx={{ width: "100%", margin: "20px 0", fontFamily: "Arial", border:"thick"}} >
+      <Box sx={{ width: "100%", margin: "20px 0"}} >
         <Box
           sx={{
             borderBottom: "1px solid #ccc",
@@ -283,7 +283,6 @@ const AddEditPage = ({ initialData, onSave, onCancel }: AddEditPageProps) => {
         startDecorator={
           <SvgIcon>
             <svg
-              xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
               strokeWidth={1.5}

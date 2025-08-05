@@ -26,6 +26,7 @@ interface AccountTypeResponse {
 
 interface AccountStates {
   data: AccountType[];
+  total:number
   metaData: {
     total: number | string;
   };

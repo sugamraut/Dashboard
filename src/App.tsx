@@ -1,6 +1,6 @@
 import { RouterProvider } from "react-router-dom";
 import router from "./route/router";
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer} from 'react-toastify';
 
 
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -10,7 +10,7 @@ import "./assets/custom.css";
 function App() {
   return <div>
     <RouterProvider router={router} />;
-     <ToastContainer />
+
   </div>
 }
 
