@@ -60,7 +60,6 @@ const AddEditPage = ({ initialData, onSave, onCancel }: AddEditPageProps) => {
   const {
     register,
     handleSubmit,
-    control,
     reset,
     setValue,
     formState: { errors },
