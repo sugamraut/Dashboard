@@ -85,7 +85,6 @@ const AccountPage: React.FC = () => {
       code: data.code,
       interest: data.interest,
       details: data.details,
-      ...(editingAccount && { id: editingAccount.id }),
     });
     handleClose();
   };
