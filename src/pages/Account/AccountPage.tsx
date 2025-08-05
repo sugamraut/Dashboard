@@ -26,6 +26,8 @@ import {
   type AccountType,
 } from "../../store/Account/AccountSlice";
 import AddEditPage from "./add_edit_pages";
+import { useSelector } from "react-redux";
+import type { RootState } from "../../store/store";
 
 const AccountPage: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -34,6 +36,7 @@ const AccountPage: React.FC = () => {
     error,
     loading,
   } = useAppSelector((state) => state.accountTypes);
+  const data=useSelector((state:RootState)=>state.accountTypes.data)||null
 
   const [searchQuery, setSearchQuery] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -136,7 +139,7 @@ const AccountPage: React.FC = () => {
                 </TableCell>
               </TableRow>
             ) : (
-              filtered.map((account: any, idx: number) => (
+              data.map((account: any, idx: number) => (
                 <TableRow key={account.id}>
                   <TableCell>{idx + 1}</TableCell>
                   <TableCell>{account.name}</TableCell>

@@ -7,7 +7,7 @@ import {
   Tooltip,
 } from "@mui/material";
 import Button from "@mui/joy/Button";
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { useEffect, useRef, useState } from "react";
 import {
   FormatBold,
@@ -53,7 +53,7 @@ interface AddEditPageProps {
 }
 
 const AddEditPage = ({ initialData, onSave, onCancel }: AddEditPageProps) => {
-  // const editorRef = useRef<HTMLDivElement>(null);
+  const editorRef = useRef<HTMLDivElement>(null);
   const [alignment, setAlignment] = useState("left");
   const [uploadFileName, setUploadFileName] = useState<string | undefined>("");
 
@@ -85,9 +85,9 @@ const AddEditPage = ({ initialData, onSave, onCancel }: AddEditPageProps) => {
         interestPayment: initialData.interestPayment || "",
         upload: initialData.upload || "",
       });
-      // if (editorRef.current) {
-      //   editorRef.current.innerHTML = initialData.details || "";
-      // }
+      if (editorRef.current) {
+        editorRef.current.innerHTML = initialData.details || "";
+      }
       setUploadFileName(initialData.upload);
     }
   }, [initialData, reset]);
@@ -117,7 +117,7 @@ const AddEditPage = ({ initialData, onSave, onCancel }: AddEditPageProps) => {
   const onSubmit = (data: any) => {
     onSave({
       ...data,
-      // details: editorRef.current?.innerHTML || "",
+      details: editorRef.current?.innerHTML || "",
     });
   };
 
@@ -153,8 +153,7 @@ const AddEditPage = ({ initialData, onSave, onCancel }: AddEditPageProps) => {
         helperText={errors.interest?.message}
       />
 
-      
-      <Box sx={{ width: "100%", margin: "20px 0", fontFamily: "Arial" }}>
+      <Box sx={{ width: "100%", margin: "20px 0", fontFamily: "Arial", border:"thick"}} >
         <Box
           sx={{
             borderBottom: "1px solid #ccc",
@@ -171,25 +170,73 @@ const AddEditPage = ({ initialData, onSave, onCancel }: AddEditPageProps) => {
             onChange={handleAlignment}
             size="small"
           >
-            <ToggleButton value="Left"><FormatAlignLeft /></ToggleButton>
-            <ToggleButton value="Center"><FormatAlignCenter /></ToggleButton>
-            <ToggleButton value="Right"><FormatAlignRight /></ToggleButton>
-            <ToggleButton value="Full"><FormatAlignJustify /></ToggleButton>
+            <ToggleButton value="Left">
+              <FormatAlignLeft />
+            </ToggleButton>
+            <ToggleButton value="Center">
+              <FormatAlignCenter />
+            </ToggleButton>
+            <ToggleButton value="Right">
+              <FormatAlignRight />
+            </ToggleButton>
+            <ToggleButton value="Full">
+              <FormatAlignJustify />
+            </ToggleButton>
           </ToggleButtonGroup>
 
-          <Tooltip title="Bold"><IconButton size="small" onClick={() => execCommand("bold")}><FormatBold /></IconButton></Tooltip>
-          <Tooltip title="Italic"><IconButton size="small" onClick={() => execCommand("italic")}><FormatItalic /></IconButton></Tooltip>
-          <Tooltip title="Underline"><IconButton size="small" onClick={() => execCommand("underline")}><FormatUnderlined /></IconButton></Tooltip>
-          <Tooltip title="Strikethrough"><IconButton size="small" onClick={() => execCommand("strikeThrough")}><FormatStrikethrough /></IconButton></Tooltip>
-          <Tooltip title="Bullet List"><IconButton size="small" onClick={() => execCommand("insertUnorderedList")}><FormatListBulleted /></IconButton></Tooltip>
-          <Tooltip title="Numbered List"><IconButton size="small" onClick={() => execCommand("insertOrderedList")}><FormatListNumbered /></IconButton></Tooltip>
-          <Tooltip title="Undo"><IconButton size="small" onClick={() => execCommand("undo")}><Undo /></IconButton></Tooltip>
-          <Tooltip title="Redo"><IconButton size="small" onClick={() => execCommand("redo")}><Redo /></IconButton></Tooltip>
+          <Tooltip title="Bold">
+            <IconButton size="small" onClick={() => execCommand("bold")}>
+              <FormatBold />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Italic">
+            <IconButton size="small" onClick={() => execCommand("italic")}>
+              <FormatItalic />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Underline">
+            <IconButton size="small" onClick={() => execCommand("underline")}>
+              <FormatUnderlined />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Strikethrough">
+            <IconButton
+              size="small"
+              onClick={() => execCommand("strikeThrough")}
+            >
+              <FormatStrikethrough />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Bullet List">
+            <IconButton
+              size="small"
+              onClick={() => execCommand("insertUnorderedList")}
+            >
+              <FormatListBulleted />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Numbered List">
+            <IconButton
+              size="small"
+              onClick={() => execCommand("insertOrderedList")}
+            >
+              <FormatListNumbered />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Undo">
+            <IconButton size="small" onClick={() => execCommand("undo")}>
+              <Undo />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Redo">
+            <IconButton size="small" onClick={() => execCommand("redo")}>
+              <Redo />
+            </IconButton>
+          </Tooltip>
         </Box>
 
-
         <Box
-          // ref={editorRef}
+          ref={editorRef}
           contentEditable
           sx={{
             minHeight: "150px",
@@ -209,7 +256,9 @@ const AddEditPage = ({ initialData, onSave, onCancel }: AddEditPageProps) => {
         fullWidth
         required
         margin="normal"
-        {...register("minimumblance", { required: "Minimum Balance is required" })}
+        {...register("minimumblance", {
+          required: "Minimum Balance is required",
+        })}
         error={!!errors.minimumblance}
         helperText={errors.minimumblance?.message}
       />
@@ -219,11 +268,12 @@ const AddEditPage = ({ initialData, onSave, onCancel }: AddEditPageProps) => {
         fullWidth
         required
         margin="normal"
-        {...register("interestPayment", { required: "Interest Payment is required" })}
+        {...register("interestPayment", {
+          required: "Interest Payment is required",
+        })}
         error={!!errors.interestPayment}
         helperText={errors.interestPayment?.message}
       />
-
 
       <Button
         component="label"
@@ -257,7 +307,6 @@ const AddEditPage = ({ initialData, onSave, onCancel }: AddEditPageProps) => {
       </Button>
       {uploadFileName && <Box mt={1}>Selected file: {uploadFileName}</Box>}
 
-  
       <Box display="flex" justifyContent="flex-end" gap={2} mt={3}>
         <Button variant="outlined" color="neutral" onClick={onCancel}>
           Cancel

@@ -1,7 +1,4 @@
-import {
-  createAsyncThunk,
-  createSlice,
-} from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { server_Url } from "../../globals/config";
 
@@ -11,8 +8,8 @@ export interface AccountType {
   Details?: string;
   code?: string;
   Descripition?: string;
-  details?:string;
-  interest?:string
+  details?: string;
+  interest?: string;
 }
 
 interface FetchParams {
@@ -25,6 +22,13 @@ interface FetchParams {
 interface AccountTypeResponse {
   data: AccountType[];
   total: number;
+}
+
+interface AccountStates {
+  data: AccountType[];
+  metaData: {
+    total: number | string;
+  };
 }
 
 interface AccountTypesState {
@@ -51,14 +55,16 @@ export const fetchAccountTypes = createAsyncThunk<
   "accountTypes/fetchAll",
   async ({ page, rowsPerPage, sortBy, sortOrder }, { rejectWithValue }) => {
     try {
-      const resp = await axios.get(`${server_Url}/api/v1/account-types`, {
-        params: { page, rowsPerPage, sortBy, sortOrder },
-      });
+      const resp = await axios.get<AccountStates>(
+        `${server_Url}/api/v1/account-types`,
+        {
+          params: { page, rowsPerPage, sortBy, sortOrder },
+        }
+      );
       const data = resp.data.data ?? [];
-      const total = parseInt(resp.data.metaData?.total ?? "0");
+      const total = Number(resp.data.metaData?.total ?? 0);
       return { data, total };
     } catch (error: any) {
-      // console.error("API Error:", err.response?.data || err.message);
       return rejectWithValue(error.message || "Failed to fetch account types");
     }
   }
@@ -73,7 +79,6 @@ export const fetchAccountTypeById = createAsyncThunk<
     const resp = await axios.get(`${server_Url}/api/v1/account-types/${id}`);
     return resp.data.data as AccountType;
   } catch (err: any) {
-    // console.error("API Error:", err.response?.data || err.message);
     return rejectWithValue(err.message || "Failed to fetch account type");
   }
 });
@@ -90,8 +95,20 @@ export const updateAccountType = createAsyncThunk<
     );
     return resp.data.data as AccountType;
   } catch (error: any) {
-    // console.error("API Error:", err.response?.data || err.message);
     return rejectWithValue(error.message || "Failed to update account type");
+  }
+});
+
+export const deleteAccountType = createAsyncThunk<
+  number,
+  number,
+  { rejectValue: string }
+>("accountTypes/delete", async (id, { rejectWithValue }) => {
+  try {
+    await axios.delete(`${server_Url}/api/v1/account-types/${id}`);
+    return id;
+  } catch (error: any) {
+    return rejectWithValue(error.message || "Failed to delete account type");
   }
 });
 
@@ -143,10 +160,11 @@ const accountTypesSlice = createSlice({
       .addCase(updateAccountType.fulfilled, (state, action) => {
         state.loading = false;
         const updated = action.payload;
-
         const index = state.data.findIndex((item) => item.id === updated.id);
         if (index !== -1) {
           state.data[index] = updated;
+        } else {
+          state.data.push(updated);
         }
 
         if (state.selected?.id === updated.id) {
@@ -156,6 +174,16 @@ const accountTypesSlice = createSlice({
       .addCase(updateAccountType.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload ?? "Failed to update account type";
+      })
+
+      .addCase(deleteAccountType.fulfilled, (state, action) => {
+        state.data = state.data.filter((item) => item.id !== action.payload);
+        if (state.selected?.id === action.payload) {
+          state.selected = null;
+        }
+      })
+      .addCase(deleteAccountType.rejected, (state, action) => {
+        state.error = action.payload ?? "Failed to delete account type";
       });
   },
 });
