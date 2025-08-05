@@ -1,9 +1,11 @@
-
-import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
+import {
+  createSlice,
+  createAsyncThunk,
+  type PayloadAction,
+} from "@reduxjs/toolkit";
 import axios from "axios";
 import { server_Url } from "../../globals/config";
 import { Status, type StatusType } from "../../globals/status";
-import type { AppDispatch } from "../store";
 import type { StateType } from "../../globals/typeDeclaration";
 
 export interface City {
@@ -14,7 +16,7 @@ export interface City {
   districtId: number;
   code: string | null;
   district: string;
-  state:string;
+  state: string;
 }
 
 interface CityState {
@@ -24,7 +26,7 @@ interface CityState {
   error: string | null;
   status: StatusType;
   totalCount: number;
-  state:StateType
+  state: StateType;
 }
 
 const initialState: CityState = {
@@ -38,77 +40,97 @@ const initialState: CityState = {
     id: 0,
     name: "",
     nameNp: "",
-    nameCombined: ""
-  }
+    nameCombined: "",
+  },
 };
+
+export const fetchAllCities = createAsyncThunk<
+  City[],
+  void,
+  { rejectValue: string }
+>("city/fetchAll", async (_, { rejectWithValue }) => {
+  try {
+    const response = await axios.get(`${server_Url}/api/v1/cities/all`);
+    return response.data.data as City[];
+  } catch (error: any) {
+    return rejectWithValue(error.message || "Failed to fetch all cities");
+  }
+});
+
+export const fetchCityByDistrictId = createAsyncThunk<
+  { data: City[]; metaData: { total: number } },
+  number,
+  { rejectValue: string }
+>("city/fetchByDistrict", async (districtId, { rejectWithValue }) => {
+  try {
+    const response = await axios.get(`${server_Url}/api/v1/cities`, {
+      params: {
+        page: 1,
+        rowsPerPage: 25,
+        filters: JSON.stringify({ districtId }),
+      },
+    });
+
+    return {
+      data: response.data.data as City[],
+      metaData: response.data.metaData,
+    };
+  } catch (error: any) {
+    return rejectWithValue(
+      error.message || "Failed to fetch cities by district"
+    );
+  }
+});
 
 const citySlice = createSlice({
   name: "city",
   initialState,
   reducers: {
-    setCity(
-      states,
-      action: PayloadAction<{ data: City[]; metaData: { total: number } }>
-    ) {
-      states.list= action.payload.data;
-      states.totalCount = action.payload.metaData.total;
-      states.loading = false;
-      states.status=Status.Success;
-      states.error=null
+    setFullList(state, action: PayloadAction<City[]>) {
+      state.fullList = action.payload;
     },
-    setFullList(states, action: PayloadAction<City[]>) {
-      states.fullList = action.payload;
-    },
-    setCityStatus(states, action: PayloadAction<StatusType>) {
-      states.status = action.payload;
-      states.loading = action.payload === Status.Loading;
-    },
-    setCityError(states, action: PayloadAction<string>) {
-      states.error = action.payload;
-      states.status = Status.Error;
-      states.loading = false;
-    },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchAllCities.pending, (state) => {
+        state.status = Status.Loading;
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchAllCities.fulfilled, (state, action) => {
+        state.fullList = action.payload;
+        state.list = action.payload;
+        state.totalCount = action.payload.length;
+        state.status = Status.Success;
+        state.loading = false;
+        state.error = null;
+      })
+      .addCase(fetchAllCities.rejected, (state, action) => {
+        state.status = Status.Error;
+        state.loading = false;
+        state.error = action.payload || "Failed to fetch cities";
+      });
+
+    builder
+      .addCase(fetchCityByDistrictId.pending, (state) => {
+        state.status = Status.Loading;
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchCityByDistrictId.fulfilled, (state, action) => {
+        state.list = action.payload.data;
+        state.totalCount = action.payload.metaData.total;
+        state.status = Status.Success;
+        state.loading = false;
+        state.error = null;
+      })
+      .addCase(fetchCityByDistrictId.rejected, (state, action) => {
+        state.status = Status.Error;
+        state.loading = false;
+        state.error = action.payload || "Failed to fetch cities by district";
+      });
   },
 });
 
-export const { setCity, setFullList, setCityError, setCityStatus } = citySlice.actions;
-
+export const { setFullList } = citySlice.actions;
 export default citySlice.reducer;
-
-export function fetchAllCities() {
-  return async (dispatch: AppDispatch) => {
-    dispatch(setCityStatus(Status.Loading));
-    try {
-      const response = await axios.get(`${server_Url}/api/v1/cities/all`);
-      const data: City[] = response.data.data;
-      dispatch(setFullList(data));
-      dispatch(setCity({ data, metaData: { total: data.length } }));
-      dispatch(setCityStatus(Status.Success));
-    } catch (err: any) {
-      dispatch(setCityError(err.message || "Failed to fetch all cities"));
-    }
-  };
-}
-
-
-export function fetchCityByDistrictId(districtId: number) {
-  return async (dispatch: AppDispatch) => {
-    dispatch(setCityStatus(Status.Loading));
-    try {
-      const response = await axios.get(`${server_Url}/api/v1/cities`, {
-        params: {
-          page: 1,
-          rowsPerPage: 25,
-          filters: JSON.stringify({ districtId }),
-        },
-      });
-      console.log(response)
-      const { data, metaData } = response.data;
-      dispatch(setCity({ data, metaData }));
-      dispatch(setCityStatus(Status.Success));
-      console.log(setCity);
-    } catch (error: any) {
-      dispatch(setCityError(error.message || "Failed to fetch cities by district"));
-    }
-  };
-}

@@ -19,7 +19,7 @@ import companyLogo from "../assets/image/company_name.png";
 const sidebarIcons = [
   { icon: <HomeIcon />, label: "Dashboard", path: "/admin/dashboard" },
   { icon: <FolderIcon />, label: "Online Account", path: "/online-account" },
-  { icon: <TextSnippetIcon />, label: "Account Type", path: "/account-type" },
+  { icon: <TextSnippetIcon />, label: "Account Type", path: "/admin/Account" },
   { icon: <AccountTreeIcon />, label: "Branches", path: "/admin/branch" },
   { icon: <ArticleIcon />, label: "District", path: "/admin/district" },
   { icon: <ApartmentIcon />, label: "Citites", path: "/admin/cities" },
