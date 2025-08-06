@@ -6,13 +6,14 @@ import FolderIcon from "@mui/icons-material/Folder";
 import TextSnippetIcon from "@mui/icons-material/TextSnippet";
 import PeopleIcon from "@mui/icons-material/People";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
-import FolderOpenIcon from "@mui/icons-material/FolderOpen";
-import PublicIcon from "@mui/icons-material/Public";
-import SettingsIcon from "@mui/icons-material/Settings";
 import LogoutIcon from "@mui/icons-material/Logout";
 import ApartmentIcon from "@mui/icons-material/Apartment";
 import AccountTreeIcon from "@mui/icons-material/AccountTree";
 import ArticleIcon from "@mui/icons-material/Article";
+import FolderSharedIcon from '@mui/icons-material/FolderShared';
+import QrCodeScannerIcon from '@mui/icons-material/QrCodeScanner';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import AutorenewIcon from '@mui/icons-material/Autorenew';
 
 import companyLogo from "../assets/image/company_name.png";
 
@@ -29,9 +30,10 @@ const sidebarIcons = [
     label: "Roles & Access",
     path: "/roles-access",
   },
-  { icon: <FolderOpenIcon />, label: "File Manager", path: "/file-manager" },
-  { icon: <PublicIcon />, label: "Web Portal", path: "/web-portal" },
-  { icon: <SettingsIcon />, label: "Settings", path: "/settings" },
+  { icon: <FolderSharedIcon  />, label: "Permissions", path: "/file-manager" },
+  { icon: <AutorenewIcon />, label: "Activity log", path: "/web-portal" },
+  { icon: <QrCodeScannerIcon/>, label: "Scanned Log", path: "/settings" },
+    { icon: <AccountCircleIcon />, label: "Profile", path: "/Profile" },
   { icon: <LogoutIcon />, label: "Logout", path: "/admin/logout" },
 ];
 

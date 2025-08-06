@@ -250,7 +250,7 @@ export default function CitiesPage() {
         <DialogActions 
         // sx={{ justifyContent: "space-between", px: 3 }}
         >
-          <Box mt={3} textAlign="right" gap={2}>
+          <Box mt={3} textAlign="right" gap={2} sx={{ mr: 2 }} >
               <Button color="error" onClick={handleDialogClose}>
             Cancel
           </Button>

@@ -152,7 +152,7 @@ const EditDistrictForm: React.FC<EditDistrictFormProps> = ({
       />
 
       <Box mt={3} textAlign="right" gap={2}>
-        <Button variant="outlined" color="error" onClick={onClose}>
+        <Button  color="error" onClick={onClose} sx={{ mr: 2 }} >
           Cancel
         </Button>
         <Button variant="contained" color="primary" type="submit">
