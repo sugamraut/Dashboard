@@ -30,9 +30,7 @@ const defaultFormData: FormDataState = {
   district: "",
 };
 
-const AddEditpage: React.FC<EditBranchFormProps> = ({
-  initialData = {},
-}) => {
+const AddEditpage: React.FC<EditBranchFormProps> = ({ initialData = {} }) => {
   const [formData, setFormData] = useState<FormDataState>({
     ...defaultFormData,
     ...initialData,
@@ -46,9 +44,7 @@ const AddEditpage: React.FC<EditBranchFormProps> = ({
     }));
   }, [initialData]);
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -78,6 +74,7 @@ const AddEditpage: React.FC<EditBranchFormProps> = ({
         mx: "auto",
         p: 3,
         borderRadius: 2,
+        bgcolor: "background.paper",
       }}
     >
       {error && (
@@ -130,7 +127,6 @@ const AddEditpage: React.FC<EditBranchFormProps> = ({
           margin="normal"
         />
       </form>
-      
     </Box>
   );
 };

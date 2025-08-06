@@ -131,16 +131,16 @@ const AccountPage: React.FC = () => {
                   <Typography color="error">{error}</Typography>
                 </TableCell>
               </TableRow>
-            ) : filtered.length === 0 ? (
+            ) : data.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={4} align="center">
                   No data found
                 </TableCell>
               </TableRow>
             ) : (
-              data.map((account: any, idx: number) => (
+              data.map((account: any, index: number) => (
                 <TableRow key={account.id}>
-                  <TableCell>{idx + 1}</TableCell>
+                  <TableCell>{index + 1}</TableCell>
                   <TableCell>{account.name}</TableCell>
                   <TableCell>
                     {account.details || account.Details || ""}
@@ -150,7 +150,7 @@ const AccountPage: React.FC = () => {
                     <IconButton onClick={() => handleEdit(account)}>
                       <EditIcon />
                     </IconButton>
-                    <IconButton>
+                    <IconButton color="error">
                       <DeleteIcon />
                     </IconButton>
                   </TableCell>

@@ -5,6 +5,8 @@ import {
   ToggleButton,
   ToggleButtonGroup,
   Tooltip,
+  Typography,
+  Divider,
 } from "@mui/material";
 import Button from "@mui/joy/Button";
 import { useForm } from "react-hook-form";
@@ -20,8 +22,6 @@ import {
   FormatAlignJustify,
   FormatListBulleted,
   FormatListNumbered,
-  Undo,
-  Redo,
 } from "@mui/icons-material";
 import { styled } from "@mui/joy";
 import SvgIcon from "@mui/joy/SvgIcon";
@@ -91,19 +91,46 @@ const AddEditPage = ({ initialData, onSave, onCancel }: AddEditPageProps) => {
     }
   }, [initialData, reset]);
 
-  const execCommand = (command: string, value: any = null) => {
-    document.execCommand(command, false, value);
+  const applyStyle = (tag: keyof HTMLElementTagNameMap) => {
+    const selection = window.getSelection();
+    if (!selection || selection.rangeCount === 0) return;
+    const range = selection.getRangeAt(0);
+    if (range.collapsed) return;
+
+    const wrapper = document.createElement(tag);
+    wrapper.appendChild(range.extractContents());
+    range.insertNode(wrapper);
+
+    range.setStartAfter(wrapper);
+    selection.removeAllRanges();
+    selection.addRange(range);
+  };
+
+  const insertList = (type: "ul" | "ol") => {
+    const selection = window.getSelection();
+    if (!selection || selection.rangeCount === 0) return;
+
+    const range = selection.getRangeAt(0);
+    const contents = range.extractContents();
+    const list = document.createElement(type);
+    const li = document.createElement("li");
+    li.appendChild(contents);
+    list.appendChild(li);
+    range.insertNode(list);
   };
 
   const handleAlignment = (
     _event: React.MouseEvent<HTMLElement>,
     newAlignment: string | null
   ) => {
-    if (newAlignment !== null) {
+    if (newAlignment) {
       setAlignment(newAlignment);
-      document.execCommand(`justify${newAlignment}`, false);
+      if (editorRef.current) {
+        editorRef.current.style.textAlign = newAlignment.toLowerCase();
+      }
     }
   };
+
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -121,7 +148,11 @@ const AddEditPage = ({ initialData, onSave, onCancel }: AddEditPageProps) => {
   };
 
   return (
-    <Box component="form" noValidate onSubmit={handleSubmit(onSubmit)}>
+    <Box component="form" onSubmit={handleSubmit(onSubmit)}>
+      <Typography variant="h5" mb={3}>
+        {initialData?.title ? "Edit Entry" : "Add New Entry"}
+      </Typography>
+
       <TextField
         label="Title"
         fullWidth
@@ -152,86 +183,27 @@ const AddEditPage = ({ initialData, onSave, onCancel }: AddEditPageProps) => {
         helperText={errors.interest?.message}
       />
 
-      <Box sx={{ width: "100%", margin: "20px 0"}} >
-        <Box
-          sx={{
-            borderBottom: "1px solid #ccc",
-            display: "flex",
-            alignItems: "center",
-            gap: 1,
-            padding: 1,
-            flexWrap: "wrap",
-          }}
-        >
-          <ToggleButtonGroup
-            value={alignment}
-            exclusive
-            onChange={handleAlignment}
-            size="small"
-          >
-            <ToggleButton value="Left">
-              <FormatAlignLeft />
-            </ToggleButton>
-            <ToggleButton value="Center">
-              <FormatAlignCenter />
-            </ToggleButton>
-            <ToggleButton value="Right">
-              <FormatAlignRight />
-            </ToggleButton>
-            <ToggleButton value="Full">
-              <FormatAlignJustify />
-            </ToggleButton>
+      <Divider sx={{ my: 3 }} />
+
+      <Typography fontWeight={600} gutterBottom>
+        Details
+      </Typography>
+
+      <Box sx={{ border: "1px solid #ccc", borderRadius: 1, mb: 2 }}>
+        <Box sx={{ borderBottom: "1px solid #ccc", p: 1, display: "flex", gap: 1, flexWrap: "wrap" }}>
+          <ToggleButtonGroup value={alignment} exclusive onChange={handleAlignment} size="small">
+            <ToggleButton value="left"><FormatAlignLeft /></ToggleButton>
+            <ToggleButton value="center"><FormatAlignCenter /></ToggleButton>
+            <ToggleButton value="right"><FormatAlignRight /></ToggleButton>
+            <ToggleButton value="justify"><FormatAlignJustify /></ToggleButton>
           </ToggleButtonGroup>
 
-          <Tooltip title="Bold">
-            <IconButton size="small" onClick={() => execCommand("bold")}>
-              <FormatBold />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title="Italic">
-            <IconButton size="small" onClick={() => execCommand("italic")}>
-              <FormatItalic />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title="Underline">
-            <IconButton size="small" onClick={() => execCommand("underline")}>
-              <FormatUnderlined />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title="Strikethrough">
-            <IconButton
-              size="small"
-              onClick={() => execCommand("strikeThrough")}
-            >
-              <FormatStrikethrough />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title="Bullet List">
-            <IconButton
-              size="small"
-              onClick={() => execCommand("insertUnorderedList")}
-            >
-              <FormatListBulleted />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title="Numbered List">
-            <IconButton
-              size="small"
-              onClick={() => execCommand("insertOrderedList")}
-            >
-              <FormatListNumbered />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title="Undo">
-            <IconButton size="small" onClick={() => execCommand("undo")}>
-              <Undo />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title="Redo">
-            <IconButton size="small" onClick={() => execCommand("redo")}>
-              <Redo />
-            </IconButton>
-          </Tooltip>
+          <Tooltip title="Bold"><IconButton onClick={() => applyStyle("b")}><FormatBold /></IconButton></Tooltip>
+          <Tooltip title="Italic"><IconButton onClick={() => applyStyle("i")}><FormatItalic /></IconButton></Tooltip>
+          <Tooltip title="Underline"><IconButton onClick={() => applyStyle("u")}><FormatUnderlined /></IconButton></Tooltip>
+          <Tooltip title="Strikethrough"><IconButton onClick={() => applyStyle("s")}><FormatStrikethrough /></IconButton></Tooltip>
+          <Tooltip title="Bullet List"><IconButton onClick={() => insertList("ul")}><FormatListBulleted /></IconButton></Tooltip>
+          <Tooltip title="Numbered List"><IconButton onClick={() => insertList("ol")}><FormatListNumbered /></IconButton></Tooltip>
         </Box>
 
         <Box
@@ -240,13 +212,9 @@ const AddEditPage = ({ initialData, onSave, onCancel }: AddEditPageProps) => {
           sx={{
             minHeight: "150px",
             padding: 2,
-            border: "1px solid #ccc",
-            borderRadius: 1,
-            marginTop: 1,
-            overflowY: "auto",
-            fontSize: 14,
+            fontSize: 16,
+            outline: "none",
           }}
-          spellCheck
         />
       </Box>
 
@@ -274,39 +242,41 @@ const AddEditPage = ({ initialData, onSave, onCancel }: AddEditPageProps) => {
         helperText={errors.interestPayment?.message}
       />
 
-      <Button
-        component="label"
-        fullWidth
-        variant="outlined"
-        color="neutral"
-        startDecorator={
-          <SvgIcon>
-            <svg
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3
-                  M6.75 19.5a4.5 4.5 0 01-1.41-8.775
-                  5.25 5.25 0 0110.233-2.33
-                  3 3 0 013.758 3.848
-                  A3.752 3.752 0 0118 19.5H6.75z"
-              />
-            </svg>
-          </SvgIcon>
-        }
-      >
-        Upload a file
-        <VisuallyHiddenInput type="file" onChange={handleFileUpload} />
-      </Button>
-      {uploadFileName && <Box mt={1}>Selected file: {uploadFileName}</Box>}
+      <Box mt={2}>
+        <Button
+          component="label"
+          fullWidth
+          variant="outlined"
+          color="neutral"
+          startDecorator={
+            <SvgIcon>
+              <svg
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3
+                    M6.75 19.5a4.5 4.5 0 01-1.41-8.775
+                    5.25 5.25 0 0110.233-2.33
+                    3 3 0 013.758 3.848
+                    A3.752 3.752 0 0118 19.5H6.75z"
+                />
+              </svg>
+            </SvgIcon>
+          }
+        >
+          Upload a file
+          <VisuallyHiddenInput type="file" onChange={handleFileUpload} />
+        </Button>
+        {uploadFileName && <Typography mt={1}>Selected file: {uploadFileName}</Typography>}
+      </Box>
 
-      <Box display="flex" justifyContent="flex-end" gap={2} mt={3}>
-        <Button variant="outlined" color="neutral" onClick={onCancel}>
+      <Box display="flex" justifyContent="flex-end" gap={2} mt={4} color="error">
+        <Button variant="outlined"  onClick={onCancel} >
           Cancel
         </Button>
         <Button type="submit" variant="solid" color="primary">
