@@ -72,7 +72,7 @@ const AddEditpage: React.FC<EditBranchFormProps> = ({ initialData = {} }) => {
       sx={{
         maxWidth: 1000,
         mx: "auto",
-        p: 3,
+        p: 2,
         borderRadius: 2,
         bgcolor: "background.paper",
       }}

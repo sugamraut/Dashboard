@@ -248,12 +248,12 @@ const EditUser: React.FC<EditUserProps> = ({ open, handleClose, userId }) => {
           />
 
           
-          <Box mt={2} display="flex" justifyContent="flex-end" gap={2}>
-            <Button variant="outlined" color="secondary" onClick={handleClose}>
+          <Box mt={3} textAlign="right" gap={2}>
+            <Button variant="outlined" color="error" onClick={handleClose} sx={{ mr: 2 }} >
               Cancel
             </Button>
             <Button variant="contained" color="primary" type="submit">
-              Update
+             Submit
             </Button>
           </Box>
         </form>

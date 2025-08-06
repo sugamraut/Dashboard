@@ -183,11 +183,11 @@ const BranchFormModal: React.FC<BranchFormModalProps> = ({
           </FormControl>
 
           <Box mt={3} textAlign="right">
-            <Button onClick={onClose} sx={{ mr: 2 }} disabled={submitting}>
+            <Button onClick={onClose} sx={{ mr: 2 }} >
               Cancel
             </Button>
-            <Button variant="contained" type="submit" disabled={submitting}>
-              {initialData ? "Update" : "Add"}
+            <Button variant="contained" type="submit" >
+              {initialData ? "Submit" : "Save"}
             </Button>
           </Box>
         </form>

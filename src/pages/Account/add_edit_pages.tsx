@@ -276,11 +276,11 @@ const AddEditPage = ({ initialData, onSave, onCancel }: AddEditPageProps) => {
       </Box>
 
       <Box display="flex" justifyContent="flex-end" gap={2} mt={4} color="error">
-        <Button variant="outlined"  onClick={onCancel} >
+        <Button variant="outlined" color="error" onClick={onCancel} >
           Cancel
         </Button>
         <Button type="submit" variant="solid" color="primary">
-          {initialData?.title ? "Update" : "Save"}
+          {initialData?.title ? "Submit" : "Save"}
         </Button>
       </Box>
     </Box>

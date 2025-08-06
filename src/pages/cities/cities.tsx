@@ -247,7 +247,13 @@ export default function CitiesPage() {
             onClose={handleDialogClose}
           />
         </DialogContent>
-        <DialogActions sx={{ justifyContent: "space-between", px: 3 }}>
+        <DialogActions 
+        // sx={{ justifyContent: "space-between", px: 3 }}
+        >
+          <Box mt={3} textAlign="right" gap={2}>
+              <Button color="error" onClick={handleDialogClose}>
+            Cancel
+          </Button>
           <Button
             variant="contained"
             color="primary"
@@ -255,9 +261,10 @@ export default function CitiesPage() {
           >
             Submit
           </Button>
-          <Button color="error" onClick={handleDialogClose}>
-            Cancel
-          </Button>
+
+          </Box>
+        
+          
         </DialogActions>
       </Dialog>
     </Box>
