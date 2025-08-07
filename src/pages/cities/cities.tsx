@@ -187,11 +187,11 @@ export default function CitiesPage() {
         <Table size="small">
           <TableHead>
             <TableRow>
-              <TableCell>#</TableCell>
-              <TableCell>Name</TableCell>
-              <TableCell>State</TableCell>
-              <TableCell>District</TableCell>
-              <TableCell align="center">Actions</TableCell>
+              <TableCell className="table-header">#</TableCell>
+              <TableCell className="table-header">Name</TableCell>
+              <TableCell className="table-header">State</TableCell>
+              <TableCell className="table-header">District</TableCell>
+              <TableCell align="center" className="table-header">Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -204,11 +204,11 @@ export default function CitiesPage() {
             ) : (
               paginatedCities.map((city) => (
                 <TableRow key={city.id}>
-                  <TableCell>{city.id}</TableCell>
-                  <TableCell>{city.name || city.nameCombined}</TableCell>
-                  <TableCell>{city.state || "N/A"}</TableCell>
-                  <TableCell>{city.district || "N/A"}</TableCell>
-                  <TableCell align="center">
+                  <TableCell className="table-data">{city.id}</TableCell>
+                  <TableCell className="table-data">{city.name || city.nameCombined}</TableCell>
+                  <TableCell className="table-data">{city.state || "N/A"}</TableCell>
+                  <TableCell className="table-data">{city.district || "N/A"}</TableCell>
+                  <TableCell align="center" className="table-data">
                     <IconButton
                       color="primary"
                       onClick={() => handleEditClick(city)}

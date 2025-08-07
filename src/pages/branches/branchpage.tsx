@@ -101,12 +101,12 @@ export default function BranchesPage() {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>#</TableCell>
-              <TableCell>Branch Name</TableCell>
-              <TableCell>Code</TableCell>
-              <TableCell>District</TableCell>
-              <TableCell>State</TableCell>
-              <TableCell>Actions</TableCell>
+              <TableCell className="table-header">#</TableCell>
+              <TableCell className="table-header">Branch Name</TableCell>
+              <TableCell className="table-header">Code</TableCell>
+              <TableCell className="table-header">District</TableCell>
+              <TableCell className="table-header">State</TableCell>
+              <TableCell className="table-header">Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -118,12 +118,12 @@ export default function BranchesPage() {
 
             {filteredBranches.map((branch, i) => (
               <TableRow key={branch.id}>
-                <TableCell>{i + 1}</TableCell>
-                <TableCell>{branch.name}</TableCell>
-                <TableCell>{branch.code || "--"}</TableCell>
-                <TableCell>{branch.district}</TableCell>
-                <TableCell>{branch.state}</TableCell>
-                <TableCell>
+                <TableCell className="table-data">{i + 1}</TableCell>
+                <TableCell className="table-data">{branch.name}</TableCell>
+                <TableCell className="table-data">{branch.code || "--"}</TableCell>
+                <TableCell className="table-data">{branch.district}</TableCell>
+                <TableCell className="table-data">{branch.state}</TableCell>
+                <TableCell className="table-data">
                   <IconButton onClick={() => openModal(branch)}>
                     <EditIcon />
                   </IconButton>

@@ -112,10 +112,10 @@ const AccountPage: React.FC = () => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>#</TableCell>
-              <TableCell>Title</TableCell>
-              <TableCell>Details</TableCell>
-              <TableCell>Action</TableCell>
+              <TableCell className="table-header">#</TableCell>
+              <TableCell className="table-header">Title</TableCell>
+              <TableCell className="table-header">Details</TableCell>
+              <TableCell className="table-header">Action</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -140,13 +140,13 @@ const AccountPage: React.FC = () => {
             ) : (
               data.map((account: any, index: number) => (
                 <TableRow key={account.id}>
-                  <TableCell>{index + 1}</TableCell>
-                  <TableCell>{account.name}</TableCell>
-                  <TableCell>
+                  <TableCell className="table-data">{index + 1}</TableCell>
+                  <TableCell className="table-data">{account.name}</TableCell>
+                  <TableCell className="table-data">
                     {account.details || account.Details || ""}
                   </TableCell>
                   console.log({account});
-                  <TableCell>
+                  <TableCell className="table-data">
                     <IconButton onClick={() => handleEdit(account)}>
                       <EditIcon />
                     </IconButton>

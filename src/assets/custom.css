@@ -1,7 +1,6 @@
 body {
   font-family:
-    "Noto Sans Devanagari",
-    "lato",
+    "lato ",
     Segoe UI;
 }
 
@@ -63,9 +62,9 @@ body {
   margin-bottom: 2px;
 }
 .table-header {
-  font-size: 24px !important;
+  font-size: 20px !important;
   font-weight: bold !important;
-  color: #456ee7 !important;
+  color: #043BA0 !important;
 }
 
 .editBoxforBranch {
@@ -79,4 +78,8 @@ body {
     rgba(0, 0, 0, 0.2) 0px 12px 38px 0px,
     rgba(0, 0, 0, 0.14) 0px 18px 46px 0px,
     rgba(0, 0, 0, 0.12) 0px 7px 15px 0px;
+}
+
+.table-data{
+  font-size: 18px !important;
 }

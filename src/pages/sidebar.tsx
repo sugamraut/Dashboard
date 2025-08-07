@@ -30,7 +30,7 @@ const sidebarIcons = [
     label: "Roles & Access",
     path: "/roles-access",
   },
-  { icon: <FolderSharedIcon  />, label: "Permissions", path: "/file-manager" },
+  { icon: <FolderSharedIcon  />, label: "Permissions", path: "/admin/permission" },
   { icon: <AutorenewIcon />, label: "Activity log", path: "/web-portal" },
   { icon: <QrCodeScannerIcon/>, label: "Scanned Log", path: "/settings" },
     { icon: <AccountCircleIcon />, label: "Profile", path: "/Profile" },

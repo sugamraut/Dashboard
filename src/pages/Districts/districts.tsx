@@ -164,7 +164,7 @@ export default function DistrictPage() {
       </Box>
 
       <TableContainer component={Paper}>
-        <Table>
+        <Table size="small">
           <TableHead>
             <TableRow>
               <TableCell className="table-header">#</TableCell>
@@ -185,15 +185,15 @@ export default function DistrictPage() {
               </TableRow>
             ) : (
               districtList.map((district) => (
-                <TableRow key={district.id}>
-                  <TableCell>{district.id}</TableCell>
+                <TableRow key={district.id} >
+                  <TableCell className="table-data"sx={{fontSize:"18px",}}>{district.id}</TableCell>
 
-                  <TableCell>{district.name}</TableCell>
-                  <TableCell>{district.state?.name || "N/A"}</TableCell>
+                  <TableCell className="table-data">{district.name}</TableCell>
+                  <TableCell className="table-data">{district.state?.name || "N/A"}</TableCell>
                   {/* <TableCell>
                     {district.nameCombined || district.name}
                   </TableCell> */}
-                  <TableCell align="center">
+                  <TableCell align="center" className="table-data">
                     <IconButton
                       color="primary"
                       onClick={() => handleEditClick(district)}

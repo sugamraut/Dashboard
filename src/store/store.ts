@@ -6,6 +6,7 @@ import branch from "./branchSlice/BranchSlice"
 import User from "./user/userSlice"
 // import Account from "./Account/AccountSlice"
 import accountTypes from "./Account/AccountSlice"
+import permissions from "./Permission/permissionSlice"
 
 const store=configureStore({
     reducer:{
@@ -14,7 +15,8 @@ const store=configureStore({
       city:city,
       branch:branch,
       User:User,
-      accountTypes:accountTypes
+      accountTypes:accountTypes,
+      permissions:permissions,
 
     }
 })
