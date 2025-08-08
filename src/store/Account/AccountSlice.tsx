@@ -1,13 +1,14 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { server_Url } from "../../globals/config";
+import API from "../../http";
 
 export interface AccountType {
   id: number;
-  name: string;
+  title: string;
   Details?: string;
   code?: string;
-  Descripition?: string;
+  description?: string;
   details?: string;
   interest?: string;
 }
@@ -18,18 +19,28 @@ interface FetchParams {
   sortBy: string;
   sortOrder: "asc" | "desc";
 }
+export interface UploadedFile {
+  fileKey: string;
+  originalName: string;
+  id: number;
+  createdDate: string;
+  updatedDate: string;
+  isDeleted: number;
+}
 
 interface AccountTypeResponse {
   data: AccountType[];
   total: number;
 }
 
-interface AccountStates {
+interface AccountTypesState {
+  metaData: any;
   data: AccountType[];
-  total:number
-  metaData: {
-    total: number | string;
-  };
+  total: number;
+  loading: boolean;
+  error: string | null;
+  selected: AccountType | null;
+  uploadedFiles?: UploadedFile[];
 }
 
 interface AccountTypesState {
@@ -46,6 +57,8 @@ const initialState: AccountTypesState = {
   loading: false,
   error: null,
   selected: null,
+  uploadedFiles: [],
+  metaData: [],
 };
 
 export const fetchAccountTypes = createAsyncThunk<
@@ -56,7 +69,7 @@ export const fetchAccountTypes = createAsyncThunk<
   "accountTypes/fetchAll",
   async ({ page, rowsPerPage, sortBy, sortOrder }, { rejectWithValue }) => {
     try {
-      const resp = await axios.get<AccountStates>(
+      const resp = await axios.get<AccountTypesState>(
         `${server_Url}/api/v1/account-types`,
         {
           params: { page, rowsPerPage, sortBy, sortOrder },
@@ -113,15 +126,42 @@ export const deleteAccountType = createAsyncThunk<
   }
 });
 
+export const fetchAccountTypeFiles = createAsyncThunk<
+  UploadedFile[],
+  void,
+  { rejectValue: string }
+>("accountTypes/fetchFiles", async (_, { rejectWithValue }) => {
+  try {
+    const resp = await axios.get(
+      `${server_Url}/api/v1/file-upload/ACCOUNT-TYPE`
+    );
+    return resp.data ;
+  } catch (err: any) {
+    return rejectWithValue(err.message || "Failed to fetch uploaded files");
+  }
+});
+
+export const postTheData=createAsyncThunk<AccountType,{rejectValue:string}>(
+  "accountType/postfile",async(_,{rejectWithValue})=>{
+    try {
+      const resp= await API.post("/api/v1/account-types")
+      return resp.data;
+
+    } catch (error) {
+      
+    }
+  }
+)
+
 const accountTypesSlice = createSlice({
   name: "accountTypes",
   initialState,
   reducers: {
-    clearSelected(state) {
-      state.selected = null;
-      state.error = null;
-      state.loading = false;
-    },
+    // clearSelected(state) {
+    //   state.selected = null;
+    //   state.error = null;
+    //   state.loading = false;
+    // },
   },
   extraReducers: (builder) => {
     builder
@@ -185,9 +225,20 @@ const accountTypesSlice = createSlice({
       })
       .addCase(deleteAccountType.rejected, (state, action) => {
         state.error = action.payload ?? "Failed to delete account type";
+      })
+      .addCase(fetchAccountTypeFiles.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchAccountTypeFiles.fulfilled, (state, action) => {
+        state.loading = false;
+        state.uploadedFiles = action.payload;
+      })
+      .addCase(fetchAccountTypeFiles.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload ?? "Failed to fetch uploaded files";
       });
   },
 });
 
-export const { clearSelected } = accountTypesSlice.actions;
 export default accountTypesSlice.reducer;

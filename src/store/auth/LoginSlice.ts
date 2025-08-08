@@ -58,8 +58,8 @@ export function fetchAuthAsync(data: { username: string; password: string; }) {
             const response =await axios.post(`${server_Url}/api/v1/auth/login`,data)
 
             if (response.status === 200 || response.status === 201) {
-                dispatch(setToken(response.data.accessToken))
-                console.log("Login successful", response.data);
+                // dispatch(setToken(response.data.accessToken))
+                localStorage.setItem("jwt", response.data.accessToken);
                 dispatch(setAuth(response.data));
                 dispatch(setStatus(Status.Success))
             } else {

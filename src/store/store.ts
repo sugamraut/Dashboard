@@ -6,9 +6,14 @@ import branch from "./branchSlice/BranchSlice"
 import User from "./user/userSlice"
 // import Account from "./Account/AccountSlice"
 import accountTypes from "./Account/AccountSlice"
-import permissions from "./Permission/permissionSlice"
+import Permissions from "../store/Permission/permissionSlice";
 
-const store=configureStore({
+
+
+
+
+
+const store = configureStore({
     reducer:{
       auth:auth,
       district:district,
@@ -16,8 +21,7 @@ const store=configureStore({
       branch:branch,
       User:User,
       accountTypes:accountTypes,
-      permissions:permissions,
-
+      permissions:Permissions,
     }
 })
 export default store

@@ -11,6 +11,9 @@ import { useEffect, useState } from "react";
 import type { AppDispatch, RootState } from "../../store/store";
 import {
   Box,
+  Dialog,
+  DialogContent,
+  DialogTitle,
   IconButton,
   Paper,
   Stack,
@@ -160,9 +163,7 @@ const Permissions: React.FC = () => {
             )}
           </TableBody>
         </Table>
-      </TableContainer>
-
-      <TablePagination
+           <TablePagination
         component="div"
         count={metaData?.total || 0}
         page={page}
@@ -171,6 +172,19 @@ const Permissions: React.FC = () => {
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
+      </TableContainer>
+      <Dialog open={false}>
+        <DialogTitle>
+          Add Premission
+        </DialogTitle>
+        <DialogContent dividers>
+          initialData={}
+          on onClose={}
+
+        </DialogContent>
+      </Dialog>
+
+   
     </Box>
   );
 };

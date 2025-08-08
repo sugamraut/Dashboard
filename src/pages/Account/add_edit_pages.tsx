@@ -7,8 +7,12 @@ import {
   Tooltip,
   Typography,
   Divider,
+  Stack,
 } from "@mui/material";
 import Button from "@mui/joy/Button";
+
+import DeleteIcon from "@mui/icons-material/Delete";
+
 import { useForm } from "react-hook-form";
 import { useEffect, useRef, useState } from "react";
 import {
@@ -56,6 +60,7 @@ const AddEditPage = ({ initialData, onSave, onCancel }: AddEditPageProps) => {
   const editorRef = useRef<HTMLDivElement>(null);
   const [alignment, setAlignment] = useState("left");
   const [uploadFileName, setUploadFileName] = useState<string | undefined>("");
+  // const [uploadFileName, setUploadFileName] = useState(null);
 
   const {
     register,
@@ -131,7 +136,6 @@ const AddEditPage = ({ initialData, onSave, onCancel }: AddEditPageProps) => {
     }
   };
 
-
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -145,6 +149,9 @@ const AddEditPage = ({ initialData, onSave, onCancel }: AddEditPageProps) => {
       ...data,
       details: editorRef.current?.innerHTML || "",
     });
+  };
+   const handleDeleteFile = () => {
+    setUploadFileName("");
   };
 
   return (
@@ -190,20 +197,65 @@ const AddEditPage = ({ initialData, onSave, onCancel }: AddEditPageProps) => {
       </Typography>
 
       <Box sx={{ border: "1px solid #ccc", borderRadius: 1, mb: 2 }}>
-        <Box sx={{ borderBottom: "1px solid #ccc", p: 1, display: "flex", gap: 1, flexWrap: "wrap" }}>
-          <ToggleButtonGroup value={alignment} exclusive onChange={handleAlignment} size="small">
-            <ToggleButton value="left"><FormatAlignLeft /></ToggleButton>
-            <ToggleButton value="center"><FormatAlignCenter /></ToggleButton>
-            <ToggleButton value="right"><FormatAlignRight /></ToggleButton>
-            <ToggleButton value="justify"><FormatAlignJustify /></ToggleButton>
+        <Box
+          sx={{
+            borderBottom: "1px solid #ccc",
+            p: 1,
+            display: "flex",
+            gap: 1,
+            flexWrap: "wrap",
+          }}
+        >
+          <ToggleButtonGroup
+            value={alignment}
+            exclusive
+            onChange={handleAlignment}
+            size="small"
+          >
+            <ToggleButton value="left">
+              <FormatAlignLeft />
+            </ToggleButton>
+            <ToggleButton value="center">
+              <FormatAlignCenter />
+            </ToggleButton>
+            <ToggleButton value="right">
+              <FormatAlignRight />
+            </ToggleButton>
+            <ToggleButton value="justify">
+              <FormatAlignJustify />
+            </ToggleButton>
           </ToggleButtonGroup>
 
-          <Tooltip title="Bold"><IconButton onClick={() => applyStyle("b")}><FormatBold /></IconButton></Tooltip>
-          <Tooltip title="Italic"><IconButton onClick={() => applyStyle("i")}><FormatItalic /></IconButton></Tooltip>
-          <Tooltip title="Underline"><IconButton onClick={() => applyStyle("u")}><FormatUnderlined /></IconButton></Tooltip>
-          <Tooltip title="Strikethrough"><IconButton onClick={() => applyStyle("s")}><FormatStrikethrough /></IconButton></Tooltip>
-          <Tooltip title="Bullet List"><IconButton onClick={() => insertList("ul")}><FormatListBulleted /></IconButton></Tooltip>
-          <Tooltip title="Numbered List"><IconButton onClick={() => insertList("ol")}><FormatListNumbered /></IconButton></Tooltip>
+          <Tooltip title="Bold">
+            <IconButton onClick={() => applyStyle("b")}>
+              <FormatBold />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Italic">
+            <IconButton onClick={() => applyStyle("i")}>
+              <FormatItalic />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Underline">
+            <IconButton onClick={() => applyStyle("u")}>
+              <FormatUnderlined />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Strikethrough">
+            <IconButton onClick={() => applyStyle("s")}>
+              <FormatStrikethrough />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Bullet List">
+            <IconButton onClick={() => insertList("ul")}>
+              <FormatListBulleted />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Numbered List">
+            <IconButton onClick={() => insertList("ol")}>
+              <FormatListNumbered />
+            </IconButton>
+          </Tooltip>
         </Box>
 
         <Box
@@ -272,11 +324,24 @@ const AddEditPage = ({ initialData, onSave, onCancel }: AddEditPageProps) => {
           Upload a file
           <VisuallyHiddenInput type="file" onChange={handleFileUpload} />
         </Button>
-        {uploadFileName && <Typography mt={1}>Selected file: {uploadFileName}</Typography>}
+        {uploadFileName && (
+          <Typography mt={1} display="flex" className="justify-content-between">
+            Selected file: {uploadFileName}{" "}
+            <IconButton color="error" onClick={handleDeleteFile}>
+              <DeleteIcon />
+            </IconButton>
+          </Typography>
+        )}
       </Box>
 
-      <Box display="flex" justifyContent="flex-end" gap={2} mt={4} color="error">
-        <Button  color="danger" onClick={onCancel} >
+      <Box
+        display="flex"
+        justifyContent="flex-end"
+        gap={2}
+        mt={4}
+        color="error"
+      >
+        <Button color="danger" onClick={onCancel}>
           Cancel
         </Button>
         <Button type="submit" variant="solid" color="primary">

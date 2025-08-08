@@ -26,9 +26,9 @@ const Cities = lazyWithDelay(() => import("../pages/cities/cities"));
 const Demo = lazyWithDelay(() => import("../pages/demo"));
 const User=lazyWithDelay(()=>import("../pages/users/users"))
 const Account =lazyWithDelay(()=>import("../pages/Account/AccountPage"))
-const Xyz =lazyWithDelay(()=>import("../xyz"))
+// const Xyz =lazyWithDelay(()=>import("../xyz"))
 const Permission = lazyWithDelay(()=>import("../pages/Permissions/permissions"))
-
+const Add =lazyWithDelay(()=>import("../pages/Permissions/Add_edit_page"))
 
 const withSuspense = (
   Component: React.LazyExoticComponent<React.ComponentType<any>>
@@ -56,8 +56,9 @@ const router = createBrowserRouter([
           { path: "demo", element: withSuspense(Demo) },
           {path:"User",element:withSuspense(User)},
           {path:"Account",element:withSuspense(Account)},
-          {path:"xyz",element:withSuspense(Xyz)},
+          // {path:"xyz",element:withSuspense(Xyz)},
           {path:"permission",element:withSuspense(Permission)},
+          {path:"Add",element:withSuspense(Add)}
         ],
       },
     ],

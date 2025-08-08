@@ -15,7 +15,9 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
+  TablePagination,
 } from "@mui/material";
+
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -36,7 +38,7 @@ const AccountPage: React.FC = () => {
     error,
     loading,
   } = useAppSelector((state) => state.accountTypes);
-  const data=useSelector((state:RootState)=>state.accountTypes.data)||null
+  const data = useSelector((state: RootState) => state.accountTypes.data) || [];
 
   const [searchQuery, setSearchQuery] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -44,19 +46,30 @@ const AccountPage: React.FC = () => {
     null
   );
 
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(25);
+
+
   useEffect(() => {
     dispatch(
       fetchAccountTypes({
         page: 1,
-        rowsPerPage: 10,
+        rowsPerPage: 1000, 
         sortBy: "id",
         sortOrder: "asc",
       })
     );
   }, [dispatch]);
 
-  const filtered = accountTypes.filter((a) =>
-    a.name.toLowerCase().includes(searchQuery.toLowerCase())
+  
+  const filtered = data.filter((a) =>
+    (a.title ?? "").toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+ 
+  const paginated = filtered.slice(
+    page * rowsPerPage,
+    page * rowsPerPage + rowsPerPage
   );
 
   const handleAdd = () => {
@@ -89,18 +102,37 @@ const AccountPage: React.FC = () => {
     handleClose();
   };
 
+  const handleChangePage = (_: unknown, newPage: number) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
   return (
     <Box marginLeft={10} padding={2}>
       <Box className="header">
         <Typography variant="h5" fontWeight="bold" marginBottom={2}>
           Account Types
         </Typography>
-        <Stack direction="row" spacing={2} alignItems="center" marginBottom={2}>
+        <Stack
+          direction="row"
+          spacing={2}
+          alignItems="center"
+          marginBottom={2}
+        >
           <TextField
             size="small"
             placeholder="Search"
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              setPage(0); 
+            }}
           />
           <IconButton color="primary" onClick={handleAdd}>
             <AddCircleIcon />
@@ -131,23 +163,29 @@ const AccountPage: React.FC = () => {
                   <Typography color="error">{error}</Typography>
                 </TableCell>
               </TableRow>
-            ) : data.length === 0 ? (
+            ) : paginated.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={4} align="center">
                   No data found
                 </TableCell>
               </TableRow>
             ) : (
-              data.map((account: any, index: number) => (
+              paginated.map((account: AccountType, index: number) => (
                 <TableRow key={account.id}>
-                  <TableCell className="table-data">{index + 1}</TableCell>
-                  <TableCell className="table-data">{account.name}</TableCell>
                   <TableCell className="table-data">
-                    {account.details || account.Details || ""}
+                    {page * rowsPerPage + index + 1}
                   </TableCell>
-                  console.log({account});
                   <TableCell className="table-data">
-                    <IconButton onClick={() => handleEdit(account)}>
+                    {account.title} : {account.code}
+                  </TableCell>
+                  <TableCell className="table-data">
+                    Interest: {account.interest || account.details || ""}
+                  </TableCell>
+                  <TableCell className="table-data">
+                    <IconButton
+                      onClick={() => handleEdit(account)}
+                      color="primary"
+                    >
                       <EditIcon />
                     </IconButton>
                     <IconButton color="error">
@@ -160,6 +198,17 @@ const AccountPage: React.FC = () => {
           </TableBody>
         </Table>
       </TableContainer>
+
+      <TablePagination
+        rowsPerPageOptions={[5, 10, 25, 50]}
+        component="div"
+        count={filtered.length}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+      />
+  
       <Dialog open={dialogOpen} fullWidth maxWidth="md" onClose={handleClose}>
         <DialogTitle>
           {editingAccount ? "Edit Account" : "Add Account"}
@@ -167,7 +216,7 @@ const AccountPage: React.FC = () => {
         <DialogContent dividers>
           <AddEditPage
             initialData={{
-              title: editingAccount?.name || "",
+              title: editingAccount?.title || "",
               code: editingAccount?.code || "",
               interest: editingAccount?.interest || "",
               details: editingAccount?.details || "",
