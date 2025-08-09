@@ -11,6 +11,9 @@ export interface AccountType {
   description?: string;
   details?: string;
   interest?: string;
+  minBalance?:string;
+  insurance?:string;
+  imageUrl?:string;
 }
 
 interface FetchParams {
@@ -19,6 +22,7 @@ interface FetchParams {
   sortBy: string;
   sortOrder: "asc" | "desc";
 }
+
 export interface UploadedFile {
   fileKey: string;
   originalName: string;
@@ -36,6 +40,7 @@ interface AccountTypeResponse {
 interface AccountTypesState {
   metaData: any;
   data: AccountType[];
+
   total: number;
   loading: boolean;
   error: string | null;
@@ -141,14 +146,15 @@ export const fetchAccountTypeFiles = createAsyncThunk<
   }
 });
 
-export const postTheData=createAsyncThunk<AccountType,{rejectValue:string}>(
-  "accountType/postfile",async(_,{rejectWithValue})=>{
-    try {
-      const resp= await API.post("/api/v1/account-types")
-      return resp.data;
 
-    } catch (error) {
-      
+export const PostAccountType = createAsyncThunk(
+  'accountTypes/fetchAccountTypes',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await API.post("/api/v1/account-types")
+      return response.data
+    } catch (err:any) {
+      return rejectWithValue(err.response?.data || err.message)
     }
   }
 )
@@ -156,13 +162,7 @@ export const postTheData=createAsyncThunk<AccountType,{rejectValue:string}>(
 const accountTypesSlice = createSlice({
   name: "accountTypes",
   initialState,
-  reducers: {
-    // clearSelected(state) {
-    //   state.selected = null;
-    //   state.error = null;
-    //   state.loading = false;
-    // },
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder
 
@@ -237,7 +237,19 @@ const accountTypesSlice = createSlice({
       .addCase(fetchAccountTypeFiles.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload ?? "Failed to fetch uploaded files";
-      });
+      })
+       .addCase(PostAccountType .pending, (state) => {
+        state.loading = true
+        state.error = null
+      })
+      .addCase(PostAccountType.fulfilled, (state, action) => {
+        state.loading = false;
+        state.data = action.payload
+      })
+      .addCase(PostAccountType.rejected, (state, action) => {
+        state.loading = false
+        state.error = action.payload as string
+      })
   },
 });
 

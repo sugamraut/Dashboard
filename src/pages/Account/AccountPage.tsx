@@ -42,10 +42,7 @@ const AccountPage: React.FC = () => {
 
   const [searchQuery, setSearchQuery] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [editingAccount, setEditingAccount] = useState<AccountType | null>(
-    null
-  );
-
+  const [editingAccount, setEditingAccount] = useState<AccountType | null>(null);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(25);
 
@@ -219,7 +216,10 @@ const AccountPage: React.FC = () => {
               title: editingAccount?.title || "",
               code: editingAccount?.code || "",
               interest: editingAccount?.interest || "",
-              details: editingAccount?.details || "",
+              details: editingAccount?.description || "",
+              minimumblance:editingAccount?.minBalance ||"",
+              insurance:editingAccount?.insurance || "",
+              imageUrl:editingAccount?.imageUrl || "",
             }}
             onSave={handleSave}
             onCancel={handleClose}

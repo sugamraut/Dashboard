@@ -49,8 +49,8 @@ interface AddEditPageProps {
     interest?: string;
     details?: string;
     minimumblance?: string;
-    interestPayment?: string;
-    upload?: string;
+    insurance?: string;
+    imageUrl?: string;
   };
   onSave: (data: any) => void;
   onCancel: () => void;
@@ -76,6 +76,7 @@ const AddEditPage = ({ initialData, onSave, onCancel }: AddEditPageProps) => {
       minimumblance: "",
       interestPayment: "",
       upload: "",
+
     },
   });
 
@@ -86,13 +87,13 @@ const AddEditPage = ({ initialData, onSave, onCancel }: AddEditPageProps) => {
         code: initialData.code || "",
         interest: initialData.interest || "",
         minimumblance: initialData.minimumblance || "",
-        interestPayment: initialData.interestPayment || "",
-        upload: initialData.upload || "",
+        interestPayment: initialData.insurance|| "",
+        upload: initialData.imageUrl || "",
       });
       if (editorRef.current) {
         editorRef.current.innerHTML = initialData.details || "";
       }
-      setUploadFileName(initialData.upload);
+      setUploadFileName(initialData.imageUrl);
     }
   }, [initialData, reset]);
 
