@@ -102,7 +102,7 @@ export default function DistrictPage() {
     setSelectedState(null);
     setSearch("");
     setPage(0);
-    dispatch(fetchDistrictAsync(1, rowsPerPage, "", "")); 
+    dispatch(fetchDistrictAsync(1, rowsPerPage, "", ""));
   };
 
   const handleStateFilterChange = (_: any, newValue: any) => {
@@ -185,14 +185,15 @@ export default function DistrictPage() {
               </TableRow>
             ) : (
               districtList.map((district) => (
-                <TableRow key={district.id} >
-                  <TableCell className="table-data"sx={{fontSize:"18px",}}>{district.id}</TableCell>
+                <TableRow key={district.id}>
+                  <TableCell className="table-data" sx={{ fontSize: "18px" }}>
+                    {district.id}
+                  </TableCell>
 
                   <TableCell className="table-data">{district.name}</TableCell>
-                  <TableCell className="table-data">{district.state?.name || "N/A"}</TableCell>
-                  {/* <TableCell>
-                    {district.nameCombined || district.name}
-                  </TableCell> */}
+                  <TableCell className="table-data">
+                    {district.state?.name || "N/A"}
+                  </TableCell>
                   <TableCell align="center" className="table-data">
                     <IconButton
                       color="primary"

@@ -85,16 +85,23 @@ const AccountPage: React.FC = () => {
   };
 
   const handleSave = (data: {
+    id:number;
     title: string;
     code: string;
     interest: string;
-    details: string;
+    description: string;
+    minBalance:string;
+    insurance:string;
+    imageUrl:string;
   }) => {
     console.log(editingAccount ? "Update" : "Add new", {
       name: data.title,
       code: data.code,
       interest: data.interest,
-      details: data.details,
+      description: data.description,
+      minBalance:data.minBalance,
+      insurance:data.insurance,
+      imageUrl:data.imageUrl,
     });
     handleClose();
   };

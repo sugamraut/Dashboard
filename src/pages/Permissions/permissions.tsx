@@ -1,13 +1,13 @@
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import FilterAltOffIcon from "@mui/icons-material/FilterAltOff";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { useDispatch, useSelector } from "react-redux";
+import { useEffect, useState } from "react";
 import {
   fetchPermissions,
   type Permission,
 } from "../../store/Permission/permissionSlice";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
-import { useEffect, useState } from "react";
 import type { AppDispatch, RootState } from "../../store/store";
 import {
   Box,
@@ -27,6 +27,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import AddEditPage from "./Add_edit_page";
 
 const Permissions: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -37,6 +38,11 @@ const Permissions: React.FC = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(25);
   const [searchQuery, setSearchQuery] = useState("");
+
+  const [openDialog, setOpenDialog] = useState(false);
+  const [editingPermission, setEditingPermission] = useState<Permission | null>(
+    null
+  );
 
   useEffect(() => {
     dispatch(
@@ -57,7 +63,7 @@ const Permissions: React.FC = () => {
   const handleChangeRowsPerPage = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    setRowsPerPage(parseInt(event.target.value, 25));
+    setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
 
@@ -73,6 +79,21 @@ const Permissions: React.FC = () => {
         sortOrder: "desc",
       })
     );
+  };
+
+  const handleAddClick = () => {
+    setEditingPermission(null);
+    setOpenDialog(true);
+  };
+
+  const handleEditClick = (permission: Permission) => {
+    setEditingPermission(permission);
+    setOpenDialog(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+    setEditingPermission(null);
   };
 
   return (
@@ -106,13 +127,15 @@ const Permissions: React.FC = () => {
             <FilterAltOffIcon />
           </IconButton>
 
-          <IconButton color="primary" title="Add Permission">
+          <IconButton
+            color="primary"
+            title="Add Permission"
+            onClick={handleAddClick}
+          >
             <AddCircleIcon />
           </IconButton>
         </Stack>
       </Box>
-
-      {loading && <Typography>Loading permissions...</Typography>}
       {error && (
         <Typography color="error" mb={2}>
           Error: {error}
@@ -125,27 +148,24 @@ const Permissions: React.FC = () => {
             <TableRow>
               <TableCell className="table-header">#</TableCell>
               <TableCell className="table-header">Display Name</TableCell>
-              <TableCell className="table-header">Name</TableCell>
-
+              <TableCell className="table-header">Acction Type</TableCell>
               <TableCell className="table-header">Group</TableCell>
-              <TableCell className="table-header">Action Type</TableCell>
+              <TableCell className="table-header">Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {data.length > 0 ? (
-              data.map((perm: Permission, index: number) => (
-                <TableRow key={perm.id}>
+              data.map((permission, index) => (
+                <TableRow key={permission.id}>
+                  <TableCell className="table-data">{page * rowsPerPage + index + 1}</TableCell>
+                  <TableCell className="table-data">{permission.displayName}</TableCell>
+                  <TableCell className="table-data">{permission.name}</TableCell>
+                  <TableCell className="table-data">{permission.group}</TableCell>
                   <TableCell className="table-data">
-                    {page * rowsPerPage + index + 1}
-                  </TableCell>
-                  <TableCell className="table-data">
-                    {perm.displayName}
-                  </TableCell>
-                  <TableCell className="table-data">{perm.name}</TableCell>
-
-                  <TableCell className="table-data">{perm.group}</TableCell>
-                  <TableCell className="table-data">
-                    <IconButton color="primary">
+                    <IconButton
+                      color="primary"
+                      onClick={() => handleEditClick(permission)}
+                    >
                       <EditIcon />
                     </IconButton>
                     <IconButton color="error">
@@ -163,28 +183,33 @@ const Permissions: React.FC = () => {
             )}
           </TableBody>
         </Table>
-           <TablePagination
-        component="div"
-        count={metaData?.total || 0}
-        page={page}
-        rowsPerPage={rowsPerPage}
-        rowsPerPageOptions={[5, 10, 25, 50]}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-      />
+        <TablePagination
+          component="div"
+          count={metaData?.total || 0}
+          page={page}
+          rowsPerPage={rowsPerPage}
+          rowsPerPageOptions={[5, 10, 25, 50]}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
       </TableContainer>
-      <Dialog open={false}>
+
+      <Dialog
+        open={openDialog}
+        onClose={handleCloseDialog}
+        fullWidth
+        maxWidth="sm"
+      >
         <DialogTitle>
-          Add Premission
+          {editingPermission ? "Edit Permission" : "Add Permission"}
         </DialogTitle>
         <DialogContent dividers>
-          initialData={}
-          on onClose={}
-
+          <AddEditPage
+            initialData={editingPermission}
+            onClose={handleCloseDialog}
+          />
         </DialogContent>
       </Dialog>
-
-   
     </Box>
   );
 };

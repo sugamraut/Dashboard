@@ -1,81 +1,225 @@
-import { Autocomplete, Box, Button, TextField } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { Autocomplete, Box, Button, Chip, TextField } from "@mui/material";
+import { useForm, Controller } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
+import type { AppDispatch, RootState } from "../../store/store";
+import {
+  fetchPermissionsByGroup,
+  updatePermission,
+  addPermission,
+  fetchAllPermissions,
+} from "../../store/Permission/permissionSlice";
 
-const ADDEDIT = () => {
-  const top100Films = [
-    { title :"The Shawshank Redemption", year: 1994 },
-    {title: "The Godfather", year: 1972 },
-    {title: "The Godfather: Part II", year: 1974 },
-    {title: "The Dark Knight", year: 2008 },
-    {title: "12 Angry Men", year: 1957 },
-    {title: "Schindler's List", year: 1993 },
-    { title: "Pulp Fiction", year: 1994 },
-    {
-    title: "The Lord of the Rings: The Return of the King",
-      year: 2003,
+interface GroupOption {
+  label: string;
+  id: string;
+}
+
+interface AddEditPageProps {
+  initialData?: {
+    id?: number;
+    name: string;
+    displayName: string;
+    displayNameNp?: string;
+    group?: string;
+  } | null;
+  onClose: () => void;
+}
+
+interface FormValues {
+  id?: number;
+  name: string;
+  displayName: string;
+  displayNameNp: string;
+  group: GroupOption | null;
+  extraGroups: { title: string; year: number }[];
+}
+const defaultValues: FormValues = {
+  id: undefined,
+  name: "",
+  displayName: "",
+  displayNameNp: "",
+  group: null,
+  extraGroups: [],
+};
+
+const AddEditPage: React.FC<AddEditPageProps> = ({ initialData, onClose }) => {
+  const dispatch = useDispatch<AppDispatch>();
+
+  
+  const [formData, setFormData] = useState<FormValues>({
+    ...defaultValues,
+    displayName: initialData?.displayName || "",
+    displayNameNp: initialData?.displayNameNp || "",
+  });
+
+  const [localError, setLocalError] = useState<string | null>(null);
+ const { groupedPermissions, extraGroupsData } = useSelector(
+  (state: RootState) => state.permissions
+);
+
+  console.log(groupedPermissions);
+  const {
+    control,
+    register,
+    setValue,
+    formState: { errors },
+  } = useForm<FormValues>({
+    defaultValues: {
+      name: initialData?.name || "",
+      displayName: initialData?.displayName || "",
+      displayNameNp: initialData?.displayNameNp || "",
+      group: initialData?.group || undefined,
+      extraGroups: [],
     },
-    {title: "The Good, the Bad and the Ugly", year: 1966 },
-    {title: "Fight Club", year: 1999 },
-    {
-    title: "The Lord of the Rings: The Fellowship of the Ring",
-      year: 2001,
-    },
-    {
-    title: "Star Wars: Episode V - The Empire Strikes Back",
-      year: 1980,
-    },
-    {title: "Forrest Gump", year: 1994 },
-    {title: "Inception", year: 2010 },
-    {
-    title: "The Lord of the Rings: The Two Towers",
-      year: 2002,
-    },
-  ];
+  });
+  useEffect(() => {
+  dispatch(fetchPermissionsByGroup());
+  dispatch(fetchAllPermissions());
+}, [dispatch]);
+
+  useEffect(() => {
+    if (initialData?.group && groupedPermissions.length > 0) {
+      const matched = groupedPermissions.find(
+        (g: { label: string | undefined; id: number | undefined }) =>
+          g.label === initialData.group || g.id === initialData.group
+      );
+      if (matched) {
+        setValue("group", matched);
+      }
+    }
+  }, [initialData, groupedPermissions, setValue]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!formData.displayName) {
+      setLocalError("Display Name is required");
+      return;
+    }
+
+    try {
+      if (initialData?.id) {
+        // Editing
+        await dispatch(
+          updatePermission({
+            id: initialData.id,
+            name: formData.name,
+            displayName: formData.displayName,
+            displayNameNp: formData.displayNameNp,
+            group: formData.group?.label || "",
+            guardName: "", // add actual value if required
+            label: formData.displayName,
+          })
+        ).unwrap();
+      } else {
+        // Adding
+        await dispatch(
+          addPermission({
+            id: 0, // backend will ignore
+            name: formData.name,
+            displayName: formData.displayName,
+            displayNameNp: formData.displayNameNp,
+            group: formData.group?.label || "",
+            guardName: "",
+            label: formData.displayName,
+          })
+        ).unwrap();
+      }
+      onClose();
+    } catch (error) {
+      setLocalError(String(error));
+    }
+  };
+
+  const onSubmit = (data: FormValues) => {
+    const payload = {
+      ...data,
+      group: data.group?.label || "",
+      extraGroups: data.extraGroups.map((g) => g.title),
+    };
+    // console.log("Form submitted:", payload);
+    onClose();
+  };
+
   return (
-    <Box component="form" noValidate>
+    <Box component="form" noValidate onSubmit={handleSubmit}>
       <TextField
-        label="District Name"
-        name="name"
-        // value={formData.name}
-        // onChange={handleChange}
-        required
+        label="Display Name"
         fullWidth
         margin="normal"
+        {...register("displayName", { required: "Display name is required" })}
+        error={!!errors.displayName}
+        helperText={errors.displayName?.message}
       />
-      <TextField
-        label="District in Nepali"
-        name="District in nepali"
-        required
-        fullWidth
-      />
-       <Autocomplete
-      disablePortal
-      options={top100Films }
-      sx={{ width: 300 }}
-      renderInput={(params) => <TextField {...params} label="Movie" />}
-    />
 
-      <Autocomplete
-        multiple
-        limitTags={2}
-        id="multiple-limit-tags"
-        options={top100Films}
-       getOptionLabel={(option) => option.title}
-        // defaultValue={[top100Films[13], top100Films[12], top100Films[11]]}
-        renderInput={(params) => <TextField {...params} label="limitTags" />}
-        sx={{ width: "500px" }}
+      <TextField
+        label="Display Name (Nepali)"
+        fullWidth
+        margin="normal"
+        {...register("displayNameNp")}
       />
-      <Box mt={3} textAlign="right" gap={2}>
-        <Button color="error" sx={{mr:2}}>
-            Cancel
+
+      <Controller
+        control={control}
+        name="group"
+        render={({ field }) => (
+          <Autocomplete
+            disablePortal
+            options={groupedPermissions}
+            // getOptionLabel={(option) => option.label}
+            value={field.value}
+            onChange={(_, data) => field.onChange(data)}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Group"
+                margin="normal"
+                error={!!errors.group}
+                helperText={errors.group?.message as string}
+              />
+            )}
+          />
+        )}
+      />
+
+ <Controller
+  control={control}
+  name="extraGroups"
+  render={({ field }) => (
+    <Autocomplete
+      multiple
+      options={extraGroupsData}
+      getOptionLabel={(option) => option.displayName} 
+      value={field.value}
+      onChange={(_, data) => field.onChange(data)}
+      renderTags={(value, getTagProps) =>
+        value.map((option, index) => (
+          <Chip
+            label={option.displayName} // or option.name
+            {...getTagProps({ index })}
+            key={option.id}
+          />
+        ))
+      }
+      renderInput={(params) => (
+        <TextField {...params} label="Action type" margin="normal" />
+      )}
+    />
+  )}
+/>
+
+
+      <Box mt={3} textAlign="right">
+        <Button color="error" sx={{ mr: 2 }} onClick={onClose}>
+          Cancel
         </Button>
         <Button variant="contained" color="primary" type="submit">
-            Submit
-
+          {initialData ? "Update" : "Submit"}
         </Button>
-
       </Box>
     </Box>
   );
 };
 
-export default ADDEDIT;
+export default AddEditPage;

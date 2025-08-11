@@ -1,3 +1,4 @@
+
 import {
   Box,
   IconButton,
@@ -10,11 +11,7 @@ import {
   Stack,
 } from "@mui/material";
 import Button from "@mui/joy/Button";
-
 import DeleteIcon from "@mui/icons-material/Delete";
-
-import { useForm } from "react-hook-form";
-import { useEffect, useRef, useState } from "react";
 import {
   FormatBold,
   FormatItalic,
@@ -29,6 +26,15 @@ import {
 } from "@mui/icons-material";
 import { styled } from "@mui/joy";
 import SvgIcon from "@mui/joy/SvgIcon";
+import { useForm } from "react-hook-form";
+import { useRef, useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import type { AppDispatch } from "../../store/store";
+import {
+  fetchAccountTypeFiles,
+  PostAccountType,
+  updateAccountType,
+} from "../../store/Account/AccountSlice";
 
 const VisuallyHiddenInput = styled("input")`
   clip: rect(0 0 0 0);
@@ -44,6 +50,7 @@ const VisuallyHiddenInput = styled("input")`
 
 interface AddEditPageProps {
   initialData?: {
+    id?: number;
     title?: string;
     code?: string;
     interest?: string;
@@ -52,15 +59,16 @@ interface AddEditPageProps {
     insurance?: string;
     imageUrl?: string;
   };
-  onSave: (data: any) => void;
+  onSave: () => void;
   onCancel: () => void;
+  isEdit?: boolean;
 }
 
-const AddEditPage = ({ initialData, onSave, onCancel }: AddEditPageProps) => {
+const AddEditPage = ({ initialData, onSave, onCancel, isEdit }: AddEditPageProps) => {
+  const dispatch = useDispatch<AppDispatch>();
   const editorRef = useRef<HTMLDivElement>(null);
   const [alignment, setAlignment] = useState("left");
   const [uploadFileName, setUploadFileName] = useState<string | undefined>("");
-  // const [uploadFileName, setUploadFileName] = useState(null);
 
   const {
     register,
@@ -76,7 +84,6 @@ const AddEditPage = ({ initialData, onSave, onCancel }: AddEditPageProps) => {
       minimumblance: "",
       interestPayment: "",
       upload: "",
-
     },
   });
 
@@ -87,7 +94,7 @@ const AddEditPage = ({ initialData, onSave, onCancel }: AddEditPageProps) => {
         code: initialData.code || "",
         interest: initialData.interest || "",
         minimumblance: initialData.minimumblance || "",
-        interestPayment: initialData.insurance|| "",
+        interestPayment: initialData.insurance || "",
         upload: initialData.imageUrl || "",
       });
       if (editorRef.current) {
@@ -106,7 +113,6 @@ const AddEditPage = ({ initialData, onSave, onCancel }: AddEditPageProps) => {
     const wrapper = document.createElement(tag);
     wrapper.appendChild(range.extractContents());
     range.insertNode(wrapper);
-
     range.setStartAfter(wrapper);
     selection.removeAllRanges();
     selection.addRange(range);
@@ -115,7 +121,6 @@ const AddEditPage = ({ initialData, onSave, onCancel }: AddEditPageProps) => {
   const insertList = (type: "ul" | "ol") => {
     const selection = window.getSelection();
     if (!selection || selection.rangeCount === 0) return;
-
     const range = selection.getRangeAt(0);
     const contents = range.extractContents();
     const list = document.createElement(type);
@@ -145,20 +150,56 @@ const AddEditPage = ({ initialData, onSave, onCancel }: AddEditPageProps) => {
     }
   };
 
-  const onSubmit = (data: any) => {
-    onSave({
-      ...data,
-      details: editorRef.current?.innerHTML || "",
-    });
-  };
-   const handleDeleteFile = () => {
+  const handleDeleteFile = () => {
     setUploadFileName("");
+  };
+
+  const onSubmit = async (formData: any) => {
+    try {
+      const result = await dispatch(fetchAccountTypeFiles());
+
+      if (fetchAccountTypeFiles.rejected.match(result) || !result.payload?.length) {
+        alert("Please upload at least one file before submitting.");
+        return;
+      }
+
+      const payload = {
+        title: formData.title,
+        code: formData.code,
+        interest: formData.interest,
+        description: editorRef.current?.innerHTML || "",
+        minBalance: formData.minimumblance,
+        insurance: formData.interestPayment,
+        imageUrl: uploadFileName,
+      };
+
+      if (isEdit && initialData?.id) {
+        const updateResult = await dispatch(updateAccountType({ ...payload, id: initialData.id }));
+        if (updateAccountType.rejected.match(updateResult)) {
+          alert(updateResult.payload || "Failed to update account type.");
+          return;
+        }
+        alert("Account type updated successfully.");
+      } else {
+        const createResult = await dispatch(PostAccountType(payload));
+        if (PostAccountType.rejected.match(createResult)) {
+          alert(createResult.payload || "Failed to create account type.");
+          return;
+        }
+        alert("Account type created successfully.");
+      }
+
+      onSave(); 
+    } catch (err) {
+      console.error("Unexpected error:", err);
+      alert("An unexpected error occurred.");
+    }
   };
 
   return (
     <Box component="form" onSubmit={handleSubmit(onSubmit)}>
       <Typography variant="h5" mb={3}>
-        {initialData?.title ? "Edit Entry" : "Add New Entry"}
+        {isEdit ? "Edit Entry" : "Add New Entry"}
       </Typography>
 
       <TextField
@@ -213,50 +254,18 @@ const AddEditPage = ({ initialData, onSave, onCancel }: AddEditPageProps) => {
             onChange={handleAlignment}
             size="small"
           >
-            <ToggleButton value="left">
-              <FormatAlignLeft />
-            </ToggleButton>
-            <ToggleButton value="center">
-              <FormatAlignCenter />
-            </ToggleButton>
-            <ToggleButton value="right">
-              <FormatAlignRight />
-            </ToggleButton>
-            <ToggleButton value="justify">
-              <FormatAlignJustify />
-            </ToggleButton>
+            <ToggleButton value="left"><FormatAlignLeft /></ToggleButton>
+            <ToggleButton value="center"><FormatAlignCenter /></ToggleButton>
+            <ToggleButton value="right"><FormatAlignRight /></ToggleButton>
+            <ToggleButton value="justify"><FormatAlignJustify /></ToggleButton>
           </ToggleButtonGroup>
 
-          <Tooltip title="Bold">
-            <IconButton onClick={() => applyStyle("b")}>
-              <FormatBold />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title="Italic">
-            <IconButton onClick={() => applyStyle("i")}>
-              <FormatItalic />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title="Underline">
-            <IconButton onClick={() => applyStyle("u")}>
-              <FormatUnderlined />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title="Strikethrough">
-            <IconButton onClick={() => applyStyle("s")}>
-              <FormatStrikethrough />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title="Bullet List">
-            <IconButton onClick={() => insertList("ul")}>
-              <FormatListBulleted />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title="Numbered List">
-            <IconButton onClick={() => insertList("ol")}>
-              <FormatListNumbered />
-            </IconButton>
-          </Tooltip>
+          <Tooltip title="Bold"><IconButton onClick={() => applyStyle("b")}><FormatBold /></IconButton></Tooltip>
+          <Tooltip title="Italic"><IconButton onClick={() => applyStyle("i")}><FormatItalic /></IconButton></Tooltip>
+          <Tooltip title="Underline"><IconButton onClick={() => applyStyle("u")}><FormatUnderlined /></IconButton></Tooltip>
+          <Tooltip title="Strikethrough"><IconButton onClick={() => applyStyle("s")}><FormatStrikethrough /></IconButton></Tooltip>
+          <Tooltip title="Bullet List"><IconButton onClick={() => insertList("ul")}><FormatListBulleted /></IconButton></Tooltip>
+          <Tooltip title="Numbered List"><IconButton onClick={() => insertList("ol")}><FormatListNumbered /></IconButton></Tooltip>
         </Box>
 
         <Box
@@ -276,77 +285,43 @@ const AddEditPage = ({ initialData, onSave, onCancel }: AddEditPageProps) => {
         fullWidth
         required
         margin="normal"
-        {...register("minimumblance", {
-          required: "Minimum Balance is required",
-        })}
+        {...register("minimumblance", { required: "Minimum Balance is required" })}
         error={!!errors.minimumblance}
         helperText={errors.minimumblance?.message}
       />
 
       <TextField
-        label="Interest Payment"
+        label="Insurance"
         fullWidth
         required
         margin="normal"
-        {...register("interestPayment", {
-          required: "Interest Payment is required",
-        })}
+        {...register("interestPayment", { required: "Insurance is required" })}
         error={!!errors.interestPayment}
         helperText={errors.interestPayment?.message}
       />
 
-      <Box mt={2}>
-        <Button
-          component="label"
-          fullWidth
-          variant="outlined"
-          color="neutral"
-          startDecorator={
-            <SvgIcon>
-              <svg
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3
-                    M6.75 19.5a4.5 4.5 0 01-1.41-8.775
-                    5.25 5.25 0 0110.233-2.33
-                    3 3 0 013.758 3.848
-                    A3.752 3.752 0 0118 19.5H6.75z"
-                />
-              </svg>
-            </SvgIcon>
-          }
-        >
-          Upload a file
+      <Box mt={3}>
+        <Button component="label" startDecorator={<SvgIcon>📁</SvgIcon>} variant="outlined">
+          Upload File
           <VisuallyHiddenInput type="file" onChange={handleFileUpload} />
         </Button>
+
         {uploadFileName && (
-          <Typography mt={1} display="flex" className="justify-content-between">
-            Selected file: {uploadFileName}{" "}
-            <IconButton color="error" onClick={handleDeleteFile}>
-              <DeleteIcon />
+          <Stack direction="row" alignItems="center" spacing={1} mt={1}>
+            <Typography fontSize={14}>{uploadFileName}</Typography>
+            <IconButton size="small" onClick={handleDeleteFile}>
+              <DeleteIcon fontSize="small" />
             </IconButton>
-          </Typography>
+          </Stack>
         )}
       </Box>
 
-      <Box
-        display="flex"
-        justifyContent="flex-end"
-        gap={2}
-        mt={4}
-        color="error"
-      >
-        <Button color="danger" onClick={onCancel}>
-          Cancel
+      <Box mt={4} display="flex" gap={2}>
+        <Button type="submit" color="primary" variant="solid">
+          {isEdit ? "Update" : "Add"}
         </Button>
-        <Button type="submit" variant="solid" color="primary">
-          {initialData?.title ? "Submit" : "Save"}
+        <Button variant="plain" onClick={onCancel}>
+          Cancel
         </Button>
       </Box>
     </Box>
@@ -354,3 +329,4 @@ const AddEditPage = ({ initialData, onSave, onCancel }: AddEditPageProps) => {
 };
 
 export default AddEditPage;
+

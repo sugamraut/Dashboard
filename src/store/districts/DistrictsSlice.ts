@@ -4,6 +4,7 @@ import { server_Url } from "../../globals/config";
 import type { DistrictType } from "../../globals/typeDeclaration";
 import { Status, type StatusType } from "../../globals/status";
 import type { AppDispatch } from "../store";
+import API from "../../http";
 
 interface DistrictState {
   fullList: DistrictType[];
@@ -106,15 +107,7 @@ export const fetchDistrictAsync = (
         params.search = search;
       }
 
-      const response = await axios.get<DistrictType>(
-        `${server_Url}/api/v1/districts`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          params,
-        }
-      );
+      const response =await API.get(`/api/v1/districts`,params)
 
       const sortedData = response.data.data.sort(
         (a: { id: number }, b: { id: number }) => a.id - b.id
@@ -155,17 +148,7 @@ export const updateDistrictAsync = ({
     }
 
     try {
-      const response = await axios.put<DistrictType>(
-        `${server_Url}/api/v1/districts/${id}`,
-        data,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-        }
-      );
+      const response =await API.put(`/api/v1/districts/${id}`,data)
 
       console.log("Update success:", response.data);
 
@@ -188,7 +171,8 @@ export const fetchAllDistrictsAsync = () => {
     dispatch(setStatus(Status.Loading));
 
     try {
-      const response = await axios.get(`${server_Url}/api/v1/districts/all`);
+      // const response = await axios.get(`${server_Url}/api/v1/districts/all`);
+      const response =await API.get(`/api/v1/districts/all`)
 
       if (response.status === 200 || response.status === 201) {
         dispatch(setFullList(response.data.data));
@@ -209,9 +193,10 @@ export const fetchDistrictsByStateIdAsync = (stateId: number) => {
 
     try {
       const token = getToken(); 
-      const response = await axios.get(`${server_Url}/api/v1/districts/state/${stateId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      // const response = await axios.get(`${server_Url}/api/v1/districts/state/${stateId}`, {
+      //   headers: { Authorization: `Bearer ${token}` },
+      // });
+      const response =await API.get(`/api/v1/districts/state/${stateId}`)
 
       const sortedData = response.data.sort((a: DistrictType, b: DistrictType) => a.id - b.id);
 
