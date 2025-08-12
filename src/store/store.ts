@@ -8,11 +8,6 @@ import User from "./user/userSlice"
 import accountTypes from "./Account/AccountSlice"
 import Permissions from "../store/Permission/permissionSlice";
 
-
-
-
-
-
 const store = configureStore({
     reducer:{
       auth:auth,

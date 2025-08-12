@@ -1,4 +1,4 @@
-
+import React, { useEffect, useRef, useState } from "react";
 import {
   Box,
   IconButton,
@@ -27,7 +27,6 @@ import {
 import { styled } from "@mui/joy";
 import SvgIcon from "@mui/joy/SvgIcon";
 import { useForm } from "react-hook-form";
-import { useRef, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import type { AppDispatch } from "../../store/store";
 import {
@@ -104,6 +103,7 @@ const AddEditPage = ({ initialData, onSave, onCancel, isEdit }: AddEditPageProps
     }
   }, [initialData, reset]);
 
+
   const applyStyle = (tag: keyof HTMLElementTagNameMap) => {
     const selection = window.getSelection();
     if (!selection || selection.rangeCount === 0) return;
@@ -152,13 +152,14 @@ const AddEditPage = ({ initialData, onSave, onCancel, isEdit }: AddEditPageProps
 
   const handleDeleteFile = () => {
     setUploadFileName("");
+    setValue("upload", "");
   };
 
   const onSubmit = async (formData: any) => {
     try {
-      const result = await dispatch(fetchAccountTypeFiles());
+      const fetchResult = await dispatch(fetchAccountTypeFiles());
 
-      if (fetchAccountTypeFiles.rejected.match(result) || !result.payload?.length) {
+      if (fetchAccountTypeFiles.rejected.match(fetchResult) || !fetchResult.payload?.length) {
         alert("Please upload at least one file before submitting.");
         return;
       }
@@ -189,7 +190,7 @@ const AddEditPage = ({ initialData, onSave, onCancel, isEdit }: AddEditPageProps
         alert("Account type created successfully.");
       }
 
-      onSave(); 
+      onSave();
     } catch (err) {
       console.error("Unexpected error:", err);
       alert("An unexpected error occurred.");
@@ -197,7 +198,7 @@ const AddEditPage = ({ initialData, onSave, onCancel, isEdit }: AddEditPageProps
   };
 
   return (
-    <Box component="form" onSubmit={handleSubmit(onSubmit)}>
+    <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate>
       <Typography variant="h5" mb={3}>
         {isEdit ? "Edit Entry" : "Add New Entry"}
       </Typography>
@@ -277,6 +278,9 @@ const AddEditPage = ({ initialData, onSave, onCancel, isEdit }: AddEditPageProps
             fontSize: 16,
             outline: "none",
           }}
+          aria-label="Details editor"
+          role="textbox"
+          tabIndex={0}
         />
       </Box>
 

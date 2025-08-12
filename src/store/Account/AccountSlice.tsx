@@ -135,16 +135,18 @@ export const fetchAccountTypeFiles = createAsyncThunk<
   UploadedFile[],
   void,
   { rejectValue: string }
->("accountTypes/fetchFiles", async (_, { rejectWithValue }) => {
-  try {
-    const resp = await axios.get(
-      `${server_Url}/api/v1/file-upload/ACCOUNT-TYPE`
-    );
-    return resp.data ;
-  } catch (err: any) {
-    return rejectWithValue(err.message || "Failed to fetch uploaded files");
+>(
+  "accountTypes/fetchFiles",
+  async (_, { rejectWithValue }) => {
+    try {
+      const resp = await axios.post(`${server_Url}/api/v1/file-upload/ACCOUNT-TYPE`);
+      return resp.data;
+    } catch (err: any) {
+      return rejectWithValue(err.message || "Failed to fetch uploaded files");
+    }
   }
-});
+);
+
 
 
 export const PostAccountType = createAsyncThunk(
@@ -226,18 +228,7 @@ const accountTypesSlice = createSlice({
       .addCase(deleteAccountType.rejected, (state, action) => {
         state.error = action.payload ?? "Failed to delete account type";
       })
-      .addCase(fetchAccountTypeFiles.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(fetchAccountTypeFiles.fulfilled, (state, action) => {
-        state.loading = false;
-        state.uploadedFiles = action.payload;
-      })
-      .addCase(fetchAccountTypeFiles.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload ?? "Failed to fetch uploaded files";
-      })
+      
        .addCase(PostAccountType .pending, (state) => {
         state.loading = true
         state.error = null
