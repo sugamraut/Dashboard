@@ -191,7 +191,9 @@ export default function CitiesPage() {
               <TableCell className="table-header">Name</TableCell>
               <TableCell className="table-header">State</TableCell>
               <TableCell className="table-header">District</TableCell>
-              <TableCell align="center" className="table-header">Actions</TableCell>
+              <TableCell align="center" className="table-header">
+                Actions
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -205,9 +207,15 @@ export default function CitiesPage() {
               paginatedCities.map((city) => (
                 <TableRow key={city.id}>
                   <TableCell className="table-data">{city.id}</TableCell>
-                  <TableCell className="table-data">{city.name || city.nameCombined}</TableCell>
-                  <TableCell className="table-data">{city.state || "N/A"}</TableCell>
-                  <TableCell className="table-data">{city.district || "N/A"}</TableCell>
+                  <TableCell className="table-data">
+                    {city.name || city.nameCombined}
+                  </TableCell>
+                  <TableCell className="table-data">
+                    {city.state || "N/A"}
+                  </TableCell>
+                  <TableCell className="table-data">
+                    {city.district || "N/A"}
+                  </TableCell>
                   <TableCell align="center" className="table-data">
                     <IconButton
                       color="primary"
@@ -247,24 +255,21 @@ export default function CitiesPage() {
             onClose={handleDialogClose}
           />
         </DialogContent>
-        <DialogActions 
+        <DialogActions
         // sx={{ justifyContent: "space-between", px: 3 }}
         >
-          <Box mt={3} textAlign="right" gap={2} sx={{ mr: 2 }} >
-              <Button color="error" onClick={handleDialogClose}>
-            Cancel
-          </Button>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleDialogClose}
-          >
-            Submit
-          </Button>
-
+          <Box mt={3} textAlign="right" gap={2} sx={{ mr: 2 }}>
+            <Button color="error" onClick={handleDialogClose}>
+              Cancel
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleDialogClose}
+            >
+              Submit
+            </Button>
           </Box>
-        
-          
         </DialogActions>
       </Dialog>
     </Box>

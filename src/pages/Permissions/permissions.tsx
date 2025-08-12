@@ -113,6 +113,7 @@ const Permissions: React.FC = () => {
             size="small"
             placeholder="Search by name or group"
             value={searchQuery}
+
             onChange={(e) => {
               setSearchQuery(e.target.value);
               setPage(0);
@@ -136,11 +137,6 @@ const Permissions: React.FC = () => {
           </IconButton>
         </Stack>
       </Box>
-      {error && (
-        <Typography color="error" mb={2}>
-          Error: {error}
-        </Typography>
-      )}
 
       <TableContainer component={Paper}>
         <Table size="small">
@@ -154,13 +150,26 @@ const Permissions: React.FC = () => {
             </TableRow>
           </TableHead>
           <TableBody>
+            {error && (
+              <Typography color="error" mb={2}>
+                Error: {error}
+              </Typography>
+            )}
             {data.length > 0 ? (
               data.map((permission, index) => (
                 <TableRow key={permission.id}>
-                  <TableCell className="table-data">{page * rowsPerPage + index + 1}</TableCell>
-                  <TableCell className="table-data">{permission.displayName}</TableCell>
-                  <TableCell className="table-data">{permission.name}</TableCell>
-                  <TableCell className="table-data">{permission.group}</TableCell>
+                  <TableCell className="table-data">
+                    {page * rowsPerPage + index + 1}
+                  </TableCell>
+                  <TableCell className="table-data">
+                    {permission.displayName}
+                  </TableCell>
+                  <TableCell className="table-data">
+                    {permission.name}
+                  </TableCell>
+                  <TableCell className="table-data">
+                    {permission.group}
+                  </TableCell>
                   <TableCell className="table-data">
                     <IconButton
                       color="primary"

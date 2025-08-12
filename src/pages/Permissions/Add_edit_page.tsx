@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Autocomplete, Box, Button, Chip, TextField } from "@mui/material";
+import { Autocomplete, Box, Button,TextField } from "@mui/material";
 import { useForm, Controller } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../../store/store";
@@ -8,11 +8,21 @@ import {
   updatePermission,
   addPermission,
   fetchAllPermissions,
+  type Permission,
 } from "../../store/Permission/permissionSlice";
 
 interface GroupOption {
   label: string;
-  id: string;
+  id: string | number;
+}
+
+interface ExtraGroupOption {
+  name: any;
+  id: number;
+  title: string;
+  displayName: string;
+  displayNameNp: string;
+  group: string;
 }
 
 interface AddEditPageProps {
@@ -32,56 +42,43 @@ interface FormValues {
   displayName: string;
   displayNameNp: string;
   group: GroupOption | null;
-  extraGroups: { title: string; year: number }[];
+  extraGroups: ExtraGroupOption[];
 }
-const defaultValues: FormValues = {
-  id: undefined,
-  name: "",
-  displayName: "",
-  displayNameNp: "",
-  group: null,
-  extraGroups: [],
-};
 
 const AddEditPage: React.FC<AddEditPageProps> = ({ initialData, onClose }) => {
   const dispatch = useDispatch<AppDispatch>();
-
-  
-  const [formData, setFormData] = useState<FormValues>({
-    ...defaultValues,
-    displayName: initialData?.displayName || "",
-    displayNameNp: initialData?.displayNameNp || "",
-  });
-
   const [localError, setLocalError] = useState<string | null>(null);
- const { groupedPermissions, extraGroupsData } = useSelector(
-  (state: RootState) => state.permissions
-);
 
-  console.log(groupedPermissions);
+  const { groupedPermissions, extraGroupsData } = useSelector(
+    (state: RootState) => state.permissions
+  );
+
   const {
     control,
     register,
     setValue,
+    handleSubmit,
     formState: { errors },
   } = useForm<FormValues>({
     defaultValues: {
       name: initialData?.name || "",
       displayName: initialData?.displayName || "",
       displayNameNp: initialData?.displayNameNp || "",
-      group: initialData?.group || undefined,
+      group: null,
       extraGroups: [],
     },
   });
+  // console.log(extraGroupsData)
+
   useEffect(() => {
-  dispatch(fetchPermissionsByGroup());
-  dispatch(fetchAllPermissions());
-}, [dispatch]);
+    dispatch(fetchPermissionsByGroup());
+    dispatch(fetchAllPermissions());
+  }, [dispatch]);
 
   useEffect(() => {
     if (initialData?.group && groupedPermissions.length > 0) {
       const matched = groupedPermissions.find(
-        (g: { label: string | undefined; id: number | undefined }) =>
+        (g: { label: string | undefined; id: string | number | undefined }) =>
           g.label === initialData.group || g.id === initialData.group
       );
       if (matched) {
@@ -90,60 +87,44 @@ const AddEditPage: React.FC<AddEditPageProps> = ({ initialData, onClose }) => {
     }
   }, [initialData, groupedPermissions, setValue]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!formData.displayName) {
+  const onSubmit = async (data: FormValues) => {
+    setLocalError(null);
+    console.log("===>" + data);
+    if (!data.displayName) {
       setLocalError("Display Name is required");
       return;
     }
 
     try {
+      const payload = {
+        id: data.id ?? 0,
+        name: data.name,
+        displayName: data.displayName,
+        displayNameNp: data.displayNameNp,
+        group: data.group?.label || "",
+        guardName: "",
+        label: data.displayName,
+        extraGroups: data.extraGroups.map((g) => g.name),
+      };
+
       if (initialData?.id) {
-        // Editing
         await dispatch(
-          updatePermission({
-            id: initialData.id,
-            name: formData.name,
-            displayName: formData.displayName,
-            displayNameNp: formData.displayNameNp,
-            group: formData.group?.label || "",
-            guardName: "", // add actual value if required
-            label: formData.displayName,
-          })
+          updatePermission({ ...payload, id: initialData.id })
         ).unwrap();
       } else {
-        // Adding
-        await dispatch(
-          addPermission({
-            id: 0, // backend will ignore
-            name: formData.name,
-            displayName: formData.displayName,
-            displayNameNp: formData.displayNameNp,
-            group: formData.group?.label || "",
-            guardName: "",
-            label: formData.displayName,
-          })
-        ).unwrap();
+        await dispatch(addPermission(payload)).unwrap();
       }
+
       onClose();
     } catch (error) {
       setLocalError(String(error));
     }
   };
 
-  const onSubmit = (data: FormValues) => {
-    const payload = {
-      ...data,
-      group: data.group?.label || "",
-      extraGroups: data.extraGroups.map((g) => g.title),
-    };
-    // console.log("Form submitted:", payload);
-    onClose();
-  };
+  console.log(extraGroupsData);
 
   return (
-    <Box component="form" noValidate onSubmit={handleSubmit}>
+    <Box component="form" noValidate onSubmit={handleSubmit(onSubmit)}>
       <TextField
         label="Display Name"
         fullWidth
@@ -164,17 +145,18 @@ const AddEditPage: React.FC<AddEditPageProps> = ({ initialData, onClose }) => {
         control={control}
         name="group"
         render={({ field }) => (
-          <Autocomplete
+          <Autocomplete<Permission>
             disablePortal
             options={groupedPermissions}
-            // getOptionLabel={(option) => option.label}
-            value={field.value}
+            // getOptionLabel={(option) => option.name}
             onChange={(_, data) => field.onChange(data)}
+            value={field.value}
             renderInput={(params) => (
               <TextField
                 {...params}
                 label="Group"
                 margin="normal"
+                {...register("group")}
                 error={!!errors.group}
                 helperText={errors.group?.message as string}
               />
@@ -183,32 +165,37 @@ const AddEditPage: React.FC<AddEditPageProps> = ({ initialData, onClose }) => {
         )}
       />
 
- <Controller
-  control={control}
-  name="extraGroups"
-  render={({ field }) => (
-    <Autocomplete
-      multiple
-      options={extraGroupsData}
-      getOptionLabel={(option) => option.displayName} 
-      value={field.value}
-      onChange={(_, data) => field.onChange(data)}
-      renderTags={(value, getTagProps) =>
-        value.map((option, index) => (
-          <Chip
-            label={option.displayName} // or option.name
-            {...getTagProps({ index })}
-            key={option.id}
+      <Controller
+        control={control}
+        name="extraGroups"
+        render={({ field }) => (
+          <Autocomplete 
+            multiple
+            options={Array.isArray(extraGroupsData) ? extraGroupsData : []}
+            getOptionLabel={(option) => option?.name}
+            // value={field.value}
+            onChange={(_, data) => field.onChange(data)}
+            // renderTags={(value, getTagProps) =>
+            //   value.map((option, index) => (
+            //     <Chip
+            //       label={option.name || option.displayName}
+            //       {...getTagProps({ index })}
+            //       key={option.id}
+            //     />
+            //   ))
+            // }
+            renderInput={(params) => (
+              <TextField {...params} label="Action type" margin="normal" />
+            )}
           />
-        ))
-      }
-      renderInput={(params) => (
-        <TextField {...params} label="Action type" margin="normal" />
-      )}
-    />
-  )}
-/>
+        )}
+      />
 
+      {/* {localError && (
+        <Box mt={1} color="error.main">
+          {localError}
+        </Box>
+      )} */}
 
       <Box mt={3} textAlign="right">
         <Button color="error" sx={{ mr: 2 }} onClick={onClose}>

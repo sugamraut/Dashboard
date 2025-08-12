@@ -13,6 +13,7 @@ export interface Permission {
   group: string;
   displayName: string;
   displayNameNp: string;
+  
 }
 
 export interface MetaData {
