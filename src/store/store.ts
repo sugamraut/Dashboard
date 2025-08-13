@@ -5,8 +5,8 @@ import city from "./cities/CitiesSlice"
 import branch from "./branchSlice/BranchSlice"
 import User from "./user/userSlice"
 // import Account from "./Account/AccountSlice"
-import accountTypes from "./Account/AccountSlice"
-import Permissions from "../store/Permission/permissionSlice";
+import accountTypes from "./account/AccountSlice"
+import Permissions from "./Permission/PermissionSlice";
 
 const store = configureStore({
     reducer:{

@@ -10,13 +10,13 @@ const PrivateRoute: React.FC = () => {
 
 
   if (status === Status.Loading) {
-    return <div>Loading...</div>;
+    return <div>Loading...</div>
   }
 
 
-  const loggedIn = status === Status.Success && isTokenValid(accessToken);
+  const loggedIn = status === Status.Success && isTokenValid(accessToken)
 
-  return loggedIn ? <Outlet /> : <Navigate to="/admin" replace />;
+  return loggedIn ? <Outlet /> : <Navigate to="/admin" replace />
 };
 
 export default PrivateRoute;

@@ -6,18 +6,8 @@ import {
 import axios from "axios";
 import { server_Url } from "../../globals/config";
 import { Status, type StatusType } from "../../globals/status";
-import type { StateType } from "../../globals/typeDeclaration";
+import type { City, StateType } from "../../globals/typeDeclaration";
 
-export interface City {
-  id: number;
-  name: string;
-  nameNp: string;
-  nameCombined: string;
-  districtId: number;
-  code: string | null;
-  district: string;
-  state: string;
-}
 
 interface CityState {
   fullList: City[] | null;

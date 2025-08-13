@@ -28,12 +28,12 @@ import type { RootState, AppDispatch } from "../../store/store";
 import {
   fetchAllCities,
   fetchCityByDistrictId,
-  type City,
 } from "../../store/cities/CitiesSlice";
 
-import AddEditpage from "./edit _page";
-import LoadingButtons from "../demo";
+import AddEditpage from "./edit";
+import LoadingButtons from "../loader";
 import { useEffect, useMemo, useState } from "react";
+import type { City } from "../../globals/typeDeclaration";
 
 interface DistrictOption {
   id: number;

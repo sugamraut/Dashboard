@@ -1,34 +1,34 @@
 import React, { lazy, Suspense } from "react";
 import { createBrowserRouter } from "react-router-dom";
 
-import PrivateRoute from "./PrivateRoute";
+import PrivateRoute from "./privateroute";
 import RootLayout from "../layouts/rootlayout";
-import Login from "../pages/auth/loginpage";
-import LoadingButtons from "../pages/demo";
+import Login from "../pages/auth/login";
+import LoadingButtons from "../pages/loader";
 
-const lazyWithDelay = (importFunc: () => Promise<any>, delay: number = 800) =>
+const lazyWithDelay = (importFunc: () => Promise<any>) =>
   React.lazy(
     () =>
       new Promise((resolve) => {
         setTimeout(() => {
           resolve(importFunc());
-        }, delay);
+        });
       })
   );
 
-const Dashboard = lazyWithDelay(() => import("../pages/dashboard/dashboard"));
+const Dashboard = lazyWithDelay(() => import("../pages/Dashboard/dashboard"));
 const Sidebar = lazyWithDelay(() => import("../pages/sidebar"));
 const BrandingSignInPage = lazyWithDelay(
-  () => import("../pages/branches/branchpage")
+  () => import("../pages/Branches/branch")
 );
 const District = lazyWithDelay(() => import("../pages/Districts/districts"));
-const Cities = lazyWithDelay(() => import("../pages/cities/cities"));
-const Demo = lazyWithDelay(() => import("../pages/demo"));
+const Cities = lazyWithDelay(() => import("../pages/Cities/cities"));
+const Demo = lazyWithDelay(() => import("../pages/loader"));
 const User=lazyWithDelay(()=>import("../pages/users/users"))
-const Account =lazyWithDelay(()=>import("../pages/Account/AccountPage"))
+const Account =lazyWithDelay(()=>import("../pages/Account/Account"))
 // const Xyz =lazyWithDelay(()=>import("../xyz"))
 const Permission = lazyWithDelay(()=>import("../pages/Permissions/permissions"))
-const Add =lazyWithDelay(()=>import("../pages/Permissions/Add_edit_page"))
+const Add =lazyWithDelay(()=>import("../pages/Permissions/addedit"))
 
 const withSuspense = (
   Component: React.LazyExoticComponent<React.ComponentType<any>>

@@ -1,7 +1,7 @@
 body {
   font-family:
     "lato ",
-    Segoe UI;
+    Segoe UI !important;
 }
 
 .login-section {
@@ -77,7 +77,7 @@ body {
   box-shadow:
     rgba(0, 0, 0, 0.2) 0px 12px 38px 0px,
     rgba(0, 0, 0, 0.14) 0px 18px 46px 0px,
-    rgba(0, 0, 0, 0.12) 0px 7px 15px 0px;
+    rgba(0, 0, 0, 0.12) 0px 7px 15px 0px,
 }
 
 .table-data{

@@ -1,21 +1,11 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { Status, type StatusType } from "../../globals/status";
-import type { StateType } from "../../globals/typeDeclaration";
+import type { Branch, StateType } from "../../globals/typeDeclaration";
 import type { AppDispatch } from "../store";
 import axios from "axios";
 import { server_Url } from "../../globals/config";
 
-export interface Branch {
-  id: number;
-  name: string;
-  nameNp: string;
-  nameCombined: number;
-  districtId: number;
-  code: string | null;
-  district: string;
-  state: string;
-  data?: any;
-}
+
 
 interface BranchState {
   districts: any;

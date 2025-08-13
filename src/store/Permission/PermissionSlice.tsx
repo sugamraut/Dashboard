@@ -4,25 +4,8 @@ import {
   type PayloadAction,
 } from "@reduxjs/toolkit";
 import API from "../../http";
+import type { MetaData, Permission } from "../../globals/typeDeclaration";
 
-export interface Permission {
-  label: string | undefined;
-  id: number;
-  name: string;
-  guardName: string;
-  group: string;
-  displayName: string;
-  displayNameNp: string;
-  
-}
-
-export interface MetaData {
-  page: number;
-  rowsPerPage: number;
-  sortBy: number;
-  sortOrder: string;
-  total: number;
-}
 
 export interface PermissionsResponse {
   data: Permission[];
@@ -41,8 +24,8 @@ interface FetchPermissionParams {
 interface PermissionsState {
   data: Permission[];
   metaData: MetaData | null;
-  groupedPermissions: Permission[];
-   extraGroupsData: Permission[];
+  groupedPermissions: Permission[] ;
+  ActionData: Permission[] | null;
   loading: boolean;
   error: string | null;
 }
@@ -53,7 +36,7 @@ const initialState: PermissionsState = {
   groupedPermissions: [],
   loading: false,
   error: null,
-  extraGroupsData: []
+  ActionData: []
 };
 
 export const fetchPermissions = createAsyncThunk<
@@ -225,7 +208,7 @@ const permissionsSlice = createSlice({
         state.error = action.payload ?? "Failed to add permission";
       })
       .addCase(fetchAllPermissions.fulfilled, (state, action) => {
-        state.extraGroupsData = action.payload;
+        state.ActionData = action.payload;
       });
   },
 });

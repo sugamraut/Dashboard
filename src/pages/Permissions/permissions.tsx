@@ -6,8 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import {
   fetchPermissions,
-  type Permission,
-} from "../../store/Permission/permissionSlice";
+} from "../../store/Permission/PermissionSlice";
 import type { AppDispatch, RootState } from "../../store/store";
 import {
   Box,
@@ -27,7 +26,8 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import AddEditPage from "./Add_edit_page";
+import AddEditPage from "./addedit";
+import type { Permission } from "../../globals/typeDeclaration";
 
 const Permissions: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();

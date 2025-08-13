@@ -33,7 +33,7 @@ import {
   fetchAccountTypeFiles,
   PostAccountType,
   updateAccountType,
-} from "../../store/Account/AccountSlice";
+} from "../../store/account/AccountSlice";
 
 const VisuallyHiddenInput = styled("input")`
   clip: rect(0 0 0 0);

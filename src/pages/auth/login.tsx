@@ -75,7 +75,6 @@ const LoginPage: React.FC = () => {
             component="form"
             onSubmit={handleSubmit(onSubmit)}
             noValidate
-            autoComplete="off"
           >
             <LoginInput
               id="username"
@@ -88,7 +87,8 @@ const LoginPage: React.FC = () => {
             <LoginInput
               id="password"
               label="Password"
-              type={showPassword ? "text" : "password"}
+              // type={showPassword ? "text" : "password"}
+                type="password"  
               {...register("password")}
               error={!!errors.password}
               helperText={errors.password?.message}
@@ -108,7 +108,7 @@ const LoginPage: React.FC = () => {
         </div>
       </div>
     </div>
-  );
+  )
 };
 
-export default LoginPage;
+export default LoginPage

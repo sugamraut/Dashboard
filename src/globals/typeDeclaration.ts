@@ -21,3 +21,45 @@ export type DistrictType = {
   state:StateType
 };
 
+
+export interface City {
+  id: number;
+  name: string;
+  nameNp: string;
+  nameCombined: string;
+  districtId: number;
+  code: string | null;
+  district: string;
+  state: string;
+}
+
+export interface Branch {
+  id: number;
+  name: string;
+  nameNp: string;
+  nameCombined: number;
+  districtId: number;
+  code: string | null;
+  district: string;
+  state: string;
+  data?: any;
+}
+
+export interface Permission {
+  label: string | undefined;
+  id: number;
+  name: string;
+  guardName: string;
+  group: string;
+  displayName: string;
+  displayNameNp: string;
+
+}
+
+export interface MetaData {
+  page: number;
+  rowsPerPage: number;
+  sortBy: number;
+  sortOrder: string;
+  total: number;
+}

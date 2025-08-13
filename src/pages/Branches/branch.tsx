@@ -19,13 +19,13 @@ import {
   fetchBranchData,
   updateBranch,
   createBranch,
-  type Branch,
 } from "../../store/branchSlice/BranchSlice";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import EditIcon from "@mui/icons-material/Edit";
 import FilterAltOffIcon from "@mui/icons-material/FilterAltOff";
-import BranchFormModal from "./add_edit_page";
+import BranchFormModal from "./addedit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import type { Branch } from "../../globals/typeDeclaration";
 
 export default function BranchesPage() {
   const dispatch = useDispatch<AppDispatch>();

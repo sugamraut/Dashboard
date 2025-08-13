@@ -36,7 +36,7 @@ const LoginInput = React.forwardRef<HTMLInputElement, LoginInputProps>(
     const isPassword = type === "password";
     const inputType = isPassword && showPassword !== undefined
       ? showPassword ? "text" : "password"
-      : type;
+      : type
 
     return (
       <FormControl variant="filled" fullWidth sx={{ mb: 3 }} error={error}>
@@ -52,7 +52,7 @@ const LoginInput = React.forwardRef<HTMLInputElement, LoginInputProps>(
           endAdornment={
             isPassword && togglePasswordVisibility && (
               <InputAdornment position="end">
-                <IconButton onClick={togglePasswordVisibility} edge="end" size="small">
+                <IconButton onClick={togglePasswordVisibility} edge="end" size="small" >
                   {showPassword ? <VisibilityOff /> : <Visibility />}
                 </IconButton>
               </InputAdornment>
@@ -62,7 +62,7 @@ const LoginInput = React.forwardRef<HTMLInputElement, LoginInputProps>(
 
         {helperText && <FormHelperText>{helperText}</FormHelperText>}
       </FormControl>
-    );
+    )
   }
 );
 

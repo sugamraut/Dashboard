@@ -26,8 +26,8 @@ import { useAppDispatch, useAppSelector } from "../../store/hook";
 import {
   fetchAccountTypes,
   type AccountType,
-} from "../../store/Account/AccountSlice";
-import AddEditPage from "./add_edit_pages";
+} from "../../store/account/AccountSlice";
+import AddEditPage from "./addedit";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../store/store";
 

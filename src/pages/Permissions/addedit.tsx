@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Autocomplete, Box, Button,TextField } from "@mui/material";
+import { Autocomplete, Box, Button, TextField } from "@mui/material";
 import { useForm, Controller } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../../store/store";
@@ -8,13 +8,10 @@ import {
   updatePermission,
   addPermission,
   fetchAllPermissions,
-  type Permission,
-} from "../../store/Permission/permissionSlice";
+} from "../../store/Permission/PermissionSlice";
+import type { Permission } from "../../globals/typeDeclaration";
 
-interface GroupOption {
-  label: string;
-  id: string | number;
-}
+
 
 interface ExtraGroupOption {
   name: any;
@@ -32,6 +29,7 @@ interface AddEditPageProps {
     displayName: string;
     displayNameNp?: string;
     group?: string;
+    extraGroups?: ExtraGroupOption[];
   } | null;
   onClose: () => void;
 }
@@ -41,7 +39,7 @@ interface FormValues {
   name: string;
   displayName: string;
   displayNameNp: string;
-  group: GroupOption | null;
+  group: string;
   extraGroups: ExtraGroupOption[];
 }
 
@@ -49,14 +47,14 @@ const AddEditPage: React.FC<AddEditPageProps> = ({ initialData, onClose }) => {
   const dispatch = useDispatch<AppDispatch>();
   const [localError, setLocalError] = useState<string | null>(null);
 
-  const { groupedPermissions, extraGroupsData } = useSelector(
+  const { groupedPermissions, ActionData } = useSelector(
     (state: RootState) => state.permissions
   );
+
 
   const {
     control,
     register,
-    setValue,
     handleSubmit,
     formState: { errors },
   } = useForm<FormValues>({
@@ -64,35 +62,22 @@ const AddEditPage: React.FC<AddEditPageProps> = ({ initialData, onClose }) => {
       name: initialData?.name || "",
       displayName: initialData?.displayName || "",
       displayNameNp: initialData?.displayNameNp || "",
-      group: null,
-      extraGroups: [],
+      group: initialData?.group || "",
+      extraGroups: initialData?.extraGroups ?? [],
     },
   });
-  // console.log(extraGroupsData)
+
 
   useEffect(() => {
     dispatch(fetchPermissionsByGroup());
     dispatch(fetchAllPermissions());
   }, [dispatch]);
 
-  useEffect(() => {
-    if (initialData?.group && groupedPermissions.length > 0) {
-      const matched = groupedPermissions.find(
-        (g: { label: string | undefined; id: string | number | undefined }) =>
-          g.label === initialData.group || g.id === initialData.group
-      );
-      if (matched) {
-        setValue("group", matched);
-      }
-    }
-  }, [initialData, groupedPermissions, setValue]);
-
   const onSubmit = async (data: FormValues) => {
     setLocalError(null);
     console.log("===>" + data);
     if (!data.displayName) {
       setLocalError("Display Name is required");
-      return;
     }
 
     try {
@@ -101,16 +86,16 @@ const AddEditPage: React.FC<AddEditPageProps> = ({ initialData, onClose }) => {
         name: data.name,
         displayName: data.displayName,
         displayNameNp: data.displayNameNp,
-        group: data.group?.label || "",
+        group: data.group ?? "",
         guardName: "",
         label: data.displayName,
-        extraGroups: data.extraGroups.map((g) => g.name),
+        extraGroups: data.extraGroups.map((g) => g.name) || [],
       };
 
       if (initialData?.id) {
-        await dispatch(
+        +(await dispatch(
           updatePermission({ ...payload, id: initialData.id })
-        ).unwrap();
+        ).unwrap());
       } else {
         await dispatch(addPermission(payload)).unwrap();
       }
@@ -121,7 +106,8 @@ const AddEditPage: React.FC<AddEditPageProps> = ({ initialData, onClose }) => {
     }
   };
 
-  console.log(extraGroupsData);
+  console.log(ActionData);
+  
 
   return (
     <Box component="form" noValidate onSubmit={handleSubmit(onSubmit)}>
@@ -140,6 +126,7 @@ const AddEditPage: React.FC<AddEditPageProps> = ({ initialData, onClose }) => {
         margin="normal"
         {...register("displayNameNp")}
       />
+
 
       <Controller
         control={control}
@@ -165,37 +152,43 @@ const AddEditPage: React.FC<AddEditPageProps> = ({ initialData, onClose }) => {
         )}
       />
 
-      <Controller
+      {/* <Controller
         control={control}
         name="extraGroups"
         render={({ field }) => (
-          <Autocomplete 
+          <Autocomplete
             multiple
-            options={Array.isArray(extraGroupsData) ? extraGroupsData : []}
-            getOptionLabel={(option) => option?.name}
-            // value={field.value}
+            options={Array.isArray(ActionData) ? ActionData : []}
+            getOptionLabel={(option) => option.name || ""}
+            value={field.value || []}
             onChange={(_, data) => field.onChange(data)}
-            // renderTags={(value, getTagProps) =>
-            //   value.map((option, index) => (
-            //     <Chip
-            //       label={option.name || option.displayName}
-            //       {...getTagProps({ index })}
-            //       key={option.id}
-            //     />
-            //   ))
-            // }
+            isOptionEqualToValue={(option, value) => option.id === value.id}
             renderInput={(params) => (
               <TextField {...params} label="Action type" margin="normal" />
             )}
           />
         )}
+      /> */}
+      
+  <Controller
+    control={control}
+    name="extraGroups"
+    render={({ field }) => (
+      <Autocomplete
+        multiple
+        options={ActionData}
+        getOptionLabel={(option) => option.name || ""}
+        value={field.value || []}
+        onChange={(_, data) => field.onChange(data)}
+        isOptionEqualToValue={(option, value) => option.id === value.id}
+        renderInput={(params) => (
+          <TextField {...params} label="Action type" margin="normal" />
+        )}
       />
+    )}
+  />
 
-      {/* {localError && (
-        <Box mt={1} color="error.main">
-          {localError}
-        </Box>
-      )} */}
+
 
       <Box mt={3} textAlign="right">
         <Button color="error" sx={{ mr: 2 }} onClick={onClose}>
