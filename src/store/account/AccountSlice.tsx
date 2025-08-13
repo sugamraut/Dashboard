@@ -40,7 +40,6 @@ interface AccountTypeResponse {
 interface AccountTypesState {
   metaData: any;
   data: AccountType[];
-
   total: number;
   loading: boolean;
   error: string | null;

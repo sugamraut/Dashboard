@@ -40,6 +40,11 @@ interface DistrictOption {
   name: string;
   state: string;
 }
+interface stateOption {
+  id: number;
+  name: string;
+  state: string;
+}
 
 export default function CitiesPage() {
   const dispatch = useDispatch<AppDispatch>();
@@ -72,19 +77,68 @@ export default function CitiesPage() {
     }
   }, [dispatch, selectedDistrict]);
 
+  // const districtOptions: DistrictOption[] = useMemo(() => {
+  //   const seen = new Set<number>();
+  //   return allCities
+  //     .filter((city) => {
+  //       if (city.districtId && !seen.has(city.districtId)) {
+  //         seen.add(city.districtId);
+  //         return true;
+  //       }
+  //       return false;
+  //     })
+  //     .map((city) => ({
+  //       id: city.districtId,
+  //       name: city.district,
+  //       state: city.state,
+  //     }));
+  // }, [allCities]);
   const districtOptions: DistrictOption[] = useMemo(() => {
-    const seen = new Set<number>();
-    return allCities
+  const seen = new Set<number>();
+  return allCities
+    .filter(city => {
+      const matchesState = !selectedState || city.state === selectedState;
+      if (matchesState && city.districtId && !seen.has(city.districtId)) {
+        seen.add(city.districtId);
+        return true;
+      }
+      return false;
+    })
+    .map(city => ({
+      id: city.districtId,
+      name: city.district,
+      state: city.state,
+    }));
+}, [allCities, selectedState]);
+
+
+  // const stateOption : stateOption[] = useMemo(()=>{
+  //   const seen =new Set<number>();
+  //   return allCities.filter((states)=>{
+  //     if(states.state && ! seen.has(states.state)){
+  //       seen.add(states.state);
+  //       return true;
+  //     }
+  //     return false;
+  //   }).map((states)=>{
+  //     id:states.districtId;
+  //     name: states.district;
+  //     state:states.state;
+  //   })
+  // },[allCities])
+  const stateOptions: stateOption[] = useMemo(() => {
+    const seen = new Set<string>();
+    return cities
       .filter((city) => {
-        if (city.districtId && !seen.has(city.districtId)) {
-          seen.add(city.districtId);
+        if (city.state && !seen.has(city.state)) {
+          seen.add(city.state);
           return true;
         }
         return false;
       })
       .map((city) => ({
-        id: city.districtId,
-        name: city.district,
+        id: city.id,
+        name: city.state,
         state: city.state,
       }));
   }, [allCities]);
@@ -94,7 +148,7 @@ export default function CitiesPage() {
       const matchesSearch = city.name
         ?.toLowerCase()
         .includes(search.toLowerCase());
-      const matchesState = !selectedState || city.state === selectedState;
+      const matchesState = !selectedState ;
       return matchesSearch && matchesState;
     });
   }, [cities, search, selectedState]);
@@ -119,7 +173,7 @@ export default function CitiesPage() {
   const handleChangePage = (_: unknown, newPage: number) => setPage(newPage);
 
   const handleChangeRowsPerPage = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setRowsPerPage(parseInt(e.target.value, 10));
+    setRowsPerPage(parseInt(e.target.value, 25));
     setPage(0);
   };
 
@@ -131,6 +185,9 @@ export default function CitiesPage() {
     dispatch(fetchAllCities());
     dispatch(fetchCityByDistrictId(1));
   };
+
+console.log("====>",stateOptions)
+console.log("state",allCities)
 
   return (
     <Box marginLeft={9} padding={2}>
@@ -150,6 +207,17 @@ export default function CitiesPage() {
               <TextField {...params} label="District" size="small" />
             )}
           />
+          {/* <Autocomplete
+            size="small"
+            sx={{ minWidth: 220 }}
+            options={stateOptions}
+            getOptionLabel={(option) => option.name}
+            value={stateOptions.find((s) => s.state === selectedState) || null}
+            onChange={(_, newValue) => setSelectedState(newValue?.state || "")}
+            renderInput={(params) => (
+              <TextField {...params} label="State" size="small" />
+            )}
+          /> */}
 
           <TextField
             label="Search"
@@ -211,7 +279,7 @@ export default function CitiesPage() {
                     {city.name || city.nameCombined}
                   </TableCell>
                   <TableCell className="table-data">
-                    {city.state || "N/A"}
+                    {city.state}
                   </TableCell>
                   <TableCell className="table-data">
                     {city.district || "N/A"}

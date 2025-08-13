@@ -53,7 +53,7 @@ const router = createBrowserRouter([
           { path: "branch", element: withSuspense(BrandingSignInPage) },
           { path: "district", element: withSuspense(District) },
           { path: "cities", element: withSuspense(Cities) },
-          { path: "demo", element: withSuspense(Demo) },
+          // { path: "demo", element: withSuspense(Demo) },
           {path:"User",element:withSuspense(User)},
           {path:"Account",element:withSuspense(Account)},
           // {path:"xyz",element:withSuspense(Xyz)},

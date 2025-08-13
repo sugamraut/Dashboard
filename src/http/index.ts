@@ -5,7 +5,7 @@ const API = axios.create({
   baseURL: server_Url,
   headers: {
     // Authorization: `Bearer ${localStorage.getItem("jwt")}`,
-      Authorization:token,
+       Authorization: `Bearer ${token}`,
     'Accept':'applicaton/json',
     'Content-Type':'application/json'
   },

@@ -1,7 +1,7 @@
 export type authItem = {
-    username: string;
-    password: string
-}
+  username: string;
+  password: string;
+};
 export type StateType = {
   id: number;
   name: string;
@@ -11,16 +11,20 @@ export type StateType = {
 
 export type DistrictType = {
   data: any;
-  metaData: { total: number; };
+  metaData: { total: number };
   id: number;
   name: string;
   nameNp: string;
   nameCombined: string;
   code: string;
   stateId: number;
-  state:StateType
+  state: {
+    id: number;
+    name: string;
+    nameNp: string;
+    nameCombined: string;
+  };
 };
-
 
 export interface City {
   id: number;
@@ -30,7 +34,12 @@ export interface City {
   districtId: number;
   code: string | null;
   district: string;
-  state: string;
+  state:{
+     id: number;
+    name: string;
+    nameNp: string;
+    nameCombined: string;
+  };
 }
 
 export interface Branch {
@@ -53,7 +62,6 @@ export interface Permission {
   group: string;
   displayName: string;
   displayNameNp: string;
-
 }
 
 export interface MetaData {

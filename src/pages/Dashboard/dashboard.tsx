@@ -13,79 +13,80 @@ import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
-import BlockIcon from "@mui/icons-material/Block";
-import Sidebar from "../sidebar";
+import NotInterestedIcon from "@mui/icons-material/NotInterested";
+import { useDispatch, useSelector } from "react-redux";
+import type { AppDispatch, RootState } from "../../store/store";
+import { useEffect } from "react";
+import { fetchdashboarddata } from "../../store/dashboard/DashboardSlice";
 
 const cardItems = [
   {
     title: "TOTAL",
-    count: 7,
-    trend: 1,
     icon: <StorageIcon />,
-    iconBg: "#0a58ca",
     trendColor: "#0a58ca",
   },
   {
     title: "PENDING",
-    count: 7,
-    trend: 1,
     icon: <VisibilityOffIcon />,
-    iconBg: "#6c757d",
     trendColor: "#6c757d",
   },
   {
     title: "PROCESSING",
-    count: 0,
-    trend: 0,
     icon: <AccessTimeIcon />,
-    iconBg: "#0d6efd",
     trendColor: "#0d6efd",
   },
   {
     title: "APPROVED",
-    count: 0,
-    trend: 0,
     icon: <CheckCircleIcon />,
-    iconBg: "#198754",
     trendColor: "#198754",
   },
   {
     title: "REJECTED",
-    count: 0,
-    trend: 0,
     icon: <CancelIcon />,
-    iconBg: "#dc3545",
     trendColor: "#dc3545",
   },
   {
     title: "SPAM",
-    count: 0,
-    trend: 0,
-    icon: <BlockIcon />,
-    iconBg: "#ffc107",
+    icon: <NotInterestedIcon />,
     trendColor: "#ffc107",
   },
 ];
 
 const StatusCards = () => {
+  const dispatch = useDispatch<AppDispatch>();
+
+  const { list } = useSelector((state: RootState) => state.dashboard);
+  useEffect(() => {
+    dispatch(
+      fetchdashboarddata({
+        page: 1,
+        rowsPerPage: 20,
+        sortBy: "createdAt",
+        sortOrder: "desc",
+      })
+    );
+  }, [dispatch]);
+
+  const mergedCards = list.map((apiItem) => {
+    const matchedCard = cardItems.find((c) => c.title === apiItem.title);
+    return {
+      ...apiItem,
+      icon: matchedCard?.icon || <StorageIcon />,
+      trendColor: matchedCard?.trendColor,
+    };
+  });
+
   return (
-    <Box sx={{ display: "flex" }}>
-      <Sidebar />
-      <Box
-        component="main"
-        sx={{ flexGrow: 1, p: 3 }}
-      >
-        {" "}
-        <Box sx={{ p: 4 }} >
+    <Box sx={{ display: "flex", paddingLeft: "50px" }}>
+      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+        <Box sx={{ p: 4 }}>
           <Grid container spacing={5}>
-            {cardItems.map((item) => (
-              <Card
-                className="card-design"
-              >
+            {mergedCards.map((item) => (
+              <Card className="card-design">
                 <CardContent>
                   <Avatar
                     sx={{
-                      bgcolor: item.iconBg
+                      bgcolor: item.trendColor,
                     }}
                     className="avatar-icon-style "
                   >
@@ -93,13 +94,9 @@ const StatusCards = () => {
                   </Avatar>
 
                   <Chip
-                    label={item.trend}
+                    label={item.changeValue}
                     size="small"
-                    sx={{
-                     
-                      backgroundColor: item.trendColor,
-                  
-                    }}
+                    sx={{ backgroundColor: item.trendColor }}
                     className="chip-icon-style"
                   />
 

@@ -7,7 +7,7 @@ import axios from "axios";
 import { server_Url } from "../../globals/config";
 import { Status, type StatusType } from "../../globals/status";
 import type { City, StateType } from "../../globals/typeDeclaration";
-
+import API from "../../http";
 
 interface CityState {
   fullList: City[] | null;
@@ -16,7 +16,7 @@ interface CityState {
   error: string | null;
   status: StatusType;
   totalCount: number;
-  state: StateType;
+  // state: StateType;
 }
 
 const initialState: CityState = {
@@ -26,12 +26,6 @@ const initialState: CityState = {
   error: null,
   status: Status.Loading,
   totalCount: 0,
-  state: {
-    id: 0,
-    name: "",
-    nameNp: "",
-    nameCombined: "",
-  },
 };
 
 export const fetchAllCities = createAsyncThunk<
@@ -41,7 +35,7 @@ export const fetchAllCities = createAsyncThunk<
 >("city/fetchAll", async (_, { rejectWithValue }) => {
   try {
     const response = await axios.get(`${server_Url}/api/v1/cities/all`);
-    return response.data.data as City[];
+    return response.data.data ;
   } catch (error: any) {
     return rejectWithValue(error.message || "Failed to fetch all cities");
   }
@@ -53,14 +47,20 @@ export const fetchCityByDistrictId = createAsyncThunk<
   { rejectValue: string }
 >("city/fetchByDistrict", async (districtId, { rejectWithValue }) => {
   try {
-    const response = await axios.get(`${server_Url}/api/v1/cities`, {
+    // const response = await axios.get(`${server_Url}/api/v1/cities`, {
+    //   params: {
+    //     page: 1,
+    //     rowsPerPage: 25,
+    //     filters: JSON.stringify({ districtId }),
+    //   },
+    // });
+    const response = await API.get(`/api/v1/cities`, {
       params: {
         page: 1,
         rowsPerPage: 25,
         filters: JSON.stringify({ districtId }),
       },
     });
-
     return {
       data: response.data.data as City[],
       metaData: response.data.metaData,

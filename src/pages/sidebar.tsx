@@ -57,7 +57,7 @@ export default function Sidebar() {
         },
       }}
     >
-      <img src={companyLogo} alt="Logo" width="50" />
+      <img src={companyLogo} alt="Logo" width="65" className="rounded-1"/>
       <List sx={{ mt: 2 }}>
         {sidebarIcons.map(({ icon, label, path }, index) => {
           const isActive = location.pathname === path;

@@ -192,7 +192,7 @@ export const fetchDistrictsByStateIdAsync = (stateId: number) => {
     dispatch(setStatus(Status.Loading));
 
     try {
-      const token = getToken(); 
+      // const token = getToken(); 
       // const response = await axios.get(`${server_Url}/api/v1/districts/state/${stateId}`, {
       //   headers: { Authorization: `Bearer ${token}` },
       // });
