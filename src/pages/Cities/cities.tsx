@@ -1,294 +1,195 @@
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Box,
-  TableContainer,
   Table,
+  TableContainer,
   TableHead,
   TableRow,
   TableCell,
   TableBody,
+  Paper,
   IconButton,
   Typography,
   TextField,
   Stack,
+  TablePagination,
   Dialog,
   DialogTitle,
   DialogContent,
-  DialogActions,
-  Button,
-  TablePagination,
   Autocomplete,
 } from "@mui/material";
 
 import EditIcon from "@mui/icons-material/Edit";
-import AddCircleIcon from "@mui/icons-material/AddCircle";
 import FilterAltOffIcon from "@mui/icons-material/FilterAltOff";
-
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState, AppDispatch } from "../../store/store";
 import {
   fetchAllCities,
-  fetchCityByDistrictId,
+  fetchCityBypaginated,
 } from "../../store/cities/CitiesSlice";
+import AddEditCity from "./edit";
+import type { City} from "../../globals/typeDeclaration";
 
-import AddEditpage from "./edit";
-import LoadingButtons from "../loader";
-import { useEffect, useMemo, useState } from "react";
-import type { City } from "../../globals/typeDeclaration";
-
-interface DistrictOption {
-  id: number;
-  name: string;
-  state: string;
-}
-interface stateOption {
-  id: number;
-  name: string;
-  state: string;
-}
-
-export default function CitiesPage() {
+export default function CityPage() {
   const dispatch = useDispatch<AppDispatch>();
 
-  const allCities = useSelector(
-    (state: RootState) => state.city.fullList ?? []
-  );
-  const cities = useSelector((state: RootState) => state.city.list ?? []);
-  const loading = useSelector((state: RootState) => state.city.loading);
-  const error = useSelector((state: RootState) => state.city.error);
+  const fulldistrict = useSelector((state: RootState) => state.city.fullList);
+  const cityList = useSelector((state: RootState) => state.city.list ?? []);
+  const totalCount = useSelector((state: RootState) => state.city.totalCount);
 
   const [search, setSearch] = useState("");
-  const [selectedState, setSelectedState] = useState<string>("");
-  const [selectedDistrict, setSelectedDistrict] =
-    useState<DistrictOption | null>(null);
+ const [selectedDistrict, setSelectedDistrict] = useState<{ id: number; district: string } | null>(null);
+
   const [editDialogOpen, setEditDialogOpen] = useState(false);
-  const [selectedCity, setSelectedCity] = useState<City | null>(null);
+  const [selectedCityItem, setSelectedCityItem] = useState<City | null>(null);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(25);
 
   useEffect(() => {
     dispatch(fetchAllCities());
-    dispatch(fetchCityByDistrictId(1));
   }, [dispatch]);
 
   useEffect(() => {
-    if (selectedDistrict) {
-      dispatch(fetchCityByDistrictId(selectedDistrict.id));
-      setPage(0);
-    }
-  }, [dispatch, selectedDistrict]);
-
-  // const districtOptions: DistrictOption[] = useMemo(() => {
-  //   const seen = new Set<number>();
-  //   return allCities
-  //     .filter((city) => {
-  //       if (city.districtId && !seen.has(city.districtId)) {
-  //         seen.add(city.districtId);
-  //         return true;
-  //       }
-  //       return false;
-  //     })
-  //     .map((city) => ({
-  //       id: city.districtId,
-  //       name: city.district,
-  //       state: city.state,
-  //     }));
-  // }, [allCities]);
-  const districtOptions: DistrictOption[] = useMemo(() => {
-  const seen = new Set<number>();
-  return allCities
-    .filter(city => {
-      const matchesState = !selectedState || city.state === selectedState;
-      if (matchesState && city.districtId && !seen.has(city.districtId)) {
-        seen.add(city.districtId);
-        return true;
-      }
-      return false;
-    })
-    .map(city => ({
-      id: city.districtId,
-      name: city.district,
-      state: city.state,
-    }));
-}, [allCities, selectedState]);
-
-
-  // const stateOption : stateOption[] = useMemo(()=>{
-  //   const seen =new Set<number>();
-  //   return allCities.filter((states)=>{
-  //     if(states.state && ! seen.has(states.state)){
-  //       seen.add(states.state);
-  //       return true;
-  //     }
-  //     return false;
-  //   }).map((states)=>{
-  //     id:states.districtId;
-  //     name: states.district;
-  //     state:states.state;
-  //   })
-  // },[allCities])
-  const stateOptions: stateOption[] = useMemo(() => {
-    const seen = new Set<string>();
-    return cities
-      .filter((city) => {
-        if (city.state && !seen.has(city.state)) {
-          seen.add(city.state);
-          return true;
-        }
-        return false;
+    const districtId = selectedDistrict?.id;
+    dispatch(
+      fetchCityBypaginated({
+        districtId,
+        page: page + 1,
+        rowsPerPage,
+        search: search.trim() || undefined,
       })
-      .map((city) => ({
-        id: city.id,
-        name: city.state,
-        state: city.state,
-      }));
-  }, [allCities]);
-
-  const filteredCities = useMemo(() => {
-    return cities.filter((city) => {
-      const matchesSearch = city.name
-        ?.toLowerCase()
-        .includes(search.toLowerCase());
-      const matchesState = !selectedState ;
-      return matchesSearch && matchesState;
-    });
-  }, [cities, search, selectedState]);
-
-  const paginatedCities = useMemo(() => {
-    return filteredCities.slice(
-      page * rowsPerPage,
-      page * rowsPerPage + rowsPerPage
     );
-  }, [filteredCities, page, rowsPerPage]);
+  }, [dispatch, selectedDistrict, page, rowsPerPage, search]);
 
-  const handleEditClick = (city: City | null) => {
-    setSelectedCity(city);
+  const districts = useMemo(() => {
+    if (!fulldistrict) return [];
+
+    const uniqueMap = new Map<string, { id: number; district: string }>();
+
+    for (const item of fulldistrict) {
+      const key = item.district.trim().toLowerCase();
+      if (!uniqueMap.has(key)) {
+        uniqueMap.set(key, { id: item.districtId, district: item.district });
+      }
+    }
+
+    return Array.from(uniqueMap.values());
+  }, [fulldistrict]);
+
+  const handleEditClick = (city: City) => {
+    setSelectedCityItem(city);
     setEditDialogOpen(true);
   };
 
   const handleDialogClose = () => {
     setEditDialogOpen(false);
-    setSelectedCity(null);
+    setSelectedCityItem(null);
   };
 
   const handleChangePage = (_: unknown, newPage: number) => setPage(newPage);
 
-  const handleChangeRowsPerPage = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setRowsPerPage(parseInt(e.target.value, 25));
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
 
-  const handleRefresh = () => {
-    setSearch("");
-    setSelectedState("");
+  const handleClearFilters = () => {
     setSelectedDistrict(null);
+    setSearch("");
     setPage(0);
-    dispatch(fetchAllCities());
-    dispatch(fetchCityByDistrictId(1));
   };
 
-console.log("====>",stateOptions)
-console.log("state",allCities)
+  const sortedCityList = useMemo(() => {
+    return [...cityList].sort((a, b) => {
+      if (a.id !== b.id) return a.id - b.id;
+
+      return a.name.localeCompare(b.name);
+    });
+  }, [cityList]);
 
   return (
-    <Box marginLeft={9} padding={2}>
-      <Box className="header" mb={2}>
-        <Typography variant="h5" fontWeight="bold">
+    <Box marginLeft={10} padding={2}>
+      <Box className="header">
+        <Typography variant="h5" fontWeight="bold" paddingBottom={2}>
           Cities
         </Typography>
+
         <Stack direction="row" spacing={2} alignItems="center">
           <Autocomplete
             size="small"
-            sx={{ minWidth: 220 }}
-            options={districtOptions}
-            getOptionLabel={(option) => option.name}
+            sx={{ minWidth: 250 }}
+            options={districts}
+            getOptionLabel={(option) => option.district || "N/A"}
             value={selectedDistrict}
-            onChange={(_, newValue) => setSelectedDistrict(newValue)}
+            onChange={(_, newValue) => {
+              setSelectedDistrict(newValue);
+              setPage(0);
+            }}
+            isOptionEqualToValue={(option, value) => option.id === value?.id}
             renderInput={(params) => (
-              <TextField {...params} label="District" size="small" />
+              <TextField {...params} label="Filter by District" />
             )}
           />
-          {/* <Autocomplete
-            size="small"
-            sx={{ minWidth: 220 }}
-            options={stateOptions}
-            getOptionLabel={(option) => option.name}
-            value={stateOptions.find((s) => s.state === selectedState) || null}
-            onChange={(_, newValue) => setSelectedState(newValue?.state || "")}
-            renderInput={(params) => (
-              <TextField {...params} label="State" size="small" />
-            )}
-          /> */}
 
           <TextField
-            label="Search"
             size="small"
+            sx={{ minWidth: 250 }}
+            label="Search by City Name"
+            placeholder="Type a city name"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") setPage(0);
+            }}
           />
 
           <IconButton
             color="error"
-            onClick={handleRefresh}
-            title="Reset filters"
+            onClick={handleClearFilters}
+            title="Clear Filters"
           >
             <FilterAltOffIcon />
-          </IconButton>
-
-          <IconButton
-            color="primary"
-            onClick={() => handleEditClick(null)}
-            title="Add City"
-          >
-            <AddCircleIcon />
           </IconButton>
         </Stack>
       </Box>
 
-      {loading && <LoadingButtons />}
-      {error && (
-        <Typography color="error" variant="body2" mb={1}>
-          Error: {error}
-        </Typography>
-      )}
-
-      <TableContainer>
+      <TableContainer component={Paper}>
         <Table size="small">
           <TableHead>
             <TableRow>
               <TableCell className="table-header">#</TableCell>
               <TableCell className="table-header">Name</TableCell>
-              <TableCell className="table-header">State</TableCell>
               <TableCell className="table-header">District</TableCell>
+              <TableCell className="table-header">state</TableCell>
               <TableCell align="center" className="table-header">
                 Actions
               </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {paginatedCities.length === 0 ? (
+            {cityList.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={5} align="center">
-                  No cities found.
+                <TableCell colSpan={4} align="center">
+                  No cities found
                 </TableCell>
               </TableRow>
             ) : (
-              paginatedCities.map((city) => (
-                <TableRow key={city.id}>
-                  <TableCell className="table-data">{city.id}</TableCell>
+              sortedCityList.map((city, index) => (
+                <TableRow key={page * rowsPerPage + index + 1}>
                   <TableCell className="table-data">
-                    {city.name || city.nameCombined}
+                    {page * rowsPerPage + index + 1}
                   </TableCell>
-                  <TableCell className="table-data">
-                    {city.state}
-                  </TableCell>
+                  <TableCell className="table-data">{city.name}</TableCell>
                   <TableCell className="table-data">
                     {city.district || "N/A"}
                   </TableCell>
+                  <TableCell>{city.state}</TableCell>
                   <TableCell align="center" className="table-data">
                     <IconButton
                       color="primary"
                       onClick={() => handleEditClick(city)}
-                      size="small"
                     >
                       <EditIcon />
                     </IconButton>
@@ -298,17 +199,17 @@ console.log("state",allCities)
             )}
           </TableBody>
         </Table>
-      </TableContainer>
 
-      <TablePagination
-        rowsPerPageOptions={[5, 10, 25, 50]}
-        component="div"
-        count={filteredCities.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-      />
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25, 50]}
+          component="div"
+          count={totalCount}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
+      </TableContainer>
 
       <Dialog
         open={editDialogOpen}
@@ -316,29 +217,13 @@ console.log("state",allCities)
         maxWidth="md"
         fullWidth
       >
-        <DialogTitle>{selectedCity ? "Edit City" : "Add City"}</DialogTitle>
+        <DialogTitle>{selectedCityItem ? "Edit City" : "Add City"}</DialogTitle>
         <DialogContent dividers>
-          <AddEditpage
-            initialData={selectedCity!}
+          <AddEditCity
+            initialData={selectedCityItem ?? undefined}
             onClose={handleDialogClose}
           />
         </DialogContent>
-        <DialogActions
-        // sx={{ justifyContent: "space-between", px: 3 }}
-        >
-          <Box mt={3} textAlign="right" gap={2} sx={{ mr: 2 }}>
-            <Button color="error" onClick={handleDialogClose}>
-              Cancel
-            </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleDialogClose}
-            >
-              Submit
-            </Button>
-          </Box>
-        </DialogActions>
       </Dialog>
     </Box>
   );

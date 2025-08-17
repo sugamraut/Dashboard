@@ -28,6 +28,7 @@ const User=lazyWithDelay(()=>import("../pages/users/users"))
 const Account =lazyWithDelay(()=>import("../pages/Account/Account"))
 // const Xyz =lazyWithDelay(()=>import("../xyz"))
 const Permission = lazyWithDelay(()=>import("../pages/Permissions/permissions"))
+const Role =lazyWithDelay(()=>import("../pages/Role/role"))
 const Add =lazyWithDelay(()=>import("../pages/Permissions/addedit"))
 
 const withSuspense = (
@@ -58,7 +59,9 @@ const router = createBrowserRouter([
           {path:"Account",element:withSuspense(Account)},
           // {path:"xyz",element:withSuspense(Xyz)},
           {path:"permission",element:withSuspense(Permission)},
+          {path:"role",element:withSuspense(Role)},
           {path:"Add",element:withSuspense(Add)}
+
         ],
       },
     ],

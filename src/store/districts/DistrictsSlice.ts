@@ -30,7 +30,10 @@ const districtSlice = createSlice({
   reducers: {
     setDistrict(
       state,
-      action: PayloadAction<{ data: DistrictType[]; metaData: { total: number }}>
+      action: PayloadAction<{
+        data: DistrictType[];
+        metaData: { total: number };
+      }>
     ) {
       state.list = action.payload.data;
       state.totalCount = action.payload.metaData.total;
@@ -41,9 +44,9 @@ const districtSlice = createSlice({
     setFullList(state, action: PayloadAction<DistrictType[]>) {
       state.fullList = action.payload;
     },
-     setDistrictById(state, action:PayloadAction<DistrictType>) {
+    setDistrictById(state, action: PayloadAction<DistrictType>) {
       state.list = [action.payload];
-        state.totalCount = 1; 
+      state.totalCount = 1;
     },
     setStatus(state, action: PayloadAction<StatusType>) {
       state.status = action.payload;
@@ -95,22 +98,18 @@ export const fetchDistrictAsync = (
     }
 
     try {
-      const params: any = {
-        page,
-        rowsPerPage,
-        stateId: stateId || undefined,
-      };
-
-      if (id !== undefined) {
-        params.id = id;
-      } else if (search) {
-        params.search = search;
-      }
-
-      const response =await API.get(`/api/v1/districts`,params)
+      const response = await API.get(`/api/v1/districts`, {
+        params: {
+          page,
+          limit: rowsPerPage,
+          stateId: stateId || undefined,
+          id: id || undefined,
+          search: search || undefined,
+        },
+      });
 
       const sortedData = response.data.data.sort(
-        (a: { id: number }, b: { id: number }) => a.id - b.id
+        (a: DistrictType, b: DistrictType) => a.id - b.id
       );
 
       dispatch(
@@ -130,7 +129,6 @@ export const fetchDistrictAsync = (
   };
 };
 
-
 export const updateDistrictAsync = ({
   id,
   data,
@@ -148,7 +146,7 @@ export const updateDistrictAsync = ({
     }
 
     try {
-      const response =await API.put(`/api/v1/districts/${id}`,data)
+      const response = await API.put(`/api/v1/districts/${id}`, data);
 
       console.log("Update success:", response.data);
 
@@ -165,14 +163,13 @@ export const updateDistrictAsync = ({
   };
 };
 
-
 export const fetchAllDistrictsAsync = () => {
   return async (dispatch: AppDispatch) => {
     dispatch(setStatus(Status.Loading));
 
     try {
       // const response = await axios.get(`${server_Url}/api/v1/districts/all`);
-      const response =await API.get(`/api/v1/districts/all`)
+      const response = await API.get(`/api/v1/districts/all`);
 
       if (response.status === 200 || response.status === 201) {
         dispatch(setFullList(response.data.data));
@@ -187,28 +184,38 @@ export const fetchAllDistrictsAsync = () => {
     }
   };
 };
-export const fetchDistrictsByStateIdAsync = (stateId: number) => {
+
+export const fetchDistrictsByStateIdAsync = (
+  stateId: number,
+  page: number,
+  limit: number
+) => {
   return async (dispatch: AppDispatch) => {
     dispatch(setStatus(Status.Loading));
 
     try {
-      // const token = getToken(); 
-      // const response = await axios.get(`${server_Url}/api/v1/districts/state/${stateId}`, {
-      //   headers: { Authorization: `Bearer ${token}` },
-      // });
-      const response =await API.get(`/api/v1/districts/state/${stateId}`)
+      const response = await API.get(
+        `/api/v1/districts/state/${stateId}?page=${page}&limit=${limit}`
+      );
 
-      const sortedData = response.data.sort((a: DistrictType, b: DistrictType) => a.id - b.id);
+      const sortedData = response.data.sort(
+        (a: DistrictType, b: DistrictType) => a.id - b.id
+      );
 
-      dispatch(setDistrict({ data: sortedData, metaData: { total: sortedData.length } }));
+      dispatch(
+        setDistrict({
+          data: sortedData,
+          metaData: { total: sortedData.length },
+        })
+      );
       dispatch(setStatus(Status.Success));
     } catch (error: any) {
-      const message = error.response?.data?.message || error.message || "Unknown error";
+      const message =
+        error.response?.data?.message || error.message || "Unknown error";
       dispatch(setError(message));
     }
   };
 };
-  
 
 export const fetchDistrictByIdAsync = (districtId: number) => {
   return async (dispatch: AppDispatch) => {
@@ -221,9 +228,9 @@ export const fetchDistrictByIdAsync = (districtId: number) => {
       dispatch(setDistrictById(response.data));
       dispatch(setStatus(Status.Success));
     } catch (error: any) {
-      const message = error.response?.data?.message || error.message || "Unknown error";
+      const message =
+        error.response?.data?.message || error.message || "Unknown error";
       dispatch(setError(message));
     }
   };
 };
-

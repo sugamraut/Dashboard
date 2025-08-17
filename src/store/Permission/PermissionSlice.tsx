@@ -6,7 +6,6 @@ import {
 import API from "../../http";
 import type { MetaData, Permission } from "../../globals/typeDeclaration";
 
-
 export interface PermissionsResponse {
   data: Permission[];
   metaData: MetaData;
@@ -23,8 +22,9 @@ interface FetchPermissionParams {
 
 interface PermissionsState {
   data: Permission[];
+  fulllist: Permission[] | null;
   metaData: MetaData | null;
-  groupedPermissions: Permission[] ;
+  groupedPermissions: Permission[];
   ActionData: Permission[] | null;
   loading: boolean;
   error: string | null;
@@ -32,11 +32,12 @@ interface PermissionsState {
 
 const initialState: PermissionsState = {
   data: [],
+  fulllist: [],
   metaData: null,
   groupedPermissions: [],
   loading: false,
   error: null,
-  ActionData: []
+  ActionData: [],
 };
 
 export const fetchPermissions = createAsyncThunk<
@@ -139,7 +140,7 @@ export const fetchAllPermissions = createAsyncThunk<
 >("permissions/fetchAll", async (_, { rejectWithValue }) => {
   try {
     const response = await API.get(`/api/v1/permissions/all`);
-    return response.data;
+    return response.data.data;
   } catch (error: any) {
     return rejectWithValue(
       error.response?.data?.message ||
@@ -209,6 +210,7 @@ const permissionsSlice = createSlice({
       })
       .addCase(fetchAllPermissions.fulfilled, (state, action) => {
         state.ActionData = action.payload;
+        state.fulllist = action.payload;
       });
   },
 });

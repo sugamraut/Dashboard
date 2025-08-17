@@ -28,7 +28,7 @@ const sidebarIcons = [
   {
     icon: <AdminPanelSettingsIcon />,
     label: "Roles & Access",
-    path: "/roles-access",
+    path: "/admin/role",
   },
   { icon: <FolderSharedIcon  />, label: "Permissions", path: "/admin/permission" },
   { icon: <AutorenewIcon />, label: "Activity log", path: "/web-portal" },

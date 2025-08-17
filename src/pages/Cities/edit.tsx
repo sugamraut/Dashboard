@@ -1,36 +1,51 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Box,
   Alert,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
+  Button,
+  Autocomplete,
+  TextField,
 } from "@mui/material";
-import type { SelectChangeEvent } from "@mui/material";
 import InputField from "../../components/Input_field";
+import { fetchStates } from "../../store/state/stateSlice";
+import { createCity, updatecity } from "../../store/cities/CitiesSlice";
+import { useAppDispatch, useAppSelector } from "../../store/hook";
 
 interface EditBranchFormProps {
-  initialData?: Partial<FormDataState>;
+  initialData?: Partial<FormDataState> & { id?: number };
   onClose?: () => void;
   onSubmit?: (data: FormDataState) => void;
 }
 
 export interface FormDataState {
-  Name: string;
   name: string;
   state: string;
   district: string;
+  nameNp: string;
 }
 
 const defaultFormData: FormDataState = {
-  Name: "",
   name: "",
   state: "",
   district: "",
+  nameNp: "",
 };
 
-const AddEditpage: React.FC<EditBranchFormProps> = ({ initialData = {} }) => {
+const AddEditPage: React.FC<EditBranchFormProps> = ({
+  initialData = {},
+  onClose,
+}) => {
+  const dispatch = useAppDispatch();
+  const { fullList } = useAppSelector((state) => state.city);
+  const [selectedDistrict, setSelectedDistrict] = useState<{
+    id: number;
+    district: string;
+  } | null>(null);
+
+  const { statesList = [], loading } = useAppSelector(
+    (state) => state.states || {}
+  );
+
   const [formData, setFormData] = useState<FormDataState>({
     ...defaultFormData,
     ...initialData,
@@ -40,32 +55,94 @@ const AddEditpage: React.FC<EditBranchFormProps> = ({ initialData = {} }) => {
   useEffect(() => {
     setFormData((prev) => ({
       ...prev,
-      ...initialData,
+      // ...initialData,
+      state: initialData?.state?.toString() || "",
+      district: initialData?.district?.toString() || "",
+      nameNp: initialData?.nameNp?.toString() || "",
     }));
   }, [initialData]);
 
+  useEffect(() => {
+    dispatch(fetchStates());
+  }, [dispatch]);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name as string]: value,
-    }));
-  };
-
-  const handleSelectChange = (e: SelectChangeEvent<string>) => {
-    const name = e.target.name;
-    const value = e.target.value;
-    if (!name) return;
-
     setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // const handleSelectChange = (e: SelectChangeEvent<string>) => {
+  //   const name = e.target.name;
+  //   const value = e.target.value;
+  //   if (!name) return;
+
+  //   setFormData((prev) => ({
+  //     ...prev,
+  //     [name]: value,
+  //   }));
+  // };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
+
+    if (!formData.name || !formData.state || !formData.district) {
+      setError("All fields are required.");
+      return;
+    }
+
+    const payload = {
+      name: formData.name,
+      stateId: parseInt(formData.state, 10),
+      districtId: parseInt(formData.district, 10),
+    };
+
+    try {
+      if (initialData?.id) {
+        await dispatch(
+          updatecity({
+            ...payload,
+            id: initialData.id,
+            nameNp: formData.nameNp,
+            nameCombined: formData.nameNp,
+            code: null,
+            district: formData.district,
+            state: formData.state,
+          })
+        ).unwrap();
+      } else {
+        await dispatch(createCity(payload)).unwrap();
+      }
+      if (onClose) onClose();
+    } catch (err: any) {
+      setError(err?.message || "An error occurred.");
+    }
   };
+
+  const district = useMemo(() => {
+    if (!fullList) return [];
+    const uniqueMap = new Map<string, { id: number; district: string }>();
+    for (const item of fullList) {
+      const key = item.district.trim().toLowerCase();
+      if (!uniqueMap.has(key)) {
+        uniqueMap.set(key, { id: item.districtId, district: item.district });
+      }
+    }
+
+    return Array.from(uniqueMap.values());
+  }, [fullList]);
+
+  // useEffect(() => {
+  //   if (formData.district && district.length > 0) {
+  //     const found = district.find((d) => d.id === Number(formData.district));
+  //     if (found) {
+  //       setSelectedDistrict(found);
+  //     }
+  //   }
+  // }, [formData.district, district]);
 
   return (
     <Box
@@ -84,41 +161,52 @@ const AddEditpage: React.FC<EditBranchFormProps> = ({ initialData = {} }) => {
       )}
 
       <form onSubmit={handleSubmit}>
-        <FormControl fullWidth margin="normal">
-          <InputLabel id="state-label">State</InputLabel>
-          <Select
-            labelId="state-label"
-            name="state"
-            value={formData.state}
-            onChange={handleSelectChange}
-            label="State"
-          >
-            <MenuItem value="">
-              <em>None</em>
-            </MenuItem>
-            <MenuItem value="State 1">State 1</MenuItem>
-            <MenuItem value="State 2">State 2</MenuItem>
-          </Select>
-        </FormControl>
+        <Autocomplete
+          fullWidth
+          sx={{ minWidth: 250 }}
+          options={statesList}
+          getOptionLabel={(option) => option.name || "n/a"}
+          value={
+            statesList.find(
+              (state) => state.id.toString() === formData.state
+            ) || null
+          }
+          loading={loading}
+          onChange={(_, newValue) => {
+            setFormData((prev) => ({
+              ...prev,
+              state: newValue ? newValue.id.toString() : "",
+            }));
+          }}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label="State"
+              margin="normal"
+             
+            />
+          )}
+        />
+        <Autocomplete
+          fullWidth
+          sx={{ minWidth: 250 }}
+          options={district}
+          getOptionLabel={(option) => option.district || "n/a"}
+          value={selectedDistrict}
+          onChange={(_, newValue) => {
+            setSelectedDistrict(newValue);
+            setFormData((prev) => ({
+              ...prev,
+              district: newValue ? newValue.id.toString() : "",
+            }));
+          }}
+          renderInput={(params) => (
+            <TextField {...params} label="District Name" margin="normal" value={formData.district} />
+          )}
+        />
 
-        <FormControl fullWidth margin="normal">
-          <InputLabel id="district-label">District</InputLabel>
-          <Select
-            labelId="district-label"
-            name="district"
-            value={formData.district}
-            onChange={handleSelectChange}
-            label="District"
-          >
-            <MenuItem value="">
-              <em>None</em>
-            </MenuItem>
-            <MenuItem value="District 1">District 1</MenuItem>
-            <MenuItem value="District 2">District 2</MenuItem>
-          </Select>
-        </FormControl>
         <InputField
-          label="name"
+          label="City Name (English)"
           name="name"
           value={formData.name}
           onChange={handleChange}
@@ -126,9 +214,28 @@ const AddEditpage: React.FC<EditBranchFormProps> = ({ initialData = {} }) => {
           fullWidth
           margin="normal"
         />
+
+        <InputField
+          label="city Name (Nepali)"
+          name="name"
+          value={formData.nameNp}
+          onChange={handleChange}
+          required
+          fullWidth
+          margin="normal"
+        />
+
+        <Box mt={2}>
+          <Button onClick={onClose} color="error" sx={{ mr: 2 }}>
+            Cancel
+          </Button>
+          <Button variant="contained" color="primary" type="submit">
+            Submit
+          </Button>
+        </Box>
       </form>
     </Box>
   );
 };
 
-export default AddEditpage;
+export default AddEditPage;

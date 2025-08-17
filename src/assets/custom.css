@@ -84,3 +84,14 @@ body {
   font-size: 18px !important;
   font-weight: 600;
 }
+
+.dashboardCardValue{
+  margin-top: 4px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.role-permission-header{
+  font-size: 24px !important;
+  /* font-weight: bolder !important; */
+}

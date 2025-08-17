@@ -11,8 +11,6 @@ import {
 } from "../../store/Permission/PermissionSlice";
 import type { Permission } from "../../globals/typeDeclaration";
 
-
-
 interface ExtraGroupOption {
   name: any;
   id: number;
@@ -51,7 +49,6 @@ const AddEditPage: React.FC<AddEditPageProps> = ({ initialData, onClose }) => {
     (state: RootState) => state.permissions
   );
 
-
   const {
     control,
     register,
@@ -66,7 +63,6 @@ const AddEditPage: React.FC<AddEditPageProps> = ({ initialData, onClose }) => {
       extraGroups: initialData?.extraGroups ?? [],
     },
   });
-
 
   useEffect(() => {
     dispatch(fetchPermissionsByGroup());
@@ -94,7 +90,11 @@ const AddEditPage: React.FC<AddEditPageProps> = ({ initialData, onClose }) => {
 
       if (initialData?.id) {
         +(await dispatch(
-          updatePermission({ ...payload, id: initialData.id })
+          updatePermission({
+            ...payload, id: initialData.id,
+            code: undefined,
+            permissions: undefined
+          })
         ).unwrap());
       } else {
         await dispatch(addPermission(payload)).unwrap();
@@ -107,7 +107,6 @@ const AddEditPage: React.FC<AddEditPageProps> = ({ initialData, onClose }) => {
   };
 
   console.log(ActionData);
-  
 
   return (
     <Box component="form" noValidate onSubmit={handleSubmit(onSubmit)}>
@@ -126,7 +125,6 @@ const AddEditPage: React.FC<AddEditPageProps> = ({ initialData, onClose }) => {
         margin="normal"
         {...register("displayNameNp")}
       />
-
 
       <Controller
         control={control}
@@ -151,14 +149,14 @@ const AddEditPage: React.FC<AddEditPageProps> = ({ initialData, onClose }) => {
           />
         )}
       />
-
-      {/* <Controller
+      
+      <Controller
         control={control}
         name="extraGroups"
         render={({ field }) => (
           <Autocomplete
             multiple
-            options={Array.isArray(ActionData) ? ActionData : []}
+            options={ActionData}
             getOptionLabel={(option) => option.name || ""}
             value={field.value || []}
             onChange={(_, data) => field.onChange(data)}
@@ -168,27 +166,7 @@ const AddEditPage: React.FC<AddEditPageProps> = ({ initialData, onClose }) => {
             )}
           />
         )}
-      /> */}
-      
-  <Controller
-    control={control}
-    name="extraGroups"
-    render={({ field }) => (
-      <Autocomplete
-        multiple
-        options={ActionData}
-        getOptionLabel={(option) => option.name || ""}
-        value={field.value || []}
-        onChange={(_, data) => field.onChange(data)}
-        isOptionEqualToValue={(option, value) => option.id === value.id}
-        renderInput={(params) => (
-          <TextField {...params} label="Action type" margin="normal" />
-        )}
       />
-    )}
-  />
-
-
 
       <Box mt={3} textAlign="right">
         <Button color="error" sx={{ mr: 2 }} onClick={onClose}>

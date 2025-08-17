@@ -31,9 +31,11 @@ import {
 } from "../../store/districts/DistrictsSlice";
 import AddEditPage from "./addedit";
 import type { DistrictType } from "../../globals/typeDeclaration";
+import { useAppDispatch } from "../../store/hook";
 
 export default function DistrictPage() {
-  const dispatch = useDispatch<AppDispatch>();
+  
+   const dispatch =useAppDispatch()
 
   const fullDistrictList = useSelector(
     (state: RootState) => state.district.fullList
@@ -55,24 +57,29 @@ export default function DistrictPage() {
   const [selectedDistrictItem, setSelectedDistrictItem] =
     useState<DistrictType | null>(null);
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(25);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   useEffect(() => {
     dispatch(fetchAllDistrictsAsync());
   }, [dispatch]);
 
-  useEffect(() => {
-    if (selectedState) {
-      dispatch(fetchDistrictsByStateIdAsync(selectedState.id));
-    }
-  }, [dispatch, selectedState]);
+ 
+useEffect(() => {
+  if (selectedState) {
+    dispatch(
+      fetchDistrictsByStateIdAsync(selectedState.id, page + 1, rowsPerPage)
+    );
+  }
+}, [dispatch, selectedState, page, rowsPerPage]);
+
+
 
   useEffect(() => {
     if (!selectedState) {
       dispatch(fetchDistrictAsync(page + 1, rowsPerPage, "", search.trim()));
     }
   }, [search, page, rowsPerPage, selectedState, dispatch]);
-
+ 
   const states = useMemo(() => {
     const ids = new Set<number>();
     return fullDistrictList
@@ -170,7 +177,6 @@ export default function DistrictPage() {
               <TableCell className="table-header">#</TableCell>
               <TableCell className="table-header">Name</TableCell>
               <TableCell className="table-header">State</TableCell>
-              {/* <TableCell className="table-header">District</TableCell> */}
               <TableCell align="center" className="table-header">
                 Actions
               </TableCell>
@@ -184,9 +190,10 @@ export default function DistrictPage() {
                 </TableCell>
               </TableRow>
             ) : (
-              districtList.map((district) => (
+              districtList.map((district,index) => (
                 <TableRow key={district.id}>
                   <TableCell className="table-data" sx={{ fontSize: "18px" }}>
+                    {/* {page * rowsPerPage + index + 1} */}
                     {district.id}
                   </TableCell>
 

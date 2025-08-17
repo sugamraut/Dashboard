@@ -34,12 +34,7 @@ export interface City {
   districtId: number;
   code: string | null;
   district: string;
-  state:{
-     id: number;
-    name: string;
-    nameNp: string;
-    nameCombined: string;
-  };
+  state:string;
 }
 
 export interface Branch {
@@ -55,6 +50,8 @@ export interface Branch {
 }
 
 export interface Permission {
+  code: any;
+  permissions: any;
   label: string | undefined;
   id: number;
   name: string;
@@ -70,4 +67,22 @@ export interface MetaData {
   sortBy: number;
   sortOrder: string;
   total: number;
+}
+
+export interface Role {
+  id: number;
+  name: string;
+  guardName: string;
+  displayName: string;
+  isBranchUser: number;
+  permission: Permission[];
+}
+
+export interface State {
+  id: number;
+  name: string;
+  nameNp: string;
+  image: string | null;
+  code: string;
+  nameCombined: string;
 }

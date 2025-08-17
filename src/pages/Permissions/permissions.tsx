@@ -5,6 +5,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import {
+  fetchAllPermissions,
   fetchPermissions,
 } from "../../store/Permission/PermissionSlice";
 import type { AppDispatch, RootState } from "../../store/store";
@@ -43,6 +44,10 @@ const Permissions: React.FC = () => {
   const [editingPermission, setEditingPermission] = useState<Permission | null>(
     null
   );
+
+    useEffect(()=>{
+      fetchAllPermissions()
+    },[dispatch])
 
   useEffect(() => {
     dispatch(
@@ -144,7 +149,7 @@ const Permissions: React.FC = () => {
             <TableRow>
               <TableCell className="table-header">#</TableCell>
               <TableCell className="table-header">Display Name</TableCell>
-              <TableCell className="table-header">Acction Type</TableCell>
+              <TableCell className="table-header">Action Type</TableCell>
               <TableCell className="table-header">Group</TableCell>
               <TableCell className="table-header">Actions</TableCell>
             </TableRow>

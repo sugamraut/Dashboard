@@ -5,7 +5,6 @@ import {
   TextField,
   Autocomplete,
   Button,
-  Typography,
 } from "@mui/material";
 
 import { useAppDispatch, useAppSelector } from "../../store/hook";

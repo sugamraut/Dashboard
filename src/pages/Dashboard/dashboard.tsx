@@ -11,7 +11,7 @@ import {
 import StorageIcon from "@mui/icons-material/Storage";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import HowToRegIcon from '@mui/icons-material/HowToReg';
 import CancelIcon from "@mui/icons-material/Cancel";
 import NotInterestedIcon from "@mui/icons-material/NotInterested";
 import { useDispatch, useSelector } from "react-redux";
@@ -23,7 +23,7 @@ const cardItems = [
   {
     title: "TOTAL",
     icon: <StorageIcon />,
-    trendColor: "#0a58ca",
+    trendColor: "#0d6efd",
   },
   {
     title: "PENDING",
@@ -37,7 +37,7 @@ const cardItems = [
   },
   {
     title: "APPROVED",
-    icon: <CheckCircleIcon />,
+    icon: <HowToRegIcon />,
     trendColor: "#198754",
   },
   {
@@ -102,7 +102,8 @@ const StatusCards = () => {
 
                   <Typography
                     variant="h4"
-                    sx={{ mt: 4, textAlign: "center", fontWeight: "bold" }}
+                    // sx={{ mt: 4, textAlign: "center", fontWeight: "bold" }}
+                    className="dashboardCardValue"
                   >
                     {item.count}
                   </Typography>
