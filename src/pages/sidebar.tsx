@@ -33,7 +33,7 @@ const sidebarIcons = [
   { icon: <FolderSharedIcon  />, label: "Permissions", path: "/admin/permission" },
   { icon: <AutorenewIcon />, label: "Activity log", path: "/web-portal" },
   { icon: <QrCodeScannerIcon/>, label: "Scanned Log", path: "/settings" },
-    { icon: <AccountCircleIcon />, label: "Profile", path: "/Profile" },
+    { icon: <AccountCircleIcon />, label: "Profile", path: "/admin/profile" },
   { icon: <LogoutIcon />, label: "Logout", path: "/admin/logout" },
 ];
 

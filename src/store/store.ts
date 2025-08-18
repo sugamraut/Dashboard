@@ -10,6 +10,7 @@ import Permissions from "./Permission/PermissionSlice";
 import dashboard from "./dashboard/DashboardSlice";
 import roles from "./role/RoleSlice"
 import states from "./state/stateSlice"
+import profile from "./profile/ProfileSlice"
 
 const store = configureStore({
     reducer:{
@@ -23,6 +24,8 @@ const store = configureStore({
       dashboard:dashboard,
       roles:roles,
       states:states,
+      profile:profile
+
     }
 })
 export default store

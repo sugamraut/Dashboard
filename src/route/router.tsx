@@ -3,7 +3,7 @@ import { createBrowserRouter } from "react-router-dom";
 
 import PrivateRoute from "./privateroute";
 import RootLayout from "../layouts/rootlayout";
-import Login from "../pages/auth/login";
+import Login from "../pages/Auth/login";
 import LoadingButtons from "../pages/loader";
 
 const lazyWithDelay = (importFunc: () => Promise<any>) =>
@@ -24,12 +24,13 @@ const BrandingSignInPage = lazyWithDelay(
 const District = lazyWithDelay(() => import("../pages/Districts/districts"));
 const Cities = lazyWithDelay(() => import("../pages/Cities/cities"));
 const Demo = lazyWithDelay(() => import("../pages/loader"));
-const User=lazyWithDelay(()=>import("../pages/users/users"))
+const User=lazyWithDelay(()=>import("../pages/Users/users"))
 const Account =lazyWithDelay(()=>import("../pages/Account/Account"))
 // const Xyz =lazyWithDelay(()=>import("../xyz"))
 const Permission = lazyWithDelay(()=>import("../pages/Permissions/permissions"))
 const Role =lazyWithDelay(()=>import("../pages/Role/role"))
 const Add =lazyWithDelay(()=>import("../pages/Permissions/addedit"))
+const Profile= lazyWithDelay(()=> import("../pages/Profile/profile"))
 
 const withSuspense = (
   Component: React.LazyExoticComponent<React.ComponentType<any>>
@@ -60,7 +61,8 @@ const router = createBrowserRouter([
           // {path:"xyz",element:withSuspense(Xyz)},
           {path:"permission",element:withSuspense(Permission)},
           {path:"role",element:withSuspense(Role)},
-          {path:"Add",element:withSuspense(Add)}
+          {path:"Add",element:withSuspense(Add)},
+          {path:"profile" , element:withSuspense(Profile)},
 
         ],
       },

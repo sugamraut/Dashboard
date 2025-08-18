@@ -86,3 +86,12 @@ export interface State {
   code: string;
   nameCombined: string;
 }
+
+export interface UserProfile {
+  name: string;
+  username: string;
+  email: string;
+  password?: string;
+  confirmPassword?: string;
+  mobile?: string;
+}

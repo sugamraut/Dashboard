@@ -1,5 +1,4 @@
 import { createSlice, createAsyncThunk, type PayloadAction } from '@reduxjs/toolkit';
-import axios from 'axios';
 import { type State } from '../../globals/typeDeclaration';
 import API from '../../http';
 
@@ -21,7 +20,7 @@ export const fetchStates = createAsyncThunk<State[], void, { rejectValue: string
   async (_, { rejectWithValue }) => {
     try {
       const response = await API.get(`/api/v1/states`);
-      console.log("fetchStates response.data:", response.data); // Debug response
+      console.log("fetchStates response.data:", response.data);
       return response.data.data as State[];
     } catch (err: any) {
       console.error("fetchStates error:", err);
