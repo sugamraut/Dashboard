@@ -118,7 +118,7 @@ const EditDistrictForm: React.FC<EditDistrictFormProps> = ({
       <Autocomplete
         fullWidth
         options={uniqueStates}
-        getOptionLabel={(option) => option?.name || option?.nameNp || ""}
+        getOptionLabel={(option) => option?.nameCombined || option?.nameNp || ""}
         value={uniqueStates.find((s: { id: any; }) => String(s.id) === formData.state) || null}
         onChange={(_, newValue) =>
           setFormData((prev) => ({

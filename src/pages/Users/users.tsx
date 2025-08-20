@@ -48,7 +48,7 @@ const User = () => {
     <Box marginLeft={10} padding={2}>
       <Box className="header">
         <Typography variant="h5" gutterBottom>
-          User Management
+          Users
         </Typography>
 
         <Stack direction="row" spacing={2}>
@@ -103,10 +103,11 @@ const User = () => {
         </Table>
       </TableContainer>
 
+
       {selectedUserId !== null && (
         <EditUser
           open={editOpen}
-          handleClose={handleClose}
+          onClose={handleClose} 
           userId={selectedUserId}
         />
       )}

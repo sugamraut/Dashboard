@@ -64,7 +64,7 @@ body {
 .table-header {
   font-size: 20px !important;
   font-weight: bold !important;
-  color: #043BA0 !important;
+  color: #043ba0 !important;
 }
 
 .editBoxforBranch {
@@ -77,21 +77,55 @@ body {
   box-shadow:
     rgba(0, 0, 0, 0.2) 0px 12px 38px 0px,
     rgba(0, 0, 0, 0.14) 0px 18px 46px 0px,
-    rgba(0, 0, 0, 0.12) 0px 7px 15px 0px,
+    rgba(0, 0, 0, 0.12) 0px 7px 15px 0px;
 }
 
-.table-data{
+.table-data {
   font-size: 18px !important;
   font-weight: 600;
 }
 
-.dashboardCardValue{
+.dashboardCardValue {
   margin-top: 4px;
   text-align: center;
   font-weight: bold;
 }
 
-.role-permission-header{
-  font-size: 24px !important;
-  /* font-weight: bolder !important; */
+.action-icon-btn {
+  border-radius: 50%;
+  background-color: #043ba0 !important;
+  width: 30px !important;
+  height: 30px;
+  padding: 8px;
+  color: #ffffff !important;
+}
+
+.action-icon-btn:hover {
+  background-color: #043ba0;
+}
+
+.action-icon-btn-delete {
+  border-radius: 50%;
+  background-color: #f90202 !important;
+  width: 30px !important;
+  height: 30px;
+  padding: 8px;
+  color: #ffffff !important;
+}
+
+
+.sidebar-drawer{
+  width: 70px;
+  flex-shrink: 0;
+}
+
+.sidebar-drawer .MuiDrawer-paper{
+ width: 75px;
+  box-sizing: border-box;
+  background: linear-gradient(to bottom, #002b5c, #8b0000);
+  color: white;
+  display: flex;
+  align-items: center;
+  padding-top: 16px;
+
 }

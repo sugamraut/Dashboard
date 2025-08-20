@@ -28,17 +28,21 @@ import {
   fetchCityBypaginated,
 } from "../../store/cities/CitiesSlice";
 import AddEditCity from "./edit";
-import type { City} from "../../globals/typeDeclaration";
+import type { City } from "../../globals/typeDeclaration";
 
 export default function CityPage() {
   const dispatch = useDispatch<AppDispatch>();
 
   const fulldistrict = useSelector((state: RootState) => state.city.fullList);
   const cityList = useSelector((state: RootState) => state.city.list ?? []);
+
   const totalCount = useSelector((state: RootState) => state.city.totalCount);
 
   const [search, setSearch] = useState("");
- const [selectedDistrict, setSelectedDistrict] = useState<{ id: number; district: string } | null>(null);
+  const [selectedDistrict, setSelectedDistrict] = useState<{
+    id: number;
+    district: string;
+  } | null>(null);
 
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [selectedCityItem, setSelectedCityItem] = useState<City | null>(null);
@@ -161,8 +165,9 @@ export default function CityPage() {
             <TableRow>
               <TableCell className="table-header">#</TableCell>
               <TableCell className="table-header">Name</TableCell>
-              <TableCell className="table-header">District</TableCell>
               <TableCell className="table-header">state</TableCell>
+              <TableCell className="table-header">District</TableCell>
+              
               <TableCell align="center" className="table-header">
                 Actions
               </TableCell>
@@ -182,14 +187,15 @@ export default function CityPage() {
                     {page * rowsPerPage + index + 1}
                   </TableCell>
                   <TableCell className="table-data">{city.name}</TableCell>
+                   <TableCell className="table-data">{city.state}</TableCell>
                   <TableCell className="table-data">
                     {city.district || "N/A"}
                   </TableCell>
-                  <TableCell>{city.state}</TableCell>
+                 
                   <TableCell align="center" className="table-data">
                     <IconButton
-                      color="primary"
                       onClick={() => handleEditClick(city)}
+                      className="action-icon-btn"
                     >
                       <EditIcon />
                     </IconButton>

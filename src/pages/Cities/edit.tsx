@@ -1,11 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import {
-  Box,
-  Alert,
-  Button,
-  Autocomplete,
-  TextField,
-} from "@mui/material";
+import { Box, Alert, Button, Autocomplete, TextField } from "@mui/material";
 import InputField from "../../components/Input_field";
 import { fetchStates } from "../../store/state/stateSlice";
 import { createCity, updatecity } from "../../store/cities/CitiesSlice";
@@ -183,7 +177,7 @@ const AddEditPage: React.FC<EditBranchFormProps> = ({
               {...params}
               label="State"
               margin="normal"
-             
+              value={formData.state}
             />
           )}
         />
@@ -201,7 +195,12 @@ const AddEditPage: React.FC<EditBranchFormProps> = ({
             }));
           }}
           renderInput={(params) => (
-            <TextField {...params} label="District Name" margin="normal" value={formData.district} />
+            <TextField
+              {...params}
+              label="District Name"
+              margin="normal"
+              value={formData.district}
+            />
           )}
         />
 
@@ -217,7 +216,7 @@ const AddEditPage: React.FC<EditBranchFormProps> = ({
 
         <InputField
           label="city Name (Nepali)"
-          name="name"
+          name="city name in nepali"
           value={formData.nameNp}
           onChange={handleChange}
           required

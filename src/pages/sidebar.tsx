@@ -14,6 +14,7 @@ import FolderSharedIcon from '@mui/icons-material/FolderShared';
 import QrCodeScannerIcon from '@mui/icons-material/QrCodeScanner';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import AutorenewIcon from '@mui/icons-material/Autorenew';
+import SettingsIcon from '@mui/icons-material/Settings';
 
 import companyLogo from "../assets/image/company_name.png";
 
@@ -31,9 +32,10 @@ const sidebarIcons = [
     path: "/admin/role",
   },
   { icon: <FolderSharedIcon  />, label: "Permissions", path: "/admin/permission" },
-  { icon: <AutorenewIcon />, label: "Activity log", path: "/web-portal" },
-  { icon: <QrCodeScannerIcon/>, label: "Scanned Log", path: "/settings" },
-    { icon: <AccountCircleIcon />, label: "Profile", path: "/admin/profile" },
+  { icon: <AutorenewIcon />, label: "Activity log", path: "/admin/activitylog" },
+  { icon: <QrCodeScannerIcon/>, label: "Scanned Log", path: "/admin/scannedlog" },
+  {icon:<SettingsIcon/>,label:"Setting",path:"/admin/setting"},
+  { icon: <AccountCircleIcon />, label: "Profile", path: "/admin/profile" },
   { icon: <LogoutIcon />, label: "Logout", path: "/admin/logout" },
 ];
 
@@ -43,21 +45,22 @@ export default function Sidebar() {
   return (
     <Drawer
       variant="permanent"
-      sx={{
-        width: 70,
-        flexShrink: 0,
-        "& .MuiDrawer-paper": {
-          width: 80,
-          boxSizing: "border-box",
-          background: "linear-gradient(to bottom, #002b5c, #8b0000)",
-          color: "white",
-          display: "flex",
-          alignItems: "center",
-          pt: 2,
-        },
-      }}
+      // sx={{
+      //   width: 70,
+      //   flexShrink: 0,
+      //   "& .MuiDrawer-paper": {
+      //     width: 75,
+      //     boxSizing: "border-box",
+      //     background: "linear-gradient(to bottom, #002b5c, #8b0000)",
+      //     color: "white",
+      //     display: "flex",
+      //     alignItems: "center",
+      //     pt: 2,
+      //   },
+      // }}
+      className="sidebar-drawer"
     >
-      <img src={companyLogo} alt="Logo" width="65" className="rounded-1"/>
+      <img src={companyLogo} alt="Logo" width="45" className="rounded-1"/>
       <List sx={{ mt: 2 }}>
         {sidebarIcons.map(({ icon, label, path }, index) => {
           const isActive = location.pathname === path;

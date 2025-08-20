@@ -23,14 +23,19 @@ const BrandingSignInPage = lazyWithDelay(
 );
 const District = lazyWithDelay(() => import("../pages/Districts/districts"));
 const Cities = lazyWithDelay(() => import("../pages/Cities/cities"));
-const Demo = lazyWithDelay(() => import("../pages/loader"));
-const User=lazyWithDelay(()=>import("../pages/Users/users"))
-const Account =lazyWithDelay(()=>import("../pages/Account/Account"))
+// const Demo = lazyWithDelay(() => import("../pages/loader"));
+const User = lazyWithDelay(() => import("../pages/Users/users"));
+const Account = lazyWithDelay(() => import("../pages/Account/Account"));
 // const Xyz =lazyWithDelay(()=>import("../xyz"))
-const Permission = lazyWithDelay(()=>import("../pages/Permissions/permissions"))
-const Role =lazyWithDelay(()=>import("../pages/Role/role"))
-const Add =lazyWithDelay(()=>import("../pages/Permissions/addedit"))
-const Profile= lazyWithDelay(()=> import("../pages/Profile/profile"))
+const Permission = lazyWithDelay(
+  () => import("../pages/Permissions/permissions")
+);
+const Role = lazyWithDelay(() => import("../pages/Role/role"));
+const Add = lazyWithDelay(() => import("../pages/Permissions/addedit"));
+const Profile = lazyWithDelay(() => import("../pages/Profile/profile"));
+const ScannedLog = lazyWithDelay(() => import("../pages/ScannedLog/scannedlog"));
+const ActivityLog =lazyWithDelay(()=>import("../pages/ActivityLog/activitylog"));
+const Setting =lazyWithDelay(()=>import("../pages/Setting/setting"));
 
 const withSuspense = (
   Component: React.LazyExoticComponent<React.ComponentType<any>>
@@ -55,15 +60,15 @@ const router = createBrowserRouter([
           { path: "branch", element: withSuspense(BrandingSignInPage) },
           { path: "district", element: withSuspense(District) },
           { path: "cities", element: withSuspense(Cities) },
-          // { path: "demo", element: withSuspense(Demo) },
-          {path:"User",element:withSuspense(User)},
-          {path:"Account",element:withSuspense(Account)},
-          // {path:"xyz",element:withSuspense(Xyz)},
-          {path:"permission",element:withSuspense(Permission)},
-          {path:"role",element:withSuspense(Role)},
-          {path:"Add",element:withSuspense(Add)},
-          {path:"profile" , element:withSuspense(Profile)},
-
+          { path: "User", element: withSuspense(User) },
+          { path: "Account", element: withSuspense(Account) },
+          { path: "permission", element: withSuspense(Permission) },
+          { path: "role", element: withSuspense(Role) },
+          { path: "Add", element: withSuspense(Add) },
+          { path: "profile", element: withSuspense(Profile) },
+          { path: "scannedlog", element: withSuspense(ScannedLog) },
+          {path:"activitylog", element:withSuspense(ActivityLog)},
+          {path:"setting",element:withSuspense(Setting)},
         ],
       },
     ],

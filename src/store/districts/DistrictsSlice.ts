@@ -101,7 +101,7 @@ export const fetchDistrictAsync = (
       const response = await API.get(`/api/v1/districts`, {
         params: {
           page,
-          limit: rowsPerPage,
+          rowsPerPage,
           stateId: stateId || undefined,
           id: id || undefined,
           search: search || undefined,

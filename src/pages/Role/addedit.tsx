@@ -1,110 +1,108 @@
-
-import { Box, Checkbox, FormControlLabel } from "@mui/material";
 import React, { useEffect, useState } from "react";
+import { Box, Checkbox, FormControlLabel, Typography } from "@mui/material";
 import InputField from "../../components/Input_field";
 import { useAppDispatch, useAppSelector } from "../../store/hook";
 import type { RootState } from "../../store/store";
 import { fetchAllPermissions } from "../../store/Permission/PermissionSlice";
 
 interface AddEditProps {
-  initialData?: any;
+  initialData?: {
+    code?: string;
+    Name?: string;
+    permissions?: string[];
+  };
 }
-
-export interface FormDataState {
-  code: string;
-  Name: string;
-}
-
-const defaultFormData: FormDataState = {
-  code: "",
-  Name: "",
-};
 
 const ADDEDIT: React.FC<AddEditProps> = ({ initialData }) => {
   const dispatch = useAppDispatch();
-  const fulllist = useAppSelector(
+  const permissions = useAppSelector(
     (state: RootState) => state.permissions.fulllist ?? []
   );
 
-  const [formData, setFormData] = useState<FormDataState>(defaultFormData);
+  const [formData, setFormData] = useState({
+    code: "",
+    Name: "",
+  });
 
-  const [checkedPermissions, setCheckedPermissions] = useState<{
-    [key: string]: boolean;
-  }>({});
+  const [checked, setChecked] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     dispatch(fetchAllPermissions());
   }, [dispatch]);
 
-  useEffect(() => {
-    if (fulllist.length > 0) {
-      const initialState: { [key: string]: boolean } = {};
-      fulllist.forEach((perm: any) => {
-        const group = perm.group ?? "Ungrouped";
-        const key = `${group}-${perm.code}`;
-        initialState[key] = false;
-      });
-      setCheckedPermissions(initialState);
-    }
-  }, [fulllist]);
+ useEffect(() => {
+  if (!initialData) return;
 
-  useEffect(() => {
-    if (initialData) {
-      setFormData({
-        code: initialData.code || "",
-        Name: initialData.Name || "",
-      });
 
-      if (initialData.permissions && Array.isArray(initialData.permissions)) {
-        const editState: { [key: string]: boolean } = {};
-        fulllist.forEach((perm: any) => {
-          const group = perm.group ?? "Ungrouped";
-          const key = `${group}-${perm.code}`;
-          editState[key] = initialData.permissions.includes(perm.code);
-        });
-        setCheckedPermissions(editState);
-      }
-    }
-  }, [initialData, fulllist]);
+  setFormData({
+    code: initialData.code ?? "",
+    Name: initialData.Name ?? "",
+  });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+
+  const checkedMap: Record<string, boolean> = {};
+
+  initialData.permissions?.forEach((code) => {
+    const permission = permissions.find((p) => p.code === code);
+    const group = permission?.group || "Ungrouped";
+    checkedMap[`${group}-${code}`] = true;
+  });
+
+  setChecked(checkedMap);
+}, [initialData, permissions]);
+
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const groupedPermissions = fulllist.reduce((acc, perm) => {
-    const group = perm.group ?? "Ungrouped";
-    acc[group] = acc[group] ?? [];
-    acc[group].push(perm);
-    return acc;
-  }, {} as Record<string, typeof fulllist>);
-
-  const handleGroupToggle = (groupName: string, checked: boolean) => {
-    const updated = { ...checkedPermissions };
-    groupedPermissions[groupName].forEach((perm) => {
-      const key = `${groupName}-${perm.code}`;
-      updated[key] = checked;
-    });
-    setCheckedPermissions(updated);
+  const handleCheck = (group: string, code: string, value: boolean) => {
+    setChecked((prev) => ({
+      ...prev,
+      [`${group}-${code}`]: value,
+    }));
   };
 
-  const handlePermissionChange = (
-    groupName: string,
-    code: string,
-    checked: boolean
+  const handleGroupCheck = (
+    group: string,
+    checked: boolean,
+    codes: string[]
   ) => {
-    const key = `${groupName}-${code}`;
-    setCheckedPermissions((prev) => ({ ...prev, [key]: checked }));
+    const updated = { ...checked };
+    codes.forEach((code) => {
+      updated[`${group}-${code}`] = checked;
+    });
+    setChecked(updated);
   };
+
+  const grouped = permissions.reduce(
+    (acc, perm) => {
+      const group = perm.group || "Ungrouped";
+      if (!acc[group]) acc[group] = [];
+      acc[group].push(perm);
+      return acc;
+    },
+    {} as Record<string, typeof permissions>
+  );
+  console.log("====>", grouped);
 
   return (
-    <Box sx={{ maxWidth: 1000, mx: "auto", borderRadius: 2, bgcolor: "Background.paper", p: 2 }}>
+    <Box
+      sx={{
+        maxWidth: 800,
+        mx: "auto",
+        p: 2,
+        bgcolor: "background.paper",
+        borderRadius: 2,
+      }}
+    >
       <form>
         <InputField
           label="Code"
           name="code"
           value={formData.code}
-          onChange={handleChange}
+          onChange={handleInputChange}
           required
           fullWidth
           margin="normal"
@@ -114,51 +112,55 @@ const ADDEDIT: React.FC<AddEditProps> = ({ initialData }) => {
           label="Name"
           name="Name"
           value={formData.Name}
-          onChange={handleChange}
+          onChange={handleInputChange}
           required
           fullWidth
           margin="normal"
         />
 
-        {Object.entries(groupedPermissions).map(([groupName, permissions]) => {
-          const keys = permissions.map((perm) => `${groupName}-${perm.code}`);
-          const allChecked = keys.every((key) => checkedPermissions[key]);
-          const someChecked = keys.some((key) => checkedPermissions[key]) && !allChecked;
+        {Object.entries(grouped).map(([group, perms]) => {
+          const codes = perms.map((p) => p.code);
+          const allChecked = codes.every((code) => checked[`${group}-${code}`]);
+          const someChecked =
+            codes.some((code) => checked[`${group}-${code}`]) && !allChecked;
 
           return (
-            <Box key={groupName} sx={{ mb: 2 }}>
-              {/* Group checkbox */}
+            <Box key={group} mb={2}>
               <FormControlLabel
-                label={groupName}
+                //parent
                 control={
                   <Checkbox
                     checked={allChecked}
                     indeterminate={someChecked}
-                    onChange={(e) => handleGroupToggle(groupName, e.target.checked)}
-                    sx={{ "& .MuiSvgIcon-root": { fontSize: 34 } }}
+                    onChange={(e) =>
+                      handleGroupCheck(group, e.target.checked, codes)
+                    }
                   />
                 }
-                sx={{ "& .MuiTypography-root": { fontSize: 22, fontWeight: 550 } }}
+                label={<Typography fontWeight={600}>{group}</Typography>}
               />
 
-              {/* Children */}
               <Box sx={{ display: "flex", flexWrap: "wrap", ml: 4 }}>
-                {permissions.map((perm) => {
-                  const key = `${groupName}-${perm.code}`;
+                {perms.map((perm, index) => {
+                  // const key = `${group}-${perm.code}`;
+                  // const safeCode = `${perm.code} || missing-${index}`;
+                  // const key = `${group}-${safeCode}`;
+                  const key = `test-${perm.code ?? `missing-${index}`}`;
+
                   return (
                     <FormControlLabel
+                      //childern
                       key={key}
-                      label={perm.name}
                       control={
                         <Checkbox
-                          checked={checkedPermissions[key] || false}
+                          checked={!!checked[key]}
                           onChange={(e) =>
-                            handlePermissionChange(groupName, perm.code, e.target.checked)
+                            handleCheck(group, perm.code, e.target.checked)
                           }
-                          sx={{ "& .MuiSvgIcon-root": { fontSize: 30 } }}
                         />
                       }
-                      sx={{ "& .MuiTypography-root": { fontSize: 20 }, minWidth: "150px" }}
+                      label={perm.name}
+                      sx={{ minWidth: 150 }}
                     />
                   );
                 })}
@@ -172,4 +174,3 @@ const ADDEDIT: React.FC<AddEditProps> = ({ initialData }) => {
 };
 
 export default ADDEDIT;
-

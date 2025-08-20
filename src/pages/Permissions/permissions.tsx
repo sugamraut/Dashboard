@@ -177,12 +177,14 @@ const Permissions: React.FC = () => {
                   </TableCell>
                   <TableCell className="table-data">
                     <IconButton
-                      color="primary"
+                      // color="primary"
                       onClick={() => handleEditClick(permission)}
+                       className="action-icon-btn"
                     >
                       <EditIcon />
                     </IconButton>
-                    <IconButton color="error">
+                    <IconButton  className="action-icon-btn-delete ms-2" >
+                      
                       <DeleteIcon />
                     </IconButton>
                   </TableCell>

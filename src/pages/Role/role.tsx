@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from "react";
+import  { useEffect, useState } from "react";
 import {
   Box,
   IconButton,
@@ -56,9 +56,7 @@ function RolePage() {
     setOpenDialog(false);
     setEditData(null);
   };
-
-
-   
+   //padding: 6px 9px;
   return (
     <Box marginLeft={10} padding={2}>
       <Box className="header">

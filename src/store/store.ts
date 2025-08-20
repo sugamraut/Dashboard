@@ -11,6 +11,9 @@ import dashboard from "./dashboard/DashboardSlice";
 import roles from "./role/RoleSlice"
 import states from "./state/stateSlice"
 import profile from "./profile/ProfileSlice"
+import scannedLog from "./scannedlog/ScannedSlice"
+import activityLog from "./activitylogs/ActivitySlice"
+import setting from "./setting/settingSlice"
 
 const store = configureStore({
     reducer:{
@@ -24,8 +27,11 @@ const store = configureStore({
       dashboard:dashboard,
       roles:roles,
       states:states,
-      profile:profile
-
+      profile:profile,
+      scannedLog:scannedLog,
+      activityLog:activityLog,
+      setting:setting,
+      
     }
 })
 export default store

@@ -1,45 +1,58 @@
+import React, { useEffect, useState } from "react";
 import {
   Autocomplete,
   Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   FormControl,
   IconButton,
   InputAdornment,
   InputLabel,
-  Modal,
   OutlinedInput,
   TextField,
-  Typography,
-  Button,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
-import Visibility from "@mui/icons-material/Visibility";
-import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useForm, Controller } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../../store/store";
 import { updateuserdataThunk } from "../../store/user/userSlice";
+import type { UserProfile } from "../../globals/typeDeclaration";
 
 interface EditUserProps {
   open: boolean;
-  handleClose: () => void;
+  onClose: () => void;
   userId: number;
 }
 
 const genderOptions = ["Male", "Female", "Other"];
 const roleOptions = ["Admin", "User", "Manager"];
 
-const EditUser: React.FC<EditUserProps> = ({ open, handleClose, userId }) => {
-  const dispatch = useDispatch();
-  const users = useSelector((state: RootState) => state.User.list);
+interface FormValues {
+  name: string;
+  mobilenumber: string;
+  email: string;
+  username: string;
+  gender: string;
+  role: string;
+  password: string;
+  confirmPassword: string;
+}
 
+const EditUser: React.FC<EditUserProps> = ({ open, onClose, userId }) => {
+  const dispatch = useDispatch();
+  const users = useSelector((state: RootState) => state.User.list||[]);
   const [showPassword, setShowPassword] = useState(false);
 
   const {
     control,
     handleSubmit,
     reset,
+    register,
     formState: { errors },
-  } = useForm({
+  } = useForm<FormValues>({
     defaultValues: {
       name: "",
       mobilenumber: "",
@@ -53,28 +66,24 @@ const EditUser: React.FC<EditUserProps> = ({ open, handleClose, userId }) => {
   });
 
   useEffect(() => {
-    if (users && userId) {
-      const user = users.find((u) => u.id === userId);
-      if (user) {
-        reset({
-          name: user.name || "",
-          mobilenumber: user.mobilenumber || "",
-          email: user.email || "",
-          username: user.username || "",
-          gender: user.gender || "",
-          role: user.role || "",
-          password: "",
-          confirmPassword: "",
-        });
-      }
+    const user = users.find((u) => u.id === userId);
+    if (user) {
+      reset({
+        name: user.name || "",
+        mobilenumber: user.mobilenumber || "",
+        email: user.email || "",
+        username: user.username || "",
+        gender: user.gender || "",
+        role: user.role || "",
+        password: "",
+        confirmPassword: "",
+      });
     }
   }, [userId, users, reset]);
 
-  const handleClickShowPassword = () => {
-    setShowPassword((show) => !show);
-  };
+  const togglePasswordVisibility = () => setShowPassword((prev) => !prev);
 
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: FormValues) => {
     if (data.password && data.password !== data.confirmPassword) {
       alert("Passwords do not match!");
       return;
@@ -84,181 +93,121 @@ const EditUser: React.FC<EditUserProps> = ({ open, handleClose, userId }) => {
 
     try {
       await dispatch(updateuserdataThunk(userId, payload) as any);
-      handleClose();
-    } catch (error) {
-      console.error("Failed to update user", error);
+      onClose();
+    } catch (err) {
+      console.error("Update failed:", err);
     }
   };
 
   return (
-    <Modal open={open} onClose={handleClose}>
-      <Box
-        sx={{
-          maxWidth: 1000,
-          mx: "auto",
-          p: 3,
-          borderRadius: 2,
-          bgcolor: "background.paper",
-        }}
-      >
-        <Typography variant="h5" mb={3}>
-          Edit User
-        </Typography>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <Controller
-            name="name"
-            control={control}
-            rules={{ required: "Name is required" }}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                label="Name"
-                fullWidth
-                margin="normal"
-                error={!!errors.name}
-                helperText={errors.name?.message}
-              />
-            )}
+    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
+      <DialogTitle>Edit User</DialogTitle>
+      <DialogContent>
+        <Box component="form" noValidate onSubmit={handleSubmit(onSubmit)}>
+
+          <TextField
+            label="Name"
+            fullWidth
+            margin="normal"
+            {...register("name", { required: "Name is required" })}
+            error={!!errors.name}
+            helperText={errors.name?.message}
+          />
+
+          <TextField
+            label="Mobile Number"
+            fullWidth
+            margin="normal"
+            {...register("mobilenumber")}
+          />
+
+          <TextField
+            label="Email"
+            fullWidth
+            margin="normal"
+            {...register("email", { required: "Email is required" })}
+            error={!!errors.email}
+            helperText={errors.email?.message}
+          />
+
+          <TextField
+            label="Username"
+            fullWidth
+            margin="normal"
+            {...register("username")}
           />
 
           <Controller
-            name="mobilenumber"
             control={control}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                label="Mobile Number"
-                fullWidth
-                margin="normal"
-              />
-            )}
-          />
-
-          <Controller
-            name="email"
-            control={control}
-            rules={{ required: "Email is required" }}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                label="Email"
-                fullWidth
-                margin="normal"
-                error={!!errors.email}
-                helperText={errors.email?.message}
-              />
-            )}
-          />
-
-          <Controller
-            name="username"
-            control={control}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                label="Username"
-                fullWidth
-                margin="normal"
-              />
-            )}
-          />
-
-          <Controller
             name="gender"
-            control={control}
             render={({ field }) => (
               <Autocomplete
                 options={genderOptions}
                 value={field.value || ""}
-                onChange={(_, value) => field.onChange(value)}
+                onChange={(_, val) => field.onChange(val)}
                 renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Gender"
-                    margin="normal"
-                    fullWidth
-                  />
+                  <TextField {...params} label="Gender" margin="normal" fullWidth />
                 )}
               />
             )}
           />
 
           <Controller
-            name="role"
             control={control}
+            name="role"
             render={({ field }) => (
               <Autocomplete
                 options={roleOptions}
                 value={field.value || ""}
-                onChange={(_, value) => field.onChange(value)}
+                onChange={(_, val) => field.onChange(val)}
                 renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Role"
-                    margin="normal"
-                    fullWidth
-                  />
+                  <TextField {...params} label="Role" margin="normal" fullWidth />
                 )}
               />
             )}
           />
 
-          <Controller
-            name="password"
-            control={control}
-            render={({ field }) => (
-              <FormControl fullWidth variant="outlined" margin="normal">
-                <InputLabel>Password</InputLabel>
-                <OutlinedInput
-                  {...field}
-                  type={showPassword ? "text" : "password"}
-                  endAdornment={
-                    <InputAdornment position="end">
-                      <IconButton onClick={handleClickShowPassword} edge="end">
-                        {showPassword ? <VisibilityOff /> : <Visibility />}
-                      </IconButton>
-                    </InputAdornment>
-                  }
-                  label="Password"
-                />
-              </FormControl>
-            )}
-          />
+          <FormControl fullWidth variant="outlined" margin="normal">
+            <InputLabel>Password</InputLabel>
+            <OutlinedInput
+              {...register("password")}
+              type={showPassword ? "text" : "password"}
+              endAdornment={
+                <InputAdornment position="end">
+                  <IconButton onClick={togglePasswordVisibility} edge="end">
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              }
+              label="Password"
+            />
+          </FormControl>
 
-          <Controller
-            name="confirmPassword"
-            control={control}
-            render={({ field }) => (
-              <FormControl fullWidth variant="outlined" margin="normal">
-                <InputLabel>Confirm Password</InputLabel>
-                <OutlinedInput
-                  {...field}
-                  type={showPassword ? "text" : "password"}
-                  endAdornment={
-                    <InputAdornment position="end">
-                      <IconButton onClick={handleClickShowPassword} edge="end">
-                        {showPassword ? <VisibilityOff /> : <Visibility />}
-                      </IconButton>
-                    </InputAdornment>
-                  }
-                  label="Confirm Password"
-                />
-              </FormControl>
-            )}
-          />
+          <FormControl fullWidth variant="outlined" margin="normal">
+            <InputLabel>Confirm Password</InputLabel>
+            <OutlinedInput
+              {...register("confirmPassword")}
+              type={showPassword ? "text" : "password"}
+              endAdornment={
+                <InputAdornment position="end">
+                  <IconButton onClick={togglePasswordVisibility} edge="end">
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              }
+              label="Confirm Password"
+            />
+          </FormControl>
+        </Box>
+      </DialogContent>
 
-          
-          <Box mt={3} textAlign="right" gap={2}>
-            <Button variant="outlined" color="error" onClick={handleClose} sx={{ mr: 2 }} >
-              Cancel
-            </Button>
-            <Button variant="contained" color="primary" type="submit">
-             Submit
-            </Button>
-          </Box>
-        </form>
-      </Box>
-    </Modal>
+      <DialogActions>
+        <Button onClick={onClose} color="error">Cancel</Button>
+        <Button onClick={handleSubmit(onSubmit)} variant="contained" color="primary">
+          Save
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 };
 

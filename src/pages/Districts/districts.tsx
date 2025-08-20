@@ -21,8 +21,8 @@ import {
 
 import EditIcon from "@mui/icons-material/Edit";
 import FilterAltOffIcon from "@mui/icons-material/FilterAltOff";
-import { useDispatch, useSelector } from "react-redux";
-import type { RootState, AppDispatch } from "../../store/store";
+import { useSelector } from "react-redux";
+import type { RootState } from "../../store/store";
 import {
   fetchAllDistrictsAsync,
   fetchDistrictAsync,
@@ -34,14 +34,14 @@ import type { DistrictType } from "../../globals/typeDeclaration";
 import { useAppDispatch } from "../../store/hook";
 
 export default function DistrictPage() {
-  
-   const dispatch =useAppDispatch()
+  const dispatch = useAppDispatch();
 
   const fullDistrictList = useSelector(
     (state: RootState) => state.district.fullList
   );
-  const districtList = useSelector((state: RootState) =>
-    Array.isArray(state.district.list) ? state.district.list : []
+
+  const districtList = useSelector(
+    (state: RootState) => state.district.list ?? []
   );
   const totalCount = useSelector(
     (state: RootState) => state.district.totalCount ?? 0
@@ -49,6 +49,7 @@ export default function DistrictPage() {
 
   const [search, setSearch] = useState("");
   const [selectedState, setSelectedState] = useState<null | {
+    nameCombined: string | undefined;
     id: number;
     name: string;
     nameNp?: string;
@@ -57,35 +58,45 @@ export default function DistrictPage() {
   const [selectedDistrictItem, setSelectedDistrictItem] =
     useState<DistrictType | null>(null);
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rowsPerPage, setRowsPerPage] = useState(25);
 
   useEffect(() => {
     dispatch(fetchAllDistrictsAsync());
   }, [dispatch]);
 
- 
-useEffect(() => {
-  if (selectedState) {
-    dispatch(
-      fetchDistrictsByStateIdAsync(selectedState.id, page + 1, rowsPerPage)
-    );
-  }
-}, [dispatch, selectedState, page, rowsPerPage]);
-
-
-
   useEffect(() => {
-    if (!selectedState) {
+    if (selectedState) {
+      dispatch(
+        fetchDistrictsByStateIdAsync(selectedState.id, page + 1, rowsPerPage)
+      );
+    } else {
       dispatch(fetchDistrictAsync(page + 1, rowsPerPage, "", search.trim()));
     }
-  }, [search, page, rowsPerPage, selectedState, dispatch]);
- 
-  const states = useMemo(() => {
-    const ids = new Set<number>();
-    return fullDistrictList
-      .map((d) => d.state)
-      .filter((s) => s && !ids.has(s.id) && ids.add(s.id));
-  }, [fullDistrictList]);
+  }, [dispatch, selectedState, page, rowsPerPage, search]);
+
+  const states = useMemo(
+    () =>
+      Object.values(
+        fullDistrictList.reduce(
+          (acc, d) => {
+            if (d.state && !acc[d.state.id]) {
+              acc[d.state.id] = d.state;
+            }
+            return acc;
+          },
+          {} as Record<
+            number,
+            {
+              nameCombined: string | undefined;
+              id: number;
+              name: string;
+              nameNp?: string;
+            }
+          >
+        )
+      ),
+    [fullDistrictList]
+  );
 
   const handleEditClick = (district: DistrictType) => {
     setSelectedDistrictItem(district);
@@ -129,7 +140,9 @@ useEffect(() => {
             size="small"
             sx={{ minWidth: 250 }}
             options={states}
-            getOptionLabel={(option) => option.name || option.nameNp || ""}
+            getOptionLabel={(option) =>
+              option.nameCombined || option.nameNp || ""
+            }
             value={selectedState}
             onChange={handleStateFilterChange}
             isOptionEqualToValue={(option, value) => option.id === value?.id}
@@ -190,21 +203,39 @@ useEffect(() => {
                 </TableCell>
               </TableRow>
             ) : (
-              districtList.map((district,index) => (
+              districtList.map((district, index) => (
                 <TableRow key={district.id}>
-                  <TableCell className="table-data" sx={{ fontSize: "18px" }}>
-                    {/* {page * rowsPerPage + index + 1} */}
-                    {district.id}
+                  <TableCell className="table-data">
+                    {page * rowsPerPage + index + 1}
                   </TableCell>
 
                   <TableCell className="table-data">{district.name}</TableCell>
                   <TableCell className="table-data">
-                    {district.state?.name || "N/A"}
+                    {district.state?.nameCombined || "N/A"}
                   </TableCell>
                   <TableCell align="center" className="table-data">
-                    <IconButton
+                    {/* <IconButton
                       color="primary"
                       onClick={() => handleEditClick(district)}
+                    >
+                      <EditIcon />
+                    </IconButton> */}
+                    <IconButton
+                      onClick={() => handleEditClick(district)}
+                      // sx={
+                      //   {
+                      //     borderRadius: "50%",
+                      //     backgroundColor: "#043BA0 ",
+                      //     width: 10,
+                      //     height: 10,
+                      //     padding: 2,
+                      //     color: "#ffffff",
+                      //     "&:hover": {
+                      //       backgroundColor: "#043BA0 ",
+                      //     },
+                      //   }
+                      // }
+                      className="action-icon-btn"
                     >
                       <EditIcon />
                     </IconButton>
