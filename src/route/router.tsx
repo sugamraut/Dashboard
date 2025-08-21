@@ -36,6 +36,7 @@ const Profile = lazyWithDelay(() => import("../pages/Profile/profile"));
 const ScannedLog = lazyWithDelay(() => import("../pages/ScannedLog/scannedlog"));
 const ActivityLog =lazyWithDelay(()=>import("../pages/ActivityLog/activitylog"));
 const Setting =lazyWithDelay(()=>import("../pages/Setting/setting"));
+const Logout =lazyWithDelay(()=>import("../pages/Logout/logout"))
 
 const withSuspense = (
   Component: React.LazyExoticComponent<React.ComponentType<any>>
@@ -69,6 +70,7 @@ const router = createBrowserRouter([
           { path: "scannedlog", element: withSuspense(ScannedLog) },
           {path:"activitylog", element:withSuspense(ActivityLog)},
           {path:"setting",element:withSuspense(Setting)},
+          {path:"logout",element:withSuspense(Logout)},
         ],
       },
     ],

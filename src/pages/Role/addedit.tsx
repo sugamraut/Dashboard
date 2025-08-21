@@ -85,7 +85,7 @@ const ADDEDIT: React.FC<AddEditProps> = ({ initialData }) => {
     },
     {} as Record<string, typeof permissions>
   );
-  console.log("====>", grouped);
+  // console.log("====>", grouped);
 
   return (
     <Box

@@ -129,10 +129,7 @@ export function fetchUserById(Userid: number) {
   };
 }
 
-// interface UpdateuserPaload{
-//   userId:number;
-//   data:Partial<User >
-// }
+
 export function updateuserdataThunk(userid: number, data: Partial<User>) {
   return async function (dispatch: AppDispatch) {
     dispatch(setUserStatus(Status.Loading));
@@ -179,16 +176,17 @@ export function deletedUserdata(userId: number, data: Partial<User>) {
       return Promise.reject("User is Not logged in");
     }
     try {
-      const response = await axios.delete<User>(
-        `${server_Url}/api/v1/users/${userId}`,
-        {
-          headers: {
-            Authorization: `${token}`,
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-        }
-      );
+      // const response = await axios.delete<User>(
+      //   `${server_Url}/api/v1/users/${userId}`,
+      //   {
+      //     headers: {
+      //       Authorization: `${token}`,
+      //       "Content-Type": "application/json",
+      //       Accept: "application/json",
+      //     },
+      //   }
+      // );
+      const response =await API.delete<User>(`/api/v1/users/${userId}`)
       if (response.status === 201) {
         dispatch(setUserStatus(Status.Success));
       }

@@ -150,6 +150,16 @@ export const fetchAllPermissions = createAsyncThunk<
   }
 });
 
+// export const DeletePermission=createAsyncThunk<Permission[],void,
+// {rejectValue:string}>("permission/delete",)
+
+// export const  DeletePermission = createAsyncThunk< Permission [],void,{rejectValue:string}>("permission/deleted",async (_,{rejectWithValue})=>{
+//   try {
+//     // const response =await.API.
+//   } catch (error) {
+    
+//   }
+// })
 const permissionsSlice = createSlice({
   name: "permissions",
   initialState,

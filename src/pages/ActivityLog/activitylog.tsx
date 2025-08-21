@@ -173,7 +173,7 @@ const ActivityLog = () => {
           <IconButton onClick={handleClearFilter} color="error">
             <ClearIcon />
           </IconButton>
-          <IconButton onClick={handleRefresh} color="error">
+          <IconButton onClick={handleRefresh} color="primary">
             <RefreshIcon />
           </IconButton>
         </Stack>
@@ -184,12 +184,12 @@ const ActivityLog = () => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>#</TableCell>
-              <TableCell>Date</TableCell>
-              <TableCell>Description</TableCell>
-              <TableCell>User</TableCell>
-              <TableCell>IP Address</TableCell>
-              <TableCell>User Agent</TableCell>
+              <TableCell className="table-header">#</TableCell>
+              <TableCell className="table-header">Date</TableCell>
+              <TableCell className="table-header">Description</TableCell>
+              <TableCell className="table-header">User</TableCell>
+              <TableCell className="table-header">IP Address</TableCell>
+              <TableCell className="table-header">User Agent</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -201,16 +201,16 @@ const ActivityLog = () => {
                     {new Date(log.createdDate).toISOString().split("T")[0]}
                   </TableCell>
 
-                  <TableCell>{log.description}</TableCell>
-                  <TableCell>
+                  <TableCell className="table-data">{log.description}</TableCell>
+                  <TableCell className="table-data">
                     {log.user?.username||"-"}
                     <br />
                     <Typography variant="body2" color="textSecondary">
                       ({log.user?.name || "-"})
-                    </Typography>
+                    </Typography >
                   </TableCell>
-                  <TableCell>{log.ip}</TableCell>
-                  <TableCell>{log.userAgent}</TableCell>
+                  <TableCell className="table-data">{log.ip}</TableCell>
+                  <TableCell className="table-data">{log.userAgent}</TableCell>
                 </TableRow>
               ))
             ) : (

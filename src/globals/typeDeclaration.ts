@@ -141,3 +141,11 @@ export interface ActivityResponse {
   metaData: MetaData | null;
   total: number;
 }
+
+
+export interface Setting {
+  id: number;
+  name: string;
+  description: string;
+  value: string;
+}

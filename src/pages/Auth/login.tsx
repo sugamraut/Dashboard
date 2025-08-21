@@ -10,6 +10,7 @@ import { fetchAuthAsync } from "../../store/auth/LoginSlice";
 import type { RootState, AppDispatch } from "../../store/store";
 import { useNavigate } from "react-router-dom";
 import { Status } from "../../globals/status";
+import { toast } from "react-toastify";
 
 const loginSchema = z.object({
   username: z.string().min(1, "Username is required"),
@@ -44,11 +45,15 @@ const LoginPage: React.FC = () => {
     localStorage.setItem("jwt", accessToken);
    navigate("/admin/dashboard");
      sessionStorage.getItem("alreadyNavigated");
+      toast.success("Login successful! Redirecting...");
     // // if (!hasNavigated) {
     // //   navigate("/admin/dashboard");
     // //   sessionStorage.setItem("alreadyNavigated", "true");
     // // }
-  }
+  }else if (status === Status.Error && error) {
+      toast.error(error);
+      localStorage.removeItem("jwt");
+    }
 }, [status, accessToken, navigate]);
 
 
@@ -96,11 +101,11 @@ const LoginPage: React.FC = () => {
               togglePasswordVisibility={() => setShowPassword(!showPassword)}
             />
 
-            {error && (
+            {/* {error && (
               <Alert severity="error" className="mt-2">
-                {error}
+            
               </Alert>
-            )}
+            )} */}
             <Button type="submit" variant="contained" fullWidth>
               LOGIN
             </Button>
