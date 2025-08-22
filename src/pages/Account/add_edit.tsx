@@ -9,8 +9,9 @@ import {
   Typography,
   Divider,
   Stack,
+  Button
 } from "@mui/material";
-import Button from "@mui/joy/Button";
+// import Button from "@mui/joy/Button";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {
   FormatBold,
@@ -24,11 +25,13 @@ import {
   FormatListBulleted,
   FormatListNumbered,
 } from "@mui/icons-material";
-import { styled } from "@mui/joy";
-import SvgIcon from "@mui/joy/SvgIcon";
+import { styled } from '@mui/material/styles';
+// import { styled } from "@mui/joy";
+// import SvgIcon from "@mui/joy/SvgIcon";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import type { AppDispatch } from "../../store/store";
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import {
   fetchAccountTypeFiles,
   PostAccountType,
@@ -171,7 +174,7 @@ const AddEditPage = ({ initialData, onSave, onCancel, isEdit }: AddEditPageProps
         description: editorRef.current?.innerHTML || "",
         minBalance: formData.minimumblance,
         insurance: formData.interestPayment,
-        imageUrl: uploadFileName,
+        imageUrl: uploadFileName||undefined,
       };
 
       if (isEdit && initialData?.id) {
@@ -305,7 +308,7 @@ const AddEditPage = ({ initialData, onSave, onCancel, isEdit }: AddEditPageProps
       />
 
       <Box mt={3}>
-        <Button component="label" startDecorator={<SvgIcon>📁</SvgIcon>} variant="outlined">
+        <Button component="label"  startIcon={<CloudUploadIcon />} variant="contained" >
           Upload File
           <VisuallyHiddenInput type="file" onChange={handleFileUpload} />
         </Button>
@@ -321,10 +324,10 @@ const AddEditPage = ({ initialData, onSave, onCancel, isEdit }: AddEditPageProps
       </Box>
 
       <Box mt={4} display="flex" gap={2}>
-        <Button type="submit" color="primary" variant="solid">
+        <Button type="submit" color="primary" >
           {isEdit ? "Update" : "Add"}
         </Button>
-        <Button variant="plain" onClick={onCancel}>
+        <Button  onClick={onCancel}>
           Cancel
         </Button>
       </Box>

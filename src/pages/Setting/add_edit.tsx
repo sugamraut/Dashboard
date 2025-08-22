@@ -1,7 +1,7 @@
 import { Box, Button, TextField } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useAppDispatch } from "../../store/hook";
-import { createSetting, updateSetting } from "../../store/setting/settingSlice";
+import { createSetting, updateSetting } from "../../store/setting/SettingSlice";
 import type { Setting } from "../../globals/typeDeclaration";
 
 interface AddEditProps {

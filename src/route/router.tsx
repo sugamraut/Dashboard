@@ -31,7 +31,7 @@ const Permission = lazyWithDelay(
   () => import("../pages/Permissions/permissions")
 );
 const Role = lazyWithDelay(() => import("../pages/Role/role"));
-const Add = lazyWithDelay(() => import("../pages/Permissions/addedit"));
+const Add = lazyWithDelay(() => import("../pages/Permissions/add_edit"));
 const Profile = lazyWithDelay(() => import("../pages/Profile/profile"));
 const ScannedLog = lazyWithDelay(
   () => import("../pages/ScannedLog/scannedlog")
