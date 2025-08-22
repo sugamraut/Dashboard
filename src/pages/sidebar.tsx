@@ -19,7 +19,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import companyLogo from "../assets/image/company_name.png";
 
 const sidebarIcons = [
-  { icon: <HomeIcon />, label: "Dashboard", path: "dashboard" },
+  { icon: <HomeIcon />, label: "Dashboard", path: "/admin/dashboard" },
   { icon: <FolderIcon />, label: "Online Account", path: "/admin/onlineaccount" },
   { icon: <TextSnippetIcon />, label: "Account Type", path: "/admin/Account" },
   { icon: <AccountTreeIcon />, label: "Branches", path: "/admin/branch" },
