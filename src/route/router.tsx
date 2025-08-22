@@ -1,5 +1,5 @@
 import React, { lazy, Suspense } from "react";
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Navigate, replace } from "react-router-dom";
 
 import PrivateRoute from "./privateroute";
 import RootLayout from "../layouts/rootlayout";
@@ -23,7 +23,7 @@ const BrandingSignInPage = lazyWithDelay(
 );
 const District = lazyWithDelay(() => import("../pages/Districts/districts"));
 const Cities = lazyWithDelay(() => import("../pages/Cities/cities"));
-// const Demo = lazyWithDelay(() => import("../pages/loader"));
+
 const User = lazyWithDelay(() => import("../pages/Users/users"));
 const Account = lazyWithDelay(() => import("../pages/Account/Account"));
 // const Xyz =lazyWithDelay(()=>import("../xyz"))
@@ -33,10 +33,17 @@ const Permission = lazyWithDelay(
 const Role = lazyWithDelay(() => import("../pages/Role/role"));
 const Add = lazyWithDelay(() => import("../pages/Permissions/addedit"));
 const Profile = lazyWithDelay(() => import("../pages/Profile/profile"));
-const ScannedLog = lazyWithDelay(() => import("../pages/ScannedLog/scannedlog"));
-const ActivityLog =lazyWithDelay(()=>import("../pages/ActivityLog/activitylog"));
-const Setting =lazyWithDelay(()=>import("../pages/Setting/setting"));
-const Logout =lazyWithDelay(()=>import("../pages/Logout/logout"))
+const ScannedLog = lazyWithDelay(
+  () => import("../pages/ScannedLog/scannedlog")
+);
+const ActivityLog = lazyWithDelay(
+  () => import("../pages/ActivityLog/activitylog")
+);
+const Setting = lazyWithDelay(() => import("../pages/Setting/setting"));
+const Logout = lazyWithDelay(() => import("../pages/Logout/logout"));
+const OnlineAccount = lazyWithDelay(
+  () => import("../pages/OnlineAccountRequest/onlinerequest")
+);
 
 const withSuspense = (
   Component: React.LazyExoticComponent<React.ComponentType<any>>
@@ -48,10 +55,18 @@ const withSuspense = (
 
 const router = createBrowserRouter([
   {
-    path: "/admin/",
+    path: "/",
     element: <RootLayout />,
     children: [
-      { index: true, element: <Login /> },
+      {
+        index: true,
+        element: <Navigate to="/admin/" replace />,
+        // <Login />
+      },
+      {
+      path:"/admin",
+      element:<Login/>
+      },
       {
         path: "",
         element: <PrivateRoute />,
@@ -68,9 +83,10 @@ const router = createBrowserRouter([
           { path: "Add", element: withSuspense(Add) },
           { path: "profile", element: withSuspense(Profile) },
           { path: "scannedlog", element: withSuspense(ScannedLog) },
-          {path:"activitylog", element:withSuspense(ActivityLog)},
-          {path:"setting",element:withSuspense(Setting)},
-          {path:"logout",element:withSuspense(Logout)},
+          { path: "activitylog", element: withSuspense(ActivityLog) },
+          { path: "setting", element: withSuspense(Setting) },
+          { path: "logout", element: withSuspense(Logout) },
+          { path: "onlineaccount", element: withSuspense(OnlineAccount) },
         ],
       },
     ],
