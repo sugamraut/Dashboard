@@ -56,7 +56,7 @@ function RolePage() {
     setOpenDialog(false);
     setEditData(null);
   };
-   //padding: 6px 9px;
+
   return (
     <Box marginLeft={10} padding={2}>
       <Box className="header">
@@ -138,3 +138,11 @@ function RolePage() {
 }
 
 export default RolePage;
+   
+    // setChecked((check) => {
+    //   const updated = { ...check };
+    //   codes.forEach((code) => {
+    //     updated[`${group}-${code}`] = checked;
+    //   });
+    //   return updated;
+    // });
