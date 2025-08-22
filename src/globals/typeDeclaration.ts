@@ -87,15 +87,26 @@ export interface State {
   nameCombined: string;
 }
 
+// export interface UserProfile {
+//   name: string;
+//   username: string;
+//   email: string;
+//   password?: string;
+//   confirmPassword?: string;
+//   mobile?: string;
+// }
+
 export interface UserProfile {
+  id: number;
   name: string;
   username: string;
+  mobilenumber: string;
   email: string;
+  gender?: string;
+  role?: string;
   password?: string;
   confirmPassword?: string;
-  mobile?: string;
 }
-
 
 export interface Log {
   id: string;
