@@ -39,23 +39,46 @@ export const fetchRoles = createAsyncThunk<
   { data: Role[]; metaData: { total: number } },
   { page?: number; rowsPerPage?: number },
   { rejectValue: string }
->(
-  "role/fetch",
-  async ({ page, rowsPerPage } = {}, { rejectWithValue }) => {
+>("role/fetch", async ({ page, rowsPerPage } = {}, { rejectWithValue }) => {
+  try {
+    const response = await API.get(`/api/v1/roles`, {
+      params: { page, rowsPerPage },
+    });
+    return {
+      data: response.data.data,
+      metaData: response.data.metaData,
+    };
+  } catch (error: any) {
+    return rejectWithValue(error.message || "failed to fetch roles");
+  }
+});
+
+// export const fetchAllRole = createAsyncThunk<Role[], { rejectValue: string }>(
+//   "fetch/Allrole",
+//   async (_, { rejectWithValue }) => {
+//     try {
+//       const response = await API.get("/role/all");
+//       return response.data.data as Role[];
+//     } catch (error: any) {
+//       return rejectWithValue(
+//         error.message || "faield to fetch all the data"
+//       );
+//     }
+//   }
+// );
+export const fetchAllRole = createAsyncThunk<Role[]>(
+  "fetch/Allrole",
+  async (_, { rejectWithValue }) => {
     try {
-      const response = await API.get(`/api/v1/roles`, {
-        params: { page, rowsPerPage },
-      });
-      return {
-        data: response.data.data,
-        metaData: response.data.metaData,
-      };
+      const response = await API.get("/role/all");
+      return response.data.data as Role[];
     } catch (error: any) {
-      return rejectWithValue(error.message || "failed to fetch roles");
+      return rejectWithValue(
+        error.message || "failed to fetch all the data"
+      );
     }
   }
 );
-
 
 const rolesSlice = createSlice({
   name: "roles",
@@ -78,6 +101,18 @@ const rolesSlice = createSlice({
         state.status = Status.Error;
         state.loading = false;
         state.error = action.payload || "faied to load the roles ";
+      })
+      .addCase(fetchAllRole.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchAllRole.fulfilled, (state, action) => {
+        state.loading = false;
+        state.fullList = action.payload;
+      })
+      .addCase(fetchAllRole.rejected, (state, action: PayloadAction<any>) => {
+        state.loading = false;
+        state.error = action.payload || "Unknown error";
       });
   },
 });
