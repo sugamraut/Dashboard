@@ -68,7 +68,7 @@ const router = createBrowserRouter([
       element:<Login/>
       },
       {
-        path: "",
+        path: "/admin",
         element: <PrivateRoute />,
         children: [
           { path: "sidebar", element: withSuspense(Sidebar) },
