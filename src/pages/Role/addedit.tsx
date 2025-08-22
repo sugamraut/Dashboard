@@ -7,9 +7,8 @@ import { fetchAllPermissions } from "../../store/Permission/PermissionSlice";
 
 interface AddEditProps {
   initialData?: {
-    code?: string;
     Name?: string;
-    permissions?: string[];
+    Permissions?: [];
   };
 }
 
@@ -19,8 +18,8 @@ const ADDEDIT: React.FC<AddEditProps> = ({ initialData }) => {
     (state: RootState) => state.permissions.fulllist ?? []
   );
 
+
   const [formData, setFormData] = useState({
-    code: "",
     Name: "",
   });
 
@@ -30,27 +29,23 @@ const ADDEDIT: React.FC<AddEditProps> = ({ initialData }) => {
     dispatch(fetchAllPermissions());
   }, [dispatch]);
 
- useEffect(() => {
-  if (!initialData) return;
+  useEffect(() => {
+    if (!initialData) return;
 
+    setFormData({
+      Name: initialData.Name ?? "",
+    });
 
-  setFormData({
-    code: initialData.code ?? "",
-    Name: initialData.Name ?? "",
-  });
+    const checkedMap: Record<string, boolean> = {};
 
+    initialData.Permissions?.forEach((code) => {
+      const permission = permissions.find((p) => p.code === code);
+      const group = permission?.group || "Ungrouped";
+      checkedMap[`${group}-${code}`] = true;
+    });
 
-  const checkedMap: Record<string, boolean> = {};
-
-  initialData.permissions?.forEach((code) => {
-    const permission = permissions.find((p) => p.code === code);
-    const group = permission?.group || "Ungrouped";
-    checkedMap[`${group}-${code}`] = true;
-  });
-
-  setChecked(checkedMap);
-}, [initialData, permissions]);
-
+    setChecked(checkedMap);
+  }, [initialData, permissions]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -69,22 +64,26 @@ const ADDEDIT: React.FC<AddEditProps> = ({ initialData }) => {
     checked: boolean,
     codes: string[]
   ) => {
-    const updated = { ...checked };
-    codes.forEach((code) => {
-      updated[`${group}-${code}`] = checked;
+    setChecked((check) => {
+      const updated = { ...check };
+      codes.forEach((code) => {
+        updated[`${group}-${code}`] = checked;
+      });
+      return updated;
     });
-    setChecked(updated);
+    // const updated = { ...checked };
+    // codes.forEach((code) => {
+    //   updated[`${group}-${code}`] = checked;
+    // });
+    // setChecked(updated);
   };
 
-  const grouped = permissions.reduce(
-    (acc, perm) => {
-      const group = perm.group || "Ungrouped";
-      if (!acc[group]) acc[group] = [];
-      acc[group].push(perm);
-      return acc;
-    },
-    {} as Record<string, typeof permissions>
-  );
+  const grouped = permissions.reduce((acc, perm) => {
+    const group = perm.group;
+    if (!acc[group]) acc[group] = [];
+    acc[group].push(perm);
+    return acc;
+  }, {} as Record<string, typeof permissions>);
   // console.log("====>", grouped);
 
   return (
@@ -98,7 +97,7 @@ const ADDEDIT: React.FC<AddEditProps> = ({ initialData }) => {
       }}
     >
       <form>
-        <InputField
+        {/* <InputField
           label="Code"
           name="code"
           value={formData.code}
@@ -106,7 +105,7 @@ const ADDEDIT: React.FC<AddEditProps> = ({ initialData }) => {
           required
           fullWidth
           margin="normal"
-        />
+        /> */}
 
         <InputField
           label="Name"
@@ -119,7 +118,7 @@ const ADDEDIT: React.FC<AddEditProps> = ({ initialData }) => {
         />
 
         {Object.entries(grouped).map(([group, perms]) => {
-          const codes = perms.map((p) => p.code);
+          const codes = perms.map((p) => p.name);
           const allChecked = codes.every((code) => checked[`${group}-${code}`]);
           const someChecked =
             codes.some((code) => checked[`${group}-${code}`]) && !allChecked;
@@ -141,21 +140,17 @@ const ADDEDIT: React.FC<AddEditProps> = ({ initialData }) => {
               />
 
               <Box sx={{ display: "flex", flexWrap: "wrap", ml: 4 }}>
-                {perms.map((perm, index) => {
-                  // const key = `${group}-${perm.code}`;
-                  // const safeCode = `${perm.code} || missing-${index}`;
-                  // const key = `${group}-${safeCode}`;
-                  const key = `test-${perm.code ?? `missing-${index}`}`;
+                {perms.map((perm) => {
+                  const key = `${group}-${perm.name}`;
 
                   return (
                     <FormControlLabel
-                      //childern
                       key={key}
                       control={
                         <Checkbox
                           checked={!!checked[key]}
                           onChange={(e) =>
-                            handleCheck(group, perm.code, e.target.checked)
+                            handleCheck(group, perm.name, e.target.checked)
                           }
                         />
                       }
