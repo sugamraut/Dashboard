@@ -1,28 +1,54 @@
 import React, { useEffect, useState } from "react";
-import { Box, Checkbox, FormControlLabel, Typography } from "@mui/material";
+import {
+  Box,
+  Checkbox,
+  FormControlLabel,
+  Typography,
+  Button,
+  CircularProgress,
+} from "@mui/material";
+import { useForm, Controller } from "react-hook-form";
 import InputField from "../../components/Input_field";
 import { useAppDispatch, useAppSelector } from "../../store/hook";
 import type { RootState } from "../../store/store";
 import { fetchAllPermissions } from "../../store/Permission/PermissionSlice";
+import { createRole, updateRole } from "../../store/role/RoleSlice";
+import { toast } from "react-toastify";
 
 interface AddEditProps {
+  roleId?: number | null;
   initialData?: {
-    Name?: string;
-    Permissions?: [];
+    name?: string;
+    displayName?: string;
+    Permissions?: string[];
   } | null;
+  onCancel?: () => void;
 }
 
-const ADDEDIT: React.FC<AddEditProps> = ({ initialData }) => {
+interface FormValues {
+  name: string;
+  displayName: string;
+  permissions: Record<string, boolean>;
+}
+
+const ADDEDIT: React.FC<AddEditProps> = ({ initialData, roleId, onCancel }) => {
   const dispatch = useAppDispatch();
   const permissions = useAppSelector(
     (state: RootState) => state.permissions.fulllist ?? []
   );
+  const [loading, setLoading] = useState(false);
 
-  const [formData, setFormData] = useState({
-    Name: "",
-  });
+  const { handleSubmit, control, reset, watch, setValue } = useForm<FormValues>(
+    {
+      defaultValues: {
+        name: "",
+        displayName: "",
+        permissions: {},
+      },
+    }
+  );
 
-  const [checked, setChecked] = useState<Record<string, boolean>>({});
+  const watchedPermissions = watch("permissions");
 
   useEffect(() => {
     dispatch(fetchAllPermissions());
@@ -31,45 +57,62 @@ const ADDEDIT: React.FC<AddEditProps> = ({ initialData }) => {
   useEffect(() => {
     if (!initialData) return;
 
-    setFormData({
-      Name: initialData.Name ?? "",
+    reset({
+      name: initialData.name ?? "",
+      displayName: initialData.displayName ?? "",
+      permissions: {},
     });
 
     const checkedMap: Record<string, boolean> = {};
-
     initialData.Permissions?.forEach((code) => {
       const permission = permissions.find((p) => p.code === code);
       const group = permission?.group;
-      checkedMap[`${group}-${code}`] = true;
+      if (group) checkedMap[`${group}-${code}`] = true;
     });
 
-    setChecked(checkedMap);
-  }, [initialData, permissions]);
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleCheck = (group: string, code: string, value: boolean) => {
-    setChecked((prev) => ({
-      ...prev,
-      [`${group}-${code}`]: value,
-    }));
-  };
+    setValue("permissions", checkedMap);
+  }, [initialData, permissions, reset, setValue]);
 
   const handleGroupCheck = (
     group: string,
-    // checked: boolean,
     checkedValue: boolean,
     codes: string[]
   ) => {
-    const updated = { ...checked };
+    const updated = { ...watchedPermissions };
     codes.forEach((code) => {
       updated[`${group}-${code}`] = checkedValue;
     });
+    setValue("permissions", updated);
+  };
 
-    setChecked(updated);
+  const onSubmit = async (data: FormValues) => {
+    setLoading(true);
+
+    const selectedPermissions = Object.entries(data.permissions)
+      .filter(([_, checked]) => checked)
+      .map(([key]) => key.split("-")[1]);
+
+    const payload = {
+      name: data.name,
+      displayName: data.displayName,
+      permissions: selectedPermissions,
+    };
+
+    try {
+      if (roleId) {
+        await dispatch(updateRole({ id: roleId, data: payload })).unwrap();
+        toast.success("Role updated successfully");
+      } else {
+        await dispatch(createRole(payload)).unwrap();
+        toast.success("Role created successfully");
+        reset();
+      }
+      onCancel?.();
+    } catch (err: any) {
+      toast.error(err?.toString() || "Failed to save role");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const grouped = permissions.reduce((acc, perm) => {
@@ -78,6 +121,23 @@ const ADDEDIT: React.FC<AddEditProps> = ({ initialData }) => {
     acc[group].push(perm);
     return acc;
   }, {} as Record<string, typeof permissions>);
+
+  const handleCancel = () => {
+    reset({
+      name: initialData?.name || "",
+      displayName: initialData?.displayName || "",
+      permissions: (() => {
+        const perms: Record<string, boolean> = {};
+        initialData?.Permissions?.forEach((code) => {
+          const perm = permissions.find((p) => p.code === code);
+          if (perm?.group) perms[`${perm.group}-${code}`] = true;
+        });
+        return perms;
+      })(),
+    });
+
+    onCancel?.(); 
+  };
 
   return (
     <Box
@@ -89,43 +149,57 @@ const ADDEDIT: React.FC<AddEditProps> = ({ initialData }) => {
         borderRadius: 2,
       }}
     >
-      <form>
-        {/* <InputField
-          label="Code"
-          name="code"
-          value={formData.code}
-          onChange={handleInputChange}
-          required
-          fullWidth
-          margin="normal"
-        /> */}
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <Controller
+          name="name"
+          control={control}
+          rules={{ required: "Code is required" }}
+          render={({ field, fieldState }) => (
+            <InputField
+              label="Code"
+              {...field}
+              error={!!fieldState.error}
+              helperText={fieldState.error?.message}
+              fullWidth
+              margin="normal"
+            />
+          )}
+        />
 
-        <InputField
-          label="Name"
-          name="Name"
-          value={formData.Name}
-          onChange={handleInputChange}
-          required
-          fullWidth
-          margin="normal"
+        <Controller
+          name="displayName"
+          control={control}
+          rules={{ required: "Name is required" }}
+          render={({ field, fieldState }) => (
+            <InputField
+              label="Name"
+              {...field}
+              error={!!fieldState.error}
+              helperText={fieldState.error?.message}
+              fullWidth
+              margin="normal"
+            />
+          )}
         />
 
         {Object.entries(grouped).map(([group, perms]) => {
-          const name = perms.map((p) => p.name);
-          const allChecked = name.every((code) => checked[`${group}-${code}`]);
+          const codes = perms.map((p) => p.name);
+          const allChecked = codes.every(
+            (code) => watchedPermissions[`${group}-${code}`]
+          );
           const someChecked =
-            name.some((code) => checked[`${group}-${code}`]) && !allChecked;
+            codes.some((code) => watchedPermissions[`${group}-${code}`]) &&
+            !allChecked;
 
           return (
             <Box key={group} mb={2}>
               <FormControlLabel
-                //parent
                 control={
                   <Checkbox
                     checked={allChecked}
                     indeterminate={someChecked}
                     onChange={(e) =>
-                      handleGroupCheck(group, e.target.checked, name)
+                      handleGroupCheck(group, e.target.checked, codes)
                     }
                   />
                 }
@@ -135,28 +209,27 @@ const ADDEDIT: React.FC<AddEditProps> = ({ initialData }) => {
                   </Typography>
                 }
               />
-
               <Box sx={{ display: "flex", flexWrap: "wrap", ml: 4 }}>
                 {perms.map((perm) => {
                   const key = `${group}-${perm.name}`;
-
                   return (
-                    <FormControlLabel
+                    <Controller
                       key={key}
-                      control={
-                        <Checkbox
-                          checked={!!checked[key]}
-                          onChange={(e) =>
-                            handleCheck(group, perm.name, e.target.checked)
+                      name={`permissions.${key}`}
+                      control={control}
+                      render={({ field }) => (
+                        <FormControlLabel
+                          control={
+                            <Checkbox {...field} checked={!!field.value} />
                           }
+                          label={
+                            <Typography fontSize={16} fontWeight={450}>
+                              {perm.name}
+                            </Typography>
+                          }
+                          sx={{ minWidth: 150 }}
                         />
-                      }
-                      label={
-                        <Typography fontSize={16} fontWeight={450}>
-                          {perm.name}
-                        </Typography>
-                      }
-                      sx={{ minWidth: 150 }}
+                      )}
                     />
                   );
                 })}
@@ -165,6 +238,26 @@ const ADDEDIT: React.FC<AddEditProps> = ({ initialData }) => {
             </Box>
           );
         })}
+
+        <Box mt={2} display="flex" gap={2}>
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            disabled={loading}
+          >
+            {loading ? (
+              <CircularProgress size={24} color="inherit" />
+            ) : roleId ? (
+              "Update Role"
+            ) : (
+              "Create Role"
+            )}
+          </Button>
+          <Button variant="outlined" color="error" onClick={handleCancel}>
+            Cancel
+          </Button>
+        </Box>
       </form>
     </Box>
   );

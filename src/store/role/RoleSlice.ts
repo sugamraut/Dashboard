@@ -53,19 +53,6 @@ export const fetchRoles = createAsyncThunk<
   }
 });
 
-// export const fetchAllRole = createAsyncThunk<Role[], { rejectValue: string }>(
-//   "fetch/Allrole",
-//   async (_, { rejectWithValue }) => {
-//     try {
-//       const response = await API.get("/role/all");
-//       return response.data.data as Role[];
-//     } catch (error: any) {
-//       return rejectWithValue(
-//         error.message || "faield to fetch all the data"
-//       );
-//     }
-//   }
-// );
 export const fetchAllRole = createAsyncThunk<Role[]>(
   "fetch/Allrole",
   async (_, { rejectWithValue }) => {
@@ -73,12 +60,40 @@ export const fetchAllRole = createAsyncThunk<Role[]>(
       const response = await API.get("/role/all");
       return response.data.data as Role[];
     } catch (error: any) {
-      return rejectWithValue(
-        error.message || "failed to fetch all the data"
-      );
+      return rejectWithValue(error.message || "failed to fetch all the data");
     }
   }
 );
+
+export const createRole = createAsyncThunk<
+  Role,
+  { name: string; displayName: string; permissions: string[] },
+  { rejectValue: string }
+>("roles/create", async (data, { rejectWithValue }) => {
+  try {
+    const response = await API.post("/api/v1/roles", data);
+    return response.data as Role;
+  } catch (error: any) {
+    return rejectWithValue(
+      error.response?.data?.message || "Failed to create role"
+    );
+  }
+});
+
+export const updateRole = createAsyncThunk<
+  Role,
+  { userId: number; data: Partial<Role> },
+  { rejectValue: string }
+>("roles/update", async ({ userId, data }, { rejectWithValue }) => {
+  try {
+    const response = await API.put(`/api/v1/roles/${userId}`, data);
+    return response.data as Role;
+  } catch (error: any) {
+    return rejectWithValue(
+      error.response?.data?.message || "Failed to update role"
+    );
+  }
+});
 
 const rolesSlice = createSlice({
   name: "roles",
@@ -113,6 +128,40 @@ const rolesSlice = createSlice({
       .addCase(fetchAllRole.rejected, (state, action: PayloadAction<any>) => {
         state.loading = false;
         state.error = action.payload || "Unknown error";
+      })
+
+      .addCase(createRole.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(createRole.fulfilled, (state, action: PayloadAction<Role>) => {
+        state.loading = false;
+        state.list.push(action.payload);
+        state.fullList.push(action.payload);
+      })
+      .addCase(createRole.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+
+      .addCase(updateRole.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateRole.fulfilled, (state, action: PayloadAction<Role>) => {
+        state.loading = false;
+        const updated = action.payload;
+
+        state.list = state.list.map((role) =>
+          role.id === updated.id ? updated : role
+        );
+        state.fullList = state.fullList.map((role) =>
+          role.id === updated.id ? updated : role
+        );
+      })
+      .addCase(updateRole.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || "Failed to update role";
       });
   },
 });

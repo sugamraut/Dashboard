@@ -28,7 +28,7 @@ import { useSelector } from "react-redux";
 import type { RootState } from "../../store/store";
 import { useAppDispatch } from "../../store/hook";
 import { fetchRoles } from "../../store/role/RoleSlice";
-import ADDEDIT from "./addedit"; 
+import ADDEDIT from "./add_edit"; 
 
 
 function RolePage() {
@@ -126,23 +126,12 @@ function RolePage() {
       >
         <DialogTitle>{editData ? "Edit Role" : "Add Role"}</DialogTitle>
         <DialogContent>
-          <ADDEDIT initialData={editData} />
+          <ADDEDIT initialData={editData} onCancel={handleCloseDialog} />
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDialog} color="error">Cancel</Button>
-          <Button variant="contained" color="primary">Save</Button>
-        </DialogActions>
+        
       </Dialog>
     </Box>
   );
 }
 
 export default RolePage;
-   
-    // setChecked((check) => {
-    //   const updated = { ...check };
-    //   codes.forEach((code) => {
-    //     updated[`${group}-${code}`] = checked;
-    //   });
-    //   return updated;
-    // });

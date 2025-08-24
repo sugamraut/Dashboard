@@ -3,17 +3,17 @@ import auth from "./auth/LoginSlice";
 import district from "./districts/DistrictsSlice";
 import city from "./cities/CitiesSlice";
 import branch from "./branch/BranchSlice";
-import User from "./user/userSlice";
+import User from "./user/UserSlice";
 // import Account from "./Account/AccountSlice"
 import accountTypes from "./account/AccountSlice";
 import Permissions from "./Permission/PermissionSlice";
 import dashboard from "./dashboard/DashboardSlice";
 import roles from "./role/RoleSlice";
-import states from "./state/stateSlice";
+import states from "./state/StateSlice";
 import profile from "./profile/ProfileSlice";
 import scannedLog from "./scannedlog/ScannedSlice";
 import activityLog from "./activitylogs/ActivitySlice";
-import setting from "./setting/settingSlice";
+import setting from "./setting/SettingSlice";
 
 const store = configureStore({
   reducer: {

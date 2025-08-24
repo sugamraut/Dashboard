@@ -11,6 +11,8 @@ interface InputFieldProps {
   type?:string;
   className?:string;
   margin?: "none" | "dense" | "normal";
+  error?: boolean;
+  helperText?: string;
 }
 
 const InputField: React.FC<InputFieldProps> = ({
