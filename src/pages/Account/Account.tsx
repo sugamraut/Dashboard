@@ -27,43 +27,39 @@ import {
   fetchAccountTypes,
   type AccountType,
 } from "../../store/account/AccountSlice";
-import AddEditPage from "./addedit";
+import AddEditPage from "./add_edit";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../store/store";
 
 const AccountPage: React.FC = () => {
   const dispatch = useAppDispatch();
-  const {
-    data: accountTypes,
-    error,
-    loading,
-  } = useAppSelector((state) => state.accountTypes);
+  const { error, loading } = useAppSelector((state) => state.accountTypes);
+
   const data = useSelector((state: RootState) => state.accountTypes.data) || [];
 
   const [searchQuery, setSearchQuery] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [editingAccount, setEditingAccount] = useState<AccountType | null>(null);
+  const [editingAccount, setEditingAccount] = useState<AccountType | null>(
+    null
+  );
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(25);
-
+  const [rowsPerPage, setRowsPerPage] = useState(4);
 
   useEffect(() => {
     dispatch(
       fetchAccountTypes({
         page: 1,
-        rowsPerPage: 1000, 
+        rowsPerPage,
         sortBy: "id",
         sortOrder: "asc",
       })
     );
   }, [dispatch]);
 
-  
   const filtered = data.filter((a) =>
     (a.title ?? "").toLowerCase().includes(searchQuery.toLowerCase())
   );
 
- 
   const paginated = filtered.slice(
     page * rowsPerPage,
     page * rowsPerPage + rowsPerPage
@@ -85,23 +81,23 @@ const AccountPage: React.FC = () => {
   };
 
   const handleSave = (data: {
-    id:number;
+    id: number;
     title: string;
     code: string;
     interest: string;
     description: string;
-    minBalance:string;
-    insurance:string;
-    imageUrl:string;
+    minBalance: string;
+    insurance: string;
+    imageUrl: string;
   }) => {
     console.log(editingAccount ? "Update" : "Add new", {
       name: data.title,
       code: data.code,
       interest: data.interest,
       description: data.description,
-      minBalance:data.minBalance,
-      insurance:data.insurance,
-      imageUrl:data.imageUrl,
+      minBalance: data.minBalance,
+      insurance: data.insurance,
+      imageUrl: data.imageUrl,
     });
     handleClose();
   };
@@ -116,26 +112,20 @@ const AccountPage: React.FC = () => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
-
   return (
     <Box marginLeft={10} padding={2}>
       <Box className="header">
         <Typography variant="h5" fontWeight="bold" marginBottom={2}>
           Account Types
         </Typography>
-        <Stack
-          direction="row"
-          spacing={2}
-          alignItems="center"
-          marginBottom={2}
-        >
+        <Stack direction="row" spacing={2} alignItems="center" marginBottom={2}>
           <TextField
             size="small"
             placeholder="Search"
             value={searchQuery}
             onChange={(e) => {
               setSearchQuery(e.target.value);
-              setPage(0); 
+              setPage(0);
             }}
           />
           <IconButton color="primary" onClick={handleAdd}>
@@ -165,6 +155,7 @@ const AccountPage: React.FC = () => {
               <TableRow>
                 <TableCell colSpan={4} align="center">
                   <Typography color="error">{error}</Typography>
+                  {/* toast.error(error) */}
                 </TableCell>
               </TableRow>
             ) : paginated.length === 0 ? (
@@ -183,16 +174,16 @@ const AccountPage: React.FC = () => {
                     {account.title} : {account.code}
                   </TableCell>
                   <TableCell className="table-data">
-                    Interest: {account.interest || account.details || ""}
+                    Interest: {account.interest || ""}
                   </TableCell>
                   <TableCell className="table-data">
                     <IconButton
                       onClick={() => handleEdit(account)}
-                      color="primary"
+                      className="action-icon-btn"
                     >
                       <EditIcon />
                     </IconButton>
-                    <IconButton color="error">
+                    <IconButton className="action-icon-btn-delete ms-2">
                       <DeleteIcon />
                     </IconButton>
                   </TableCell>
@@ -212,7 +203,7 @@ const AccountPage: React.FC = () => {
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
-  
+
       <Dialog open={dialogOpen} fullWidth maxWidth="md" onClose={handleClose}>
         <DialogTitle>
           {editingAccount ? "Edit Account" : "Add Account"}
@@ -224,9 +215,9 @@ const AccountPage: React.FC = () => {
               code: editingAccount?.code || "",
               interest: editingAccount?.interest || "",
               details: editingAccount?.description || "",
-              minimumblance:editingAccount?.minBalance ||"",
-              insurance:editingAccount?.insurance || "",
-              imageUrl:editingAccount?.imageUrl || "",
+              minimumblance: editingAccount?.minBalance || "",
+              // insurance: editingAccount?.insurance || "",
+              imageUrl: editingAccount?.imageUrl || "",
             }}
             onSave={handleSave}
             onCancel={handleClose}

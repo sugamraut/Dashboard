@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, type ChangeEvent } from "react";
 import {
   Box,
   IconButton,
@@ -9,9 +9,8 @@ import {
   Typography,
   Divider,
   Stack,
-  Button
+  Button,
 } from "@mui/material";
-// import Button from "@mui/joy/Button";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {
   FormatBold,
@@ -25,18 +24,18 @@ import {
   FormatListBulleted,
   FormatListNumbered,
 } from "@mui/icons-material";
-import { styled } from '@mui/material/styles';
-// import { styled } from "@mui/joy";
-// import SvgIcon from "@mui/joy/SvgIcon";
+import { styled } from "@mui/material/styles";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import type { AppDispatch } from "../../store/store";
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import {
-  fetchAccountTypeFiles,
-  PostAccountType,
+  uploadFile,
+  createAccountTypeWithUpload,
   updateAccountType,
+  type AccountType,
 } from "../../store/account/AccountSlice";
+import { toast } from "react-toastify";
 
 const VisuallyHiddenInput = styled("input")`
   clip: rect(0 0 0 0);
@@ -66,17 +65,25 @@ interface AddEditPageProps {
   isEdit?: boolean;
 }
 
-const AddEditPage = ({ initialData, onSave, onCancel, isEdit }: AddEditPageProps) => {
+const AddEditPage = ({
+  initialData,
+  onSave,
+  onCancel,
+  isEdit,
+}: AddEditPageProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const editorRef = useRef<HTMLDivElement>(null);
   const [alignment, setAlignment] = useState("left");
   const [uploadFileName, setUploadFileName] = useState<string | undefined>("");
-
+  const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  // console.log("=====>", uploadFileName);
+  // console.log("=====>image", imagePreviewUrl);
   const {
     register,
     handleSubmit,
     reset,
-    setValue,
+    getValues,
     formState: { errors },
   } = useForm({
     defaultValues: {
@@ -85,7 +92,7 @@ const AddEditPage = ({ initialData, onSave, onCancel, isEdit }: AddEditPageProps
       interest: "",
       minimumblance: "",
       interestPayment: "",
-      upload: "",
+      imageUrl: "",
     },
   });
 
@@ -97,22 +104,20 @@ const AddEditPage = ({ initialData, onSave, onCancel, isEdit }: AddEditPageProps
         interest: initialData.interest || "",
         minimumblance: initialData.minimumblance || "",
         interestPayment: initialData.insurance || "",
-        upload: initialData.imageUrl || "",
       });
       if (editorRef.current) {
         editorRef.current.innerHTML = initialData.details || "";
       }
       setUploadFileName(initialData.imageUrl);
+      setImagePreviewUrl(initialData.imageUrl || null);
     }
   }, [initialData, reset]);
-
 
   const applyStyle = (tag: keyof HTMLElementTagNameMap) => {
     const selection = window.getSelection();
     if (!selection || selection.rangeCount === 0) return;
     const range = selection.getRangeAt(0);
     if (range.collapsed) return;
-
     const wrapper = document.createElement(tag);
     wrapper.appendChild(range.extractContents());
     range.insertNode(wrapper);
@@ -145,67 +150,79 @@ const AddEditPage = ({ initialData, onSave, onCancel, isEdit }: AddEditPageProps
     }
   };
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setValue("upload", file.name);
-      setUploadFileName(file.name);
+  const handleDeleteFile = () => {
+    setSelectedFile(null);
+    setUploadFileName("");
+    setImagePreviewUrl(null);
+  };
+
+  const handleFileUpload = async (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] ?? null;
+
+    if (!file) {
+      setSelectedFile(null);
+      setUploadFileName("");
+      setImagePreviewUrl(null);
+      return;
+    }
+
+    setSelectedFile(file);
+    setUploadFileName(file.name);
+    setImagePreviewUrl(URL.createObjectURL(file));
+
+    const result = await dispatch(uploadFile(file));
+
+    if (uploadFile.rejected.match(result)) {
+      toast.error(result.payload || "Failed to upload file.");
+      return;
     }
   };
 
-  const handleDeleteFile = () => {
-    setUploadFileName("");
-    setValue("upload", "");
-  };
-
-  const onSubmit = async (formData: any) => {
+  const onSubmit = async () => {
     try {
-      const fetchResult = await dispatch(fetchAccountTypeFiles());
-
-      if (fetchAccountTypeFiles.rejected.match(fetchResult) || !fetchResult.payload?.length) {
-        alert("Please upload at least one file before submitting.");
+      if (!selectedFile && !initialData?.imageUrl) {
+        toast.error("Please upload a file before submitting.");
         return;
       }
 
-      const payload = {
-        title: formData.title,
-        code: formData.code,
-        interest: formData.interest,
-        description: editorRef.current?.innerHTML || "",
-        minBalance: formData.minimumblance,
-        insurance: formData.interestPayment,
-        imageUrl: uploadFileName||undefined,
+      const payload: Partial<AccountType> & { file?: File } = {
+        id: initialData?.id!,
+        title: getValues("title") || "",
+        code: getValues("code") || "",
+        interest: getValues("interest") || "",
+        // details: editorRef.current?.innerHTML || "",
+        minBalance: getValues("minimumblance") || "",
+        // insurance: getValues("interestPayment") || "",
+        file: selectedFile || undefined,
       };
 
       if (isEdit && initialData?.id) {
-        const updateResult = await dispatch(updateAccountType({ ...payload, id: initialData.id }));
+        const updateResult = await dispatch(updateAccountType(payload));
         if (updateAccountType.rejected.match(updateResult)) {
-          alert(updateResult.payload || "Failed to update account type.");
+          toast.error(updateResult.payload || "Failed to update account type.");
           return;
         }
-        alert("Account type updated successfully.");
+        toast.success("Account type updated successfully.");
       } else {
-        const createResult = await dispatch(PostAccountType(payload));
-        if (PostAccountType.rejected.match(createResult)) {
-          alert(createResult.payload || "Failed to create account type.");
+        const createResult = await dispatch(
+          createAccountTypeWithUpload(payload)
+        );
+        if (createAccountTypeWithUpload.rejected.match(createResult)) {
+          toast.error(createResult.payload || "Failed to create account type.");
           return;
         }
-        alert("Account type created successfully.");
+        toast.success("Account type created successfully.");
       }
 
       onSave();
     } catch (err) {
-      console.error("Unexpected error:", err);
-      alert("An unexpected error occurred.");
+      console.error(err);
+      toast.error("An unexpected error occurred.");
     }
   };
 
   return (
     <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate>
-      <Typography variant="h5" mb={3}>
-        {isEdit ? "Edit Entry" : "Add New Entry"}
-      </Typography>
-
       <TextField
         label="Title"
         fullWidth
@@ -215,7 +232,6 @@ const AddEditPage = ({ initialData, onSave, onCancel, isEdit }: AddEditPageProps
         error={!!errors.title}
         helperText={errors.title?.message}
       />
-
       <TextField
         label="Code"
         fullWidth
@@ -225,7 +241,6 @@ const AddEditPage = ({ initialData, onSave, onCancel, isEdit }: AddEditPageProps
         error={!!errors.code}
         helperText={errors.code?.message}
       />
-
       <TextField
         label="Interest"
         fullWidth
@@ -258,29 +273,56 @@ const AddEditPage = ({ initialData, onSave, onCancel, isEdit }: AddEditPageProps
             onChange={handleAlignment}
             size="small"
           >
-            <ToggleButton value="left"><FormatAlignLeft /></ToggleButton>
-            <ToggleButton value="center"><FormatAlignCenter /></ToggleButton>
-            <ToggleButton value="right"><FormatAlignRight /></ToggleButton>
-            <ToggleButton value="justify"><FormatAlignJustify /></ToggleButton>
+            <ToggleButton value="left">
+              <FormatAlignLeft />
+            </ToggleButton>
+            <ToggleButton value="center">
+              <FormatAlignCenter />
+            </ToggleButton>
+            <ToggleButton value="right">
+              <FormatAlignRight />
+            </ToggleButton>
+            <ToggleButton value="justify">
+              <FormatAlignJustify />
+            </ToggleButton>
           </ToggleButtonGroup>
 
-          <Tooltip title="Bold"><IconButton onClick={() => applyStyle("b")}><FormatBold /></IconButton></Tooltip>
-          <Tooltip title="Italic"><IconButton onClick={() => applyStyle("i")}><FormatItalic /></IconButton></Tooltip>
-          <Tooltip title="Underline"><IconButton onClick={() => applyStyle("u")}><FormatUnderlined /></IconButton></Tooltip>
-          <Tooltip title="Strikethrough"><IconButton onClick={() => applyStyle("s")}><FormatStrikethrough /></IconButton></Tooltip>
-          <Tooltip title="Bullet List"><IconButton onClick={() => insertList("ul")}><FormatListBulleted /></IconButton></Tooltip>
-          <Tooltip title="Numbered List"><IconButton onClick={() => insertList("ol")}><FormatListNumbered /></IconButton></Tooltip>
+          <Tooltip title="Bold">
+            <IconButton onClick={() => applyStyle("b")}>
+              <FormatBold />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Italic">
+            <IconButton onClick={() => applyStyle("i")}>
+              <FormatItalic />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Underline">
+            <IconButton onClick={() => applyStyle("u")}>
+              <FormatUnderlined />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Strikethrough">
+            <IconButton onClick={() => applyStyle("s")}>
+              <FormatStrikethrough />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Bullet List">
+            <IconButton onClick={() => insertList("ul")}>
+              <FormatListBulleted />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Numbered List">
+            <IconButton onClick={() => insertList("ol")}>
+              <FormatListNumbered />
+            </IconButton>
+          </Tooltip>
         </Box>
 
         <Box
           ref={editorRef}
           contentEditable
-          sx={{
-            minHeight: "150px",
-            padding: 2,
-            fontSize: 16,
-            outline: "none",
-          }}
+          sx={{ minHeight: "150px", padding: 2, fontSize: 16, outline: "none" }}
           aria-label="Details editor"
           role="textbox"
           tabIndex={0}
@@ -292,12 +334,13 @@ const AddEditPage = ({ initialData, onSave, onCancel, isEdit }: AddEditPageProps
         fullWidth
         required
         margin="normal"
-        {...register("minimumblance", { required: "Minimum Balance is required" })}
+        {...register("minimumblance", {
+          required: "Minimum Balance is required",
+        })}
         error={!!errors.minimumblance}
         helperText={errors.minimumblance?.message}
       />
-
-      <TextField
+      {/* <TextField
         label="Insurance"
         fullWidth
         required
@@ -305,30 +348,51 @@ const AddEditPage = ({ initialData, onSave, onCancel, isEdit }: AddEditPageProps
         {...register("interestPayment", { required: "Insurance is required" })}
         error={!!errors.interestPayment}
         helperText={errors.interestPayment?.message}
-      />
+      /> */}
 
-      <Box mt={3}>
-        <Button component="label"  startIcon={<CloudUploadIcon />} variant="contained" >
-          Upload File
-          <VisuallyHiddenInput type="file" onChange={handleFileUpload} />
-        </Button>
+      <Divider sx={{ my: 3 }} />
 
+      <Stack direction="row" spacing={2} alignItems="center">
+        <label htmlFor="file-upload">
+          <VisuallyHiddenInput
+            id="file-upload"
+            type="file"
+            onChange={handleFileUpload}
+            accept="image/*"
+          />
+          <Button
+            variant="outlined"
+            component="span"
+            startIcon={<CloudUploadIcon />}
+          >
+            upload file
+          </Button>
+        </label>
         {uploadFileName && (
-          <Stack direction="row" alignItems="center" spacing={1} mt={1}>
-            <Typography fontSize={14}>{uploadFileName}</Typography>
-            <IconButton size="small" onClick={handleDeleteFile}>
-              <DeleteIcon fontSize="small" />
+          <Stack direction="row" spacing={1} alignItems="center">
+            <Typography>{uploadFileName}</Typography>
+            <IconButton onClick={handleDeleteFile} color="error">
+              <DeleteIcon />
             </IconButton>
           </Stack>
         )}
-      </Box>
+      </Stack>
+      {imagePreviewUrl && (
+        <Box mt={2}>
+          <img
+            src={imagePreviewUrl}
+            alt="Preview"
+            style={{ maxWidth: "200px", maxHeight: "150px" }}
+          />
+        </Box>
+      )}
 
-      <Box mt={4} display="flex" gap={2}>
-        <Button type="submit" color="primary" >
-          {isEdit ? "Update" : "Add"}
-        </Button>
-        <Button  onClick={onCancel}>
+      <Box textAlign="right" mt={4} m={2}>
+        <Button onClick={onCancel} color="error" className="me-1">
           Cancel
+        </Button>
+        <Button type="submit" variant="contained" color="primary">
+          {isEdit ? "Update" : "Create"}
         </Button>
       </Box>
     </Box>
@@ -337,3 +401,38 @@ const AddEditPage = ({ initialData, onSave, onCancel, isEdit }: AddEditPageProps
 
 export default AddEditPage;
 
+//network response
+// createdDate
+// :
+// "2025-08-26T14:35:25.764Z"
+// fileKey
+// :
+// "1756198225757"
+// id
+// :
+// 11
+// isDeleted
+// :
+// 0
+// originalName
+// :
+// "jpeg.jpg"
+// updatedDate
+// :
+// "2025-08-26T14:35:25.764Z"
+// Unexpected Application Error!
+// Cannot read properties of undefined (reading 'title')
+// TypeError: Cannot read properties of undefined (reading 'title')
+//     at http://localhost:5173/src/pages/Account/Account.tsx?t=1756199455046:69:15
+//     at Array.filter (<anonymous>)
+//     at AccountPage (http://localhost:5173/src/pages/Account/Account.tsx?t=1756199455046:68:25)
+//     at react-stack-bottom-frame (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=95470abb:17424:20)
+//     at renderWithHooks (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=95470abb:4206:24)
+//     at updateFunctionComponent (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=95470abb:6619:21)
+//     at beginWork (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=95470abb:7654:20)
+//     at runWithFiberInDEV (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=95470abb:1485:72)
+//     at performUnitOfWork (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=95470abb:10868:98)
+//     at workLoopSync (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=95470abb:10728:43)
+// 💿 Hey developer 👋
+
+// You can provide a way better UX than this when your app throws errors by providing your own ErrorBoundary or errorElement prop on your route.
