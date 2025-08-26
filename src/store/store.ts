@@ -14,6 +14,7 @@ import profile from "./profile/ProfileSlice";
 import scannedLog from "./scannedlog/ScannedSlice";
 import activityLog from "./activitylogs/ActivitySlice";
 import setting from "./setting/SettingSlice";
+import onlineAccount from "./onlineaccount/OnlineAccountSlice"
 
 const store = configureStore({
   reducer: {
@@ -31,6 +32,7 @@ const store = configureStore({
     scannedLog: scannedLog,
     activityLog: activityLog,
     setting: setting,
+    onlineAccount:onlineAccount,
   },
 });
 export default store;
