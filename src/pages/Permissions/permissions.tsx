@@ -27,7 +27,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import AddEditPage from "./addedit";
+import AddEditPage from "./add_edit";
 import type { Permission } from "../../globals/typeDeclaration";
 
 const Permissions: React.FC = () => {
@@ -177,7 +177,6 @@ const Permissions: React.FC = () => {
                   </TableCell>
                   <TableCell className="table-data">
                     <IconButton
-                      // color="primary"
                       onClick={() => handleEditClick(permission)}
                        className="action-icon-btn"
                     >

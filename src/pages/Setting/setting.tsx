@@ -20,11 +20,11 @@ import {
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import FilterAltOffIcon from "@mui/icons-material/FilterAltOff";
 import { useAppDispatch, useAppSelector } from "../../store/hook";
-import { fetchsetting } from "../../store/setting/settingSlice";
+import { fetchsetting } from "../../store/setting/SettingSlice";
 import { useEffect, useState } from "react";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import ADDEDIT from "./addedit";
+import ADDEDIT from "./add_edit";
 import type { Setting } from "../../globals/typeDeclaration";
 
 import { toast } from "react-toastify";
