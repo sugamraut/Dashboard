@@ -44,7 +44,7 @@ const LoginPage: React.FC = () => {
   if (status === Status.Success && accessToken) {
     localStorage.setItem("jwt", accessToken);
    navigate("/admin/dashboard");
-     sessionStorage.getItem("alreadyNavigated");
+    //  sessionStorage.getItem("alreadyNavigated");
       toast.success("Login successful! Redirecting...");
     // // if (!hasNavigated) {
     // //   navigate("/admin/dashboard");
