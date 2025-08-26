@@ -6,14 +6,14 @@ import API from "../../http";
 export interface AccountType {
   id: number;
   title: string;
-  Details?: string;
+  // Details?: string;
   code?: string;
   description?: string;
-  details?: string;
+  // details?: string;
   interest?: string;
-  minBalance?:string;
-  insurance?:string;
-  imageUrl?:string;
+  minBalance?: string;
+  // insurance?: string;
+  imageUrl?: string;
 }
 
 interface FetchParams {
@@ -30,6 +30,7 @@ export interface UploadedFile {
   createdDate: string;
   updatedDate: string;
   isDeleted: number;
+  filePath: string;
 }
 
 interface AccountTypeResponse {
@@ -45,14 +46,6 @@ interface AccountTypesState {
   error: string | null;
   selected: AccountType | null;
   uploadedFiles?: UploadedFile[];
-}
-
-interface AccountTypesState {
-  data: AccountType[];
-  total: number;
-  loading: boolean;
-  error: string | null;
-  selected: AccountType | null;
 }
 
 const initialState: AccountTypesState = {
@@ -73,12 +66,9 @@ export const fetchAccountTypes = createAsyncThunk<
   "accountTypes/fetchAll",
   async ({ page, rowsPerPage, sortBy, sortOrder }, { rejectWithValue }) => {
     try {
-      const resp = await axios.get<AccountTypesState>(
-        `${server_Url}/api/v1/account-types`,
-        {
-          params: { page, rowsPerPage, sortBy, sortOrder },
-        }
-      );
+      const resp = await API.get<AccountTypesState>(`/api/v1/account-types`, {
+        params: { page, rowsPerPage, sortBy, sortOrder },
+      });
       const data = resp.data.data ?? [];
       const total = Number(resp.data.metaData?.total ?? 0);
       return { data, total };
@@ -94,7 +84,7 @@ export const fetchAccountTypeById = createAsyncThunk<
   { rejectValue: string }
 >("accountTypes/fetchById", async (id, { rejectWithValue }) => {
   try {
-    const resp = await axios.get(`${server_Url}/api/v1/account-types/${id}`);
+    const resp = await API.get(`${server_Url}/api/v1/account-types/${id}`);
     return resp.data.data as AccountType;
   } catch (err: any) {
     return rejectWithValue(err.message || "Failed to fetch account type");
@@ -103,14 +93,27 @@ export const fetchAccountTypeById = createAsyncThunk<
 
 export const updateAccountType = createAsyncThunk<
   AccountType,
-  AccountType,
+  AccountType & { file?: File },
   { rejectValue: string }
->("accountTypes/update", async (accountType, { rejectWithValue }) => {
+>("accountTypes/update", async (accountType, { rejectWithValue, dispatch }) => {
   try {
-    const resp = await axios.put(
+    let imageFileId = accountType.imageUrl;
+
+    if (accountType.file) {
+      const uploaded = await dispatch(uploadFile(accountType.file)).unwrap();
+      imageFileId = String(uploaded.id);
+    }
+
+    const payload = {
+      ...accountType,
+      imageUrl: imageFileId,
+    };
+
+    const resp = await API.put(
       `${server_Url}/api/v1/account-types/${accountType.id}`,
-      accountType
+      payload
     );
+
     return resp.data.data as AccountType;
   } catch (error: any) {
     return rejectWithValue(error.message || "Failed to update account type");
@@ -130,35 +133,49 @@ export const deleteAccountType = createAsyncThunk<
   }
 });
 
-export const fetchAccountTypeFiles = createAsyncThunk<
-  UploadedFile[],
-  void,
+export const uploadFile = createAsyncThunk<
+  UploadedFile,
+  File,
+  { rejectValue: string }
+>("accountTypes/uploadFile", async (file, { rejectWithValue }) => {
+  try {
+    const formData = new FormData();
+    formData.append("files", file);
+
+    const resp = await API.post(`/api/v1/file-upload/ACCOUNT-TYPE`, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    return resp.data as UploadedFile;
+  } catch (err: any) {
+    return rejectWithValue(err.message || "Failed to upload file");
+  }
+});
+
+export const createAccountTypeWithUpload = createAsyncThunk<
+  AccountType,
+  Partial<AccountType> & { file?: File },
   { rejectValue: string }
 >(
-  "accountTypes/fetchFiles",
-  async (_, { rejectWithValue }) => {
+  "accountTypes/createWithUpload",
+  async (accountType, { rejectWithValue, dispatch }) => {
     try {
-      const resp = await axios.post(`${server_Url}/api/v1/file-upload/ACCOUNT-TYPE`);
-      return resp.data;
+      if (!accountType.file) {
+        return rejectWithValue("No file provided for upload");
+      }
+
+      const uploaded = await dispatch(uploadFile(accountType.file)).unwrap();
+
+      const resp = await API.post(`/api/v1/account-types`, {
+        ...accountType,
+        imageUrl: String(uploaded.id),
+      });
+
+      return resp.data.data as AccountType;
     } catch (err: any) {
-      return rejectWithValue(err.message || "Failed to fetch uploaded files");
+      return rejectWithValue(err.response?.data || err.message);
     }
   }
 );
-
-
-
-export const PostAccountType = createAsyncThunk(
-  'accountTypes/fetchAccountTypes',
-  async (_, { rejectWithValue }) => {
-    try {
-      const response = await API.post("/api/v1/account-types")
-      return response.data
-    } catch (err:any) {
-      return rejectWithValue(err.response?.data || err.message)
-    }
-  }
-)
 
 const accountTypesSlice = createSlice({
   name: "accountTypes",
@@ -176,6 +193,7 @@ const accountTypesSlice = createSlice({
         state.data = action.payload.data;
         state.total = action.payload.total;
       })
+
       .addCase(fetchAccountTypes.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload ?? "Unknown error";
@@ -227,19 +245,19 @@ const accountTypesSlice = createSlice({
       .addCase(deleteAccountType.rejected, (state, action) => {
         state.error = action.payload ?? "Failed to delete account type";
       })
-      
-       .addCase(PostAccountType .pending, (state) => {
-        state.loading = true
-        state.error = null
+
+      .addCase(createAccountTypeWithUpload.pending, (state) => {
+        state.loading = true;
+        state.error = null;
       })
-      .addCase(PostAccountType.fulfilled, (state, action) => {
+      .addCase(createAccountTypeWithUpload.fulfilled, (state, action) => {
         state.loading = false;
-        state.data = action.payload
+        state.data.push(action.payload);
       })
-      .addCase(PostAccountType.rejected, (state, action) => {
-        state.loading = false
-        state.error = action.payload as string
-      })
+      .addCase(createAccountTypeWithUpload.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      });
   },
 });
 

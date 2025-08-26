@@ -21,17 +21,16 @@ import RefreshIcon from "@mui/icons-material/Refresh";
 
 const ActivityLog = () => {
   const dispatch = useAppDispatch();
-  const { data, metaData} = useAppSelector(
-    (state) => state.activityLog
-  );
+  const { data, metaData } = useAppSelector((state) => state.activityLog);
 
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedUser, setSelectedUser] = useState<string | null>(null);
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
   const [rowsPerPage, setRowsPerPage] = useState(25);
   const [page, setPage] = useState(0);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedQuery, setDebouncedQuery] = useState(searchQuery);
 
-  
   const userOptions = useMemo(() => {
     return Array.from(
       new Map(
@@ -48,23 +47,6 @@ const ActivityLog = () => {
     );
   }, [data]);
 
-
-  // const roleOptions = useMemo(() => {
-  //   return Array.from(
-  //     new Set(
-  //       data
-  //         .flatMap(
-  //           (log) =>
-  //             log.user?.roles?.map((role: { name: any; }) => ({
-  //               label: role.name,
-  //               value: role.name,
-  //             })) ?? []
-  //         )
-  //         .map((r) => JSON.stringify(r))
-  //     )
-  //   ).map((r) => JSON.parse(r));
-  // }, [data]);
-
   const loadLogs = () => {
     const filters: Record<string, any> = { type: 0 };
     if (selectedUser) filters["user"] = selectedUser;
@@ -76,7 +58,7 @@ const ActivityLog = () => {
         rowsPerPage,
         sortBy: null,
         sortOrder: "desc",
-        query: "",
+        query: debouncedQuery,
         filters,
       })
     );
@@ -84,7 +66,14 @@ const ActivityLog = () => {
 
   useEffect(() => {
     loadLogs();
-  }, [selectedDate, page, rowsPerPage, selectedUser, selectedRole]);
+  }, [
+    selectedDate,
+    page,
+    rowsPerPage,
+    selectedUser,
+    selectedRole,
+    debouncedQuery,
+  ]);
 
   const handleClearFilter = () => {
     setSelectedDate(null);
@@ -108,6 +97,31 @@ const ActivityLog = () => {
     setPage(0);
   };
 
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedQuery(searchQuery);
+    }, 500);
+
+    return () => clearTimeout(handler);
+  }, [searchQuery]);
+
+  const roleOptions = useMemo(() => {
+    const roleSet = new Set<string>();
+
+    data.forEach((log) => {
+      log.user?.roles?.forEach((role: { name: string }) => {
+        if (role.name) {
+          roleSet.add(role.name);
+        }
+      });
+    });
+
+    return Array.from(roleSet).map((role) => ({
+      label: role,
+      value: role,
+    }));
+  }, [data]);
+
   return (
     <Box marginLeft={9} padding={2}>
       <Box className="header" mb={2}>
@@ -125,18 +139,9 @@ const ActivityLog = () => {
             disablePortal
             options={userOptions}
             getOptionLabel={(option) => `${option.username} (${option.name})`}
-            // filterOptions={(options, { inputValue }) =>
-            //   options.filter(
-            //     (opt) =>
-            //       opt.username
-            //         .toLowerCase()
-            //         .includes(inputValue.toLowerCase()) ||
-            //       opt.name.toLowerCase().includes(inputValue.toLowerCase())
-            //   )
-            // }
             value={
               selectedUser
-                ? (userOptions.find((u) => u.username === selectedUser) ?? null)
+                ? userOptions.find((u) => u.username === selectedUser) ?? null
                 : null
             }
             onChange={(_, newValue) =>
@@ -148,28 +153,35 @@ const ActivityLog = () => {
             )}
           />
 
-          {/* <Autocomplete
+          <Autocomplete
             disablePortal
-            // options={roleOptions}
-            // value={
-            //   selectedRole
-            //     ? (roleOptions.find((r) => r.value === selectedRole) ?? null)
-            //     : null
-            // }
-            onChange={(_, newValue) => setSelectedRole(newValue?.value ?? null)}
+            options={roleOptions}
+            value={
+              selectedRole
+                ? roleOptions.find((r) => r.value === selectedRole) ?? null
+                : null
+            }
+            onChange={(_, newValue) => {
+              setSelectedRole(newValue?.value ?? null);
+              setPage(0);
+            }}
             sx={{ width: 250 }}
             renderInput={(params) => (
               <TextField {...params} label="Filter by Role" />
             )}
-          /> */}
+          />
 
           <TextField
             size="medium"
             placeholder="Search by name or group"
             margin="normal"
+            value={searchQuery}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              setPage(0);
+            }}
           />
 
-       
           <IconButton onClick={handleClearFilter} color="error">
             <ClearIcon />
           </IconButton>
@@ -178,7 +190,6 @@ const ActivityLog = () => {
           </IconButton>
         </Stack>
       </Box>
-
 
       <TableContainer>
         <Table>
@@ -201,13 +212,15 @@ const ActivityLog = () => {
                     {new Date(log.createdDate).toISOString().split("T")[0]}
                   </TableCell>
 
-                  <TableCell className="table-data">{log.description}</TableCell>
                   <TableCell className="table-data">
-                    {log.user?.username||"-"}
+                    {log.description}
+                  </TableCell>
+                  <TableCell className="table-data">
+                    {log.user?.username || "-"}
                     <br />
                     <Typography variant="body2" color="textSecondary">
                       ({log.user?.name || "-"})
-                    </Typography >
+                    </Typography>
                   </TableCell>
                   <TableCell className="table-data">{log.ip}</TableCell>
                   <TableCell className="table-data">{log.userAgent}</TableCell>
@@ -223,7 +236,6 @@ const ActivityLog = () => {
           </TableBody>
         </Table>
 
-       
         <TablePagination
           component="div"
           count={metaData?.total || 0}

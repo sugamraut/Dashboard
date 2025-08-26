@@ -36,25 +36,38 @@ interface FetchLogsParams {
 
 export const fetchActivityLog = createAsyncThunk<
   ActivityResponse,
-  FetchLogsParams
->("ActivityLog/fetch", async (params, { rejectWithValue }) => {
+  FetchLogsParams,
+  { rejectValue: string }
+>("ActivityLog/fetch", async (
+  {
+    page = 1,
+    rowsPerPage = 25,
+    sortBy = null,
+    sortOrder = "desc",
+    query = "",
+    filters = {},
+  },
+  { rejectWithValue }
+) => {
   try {
     const response = await API.get(`/api/v1/logs`, {
       params: {
-        page: params.page ?? 1,
-        rowsPerPage: params.rowsPerPage ?? 25, 
-        sortBy: params.sortBy ?? null,
-        sortOrder: params.sortOrder ?? "desc",
-        query: params.query ?? "",
-        filters: JSON.stringify(params.filters ?? {}),
+        page,
+        rowsPerPage,
+        sortBy,
+        sortOrder,
+        query,
+        filters: JSON.stringify(filters),
       },
     });
 
     return response.data as ActivityResponse;
   } catch (error: any) {
-    return rejectWithValue(
-      error?.response?.data?.message || error.message || "Unknown error"
-    );
+    const errorMessage =
+      typeof error === "string"
+        ? error
+        : error?.response?.data?.message || error.message || "Unknown error";
+    return rejectWithValue(errorMessage);
   }
 });
 
@@ -70,7 +83,7 @@ const ActivityLogSlice = createSlice({
       })
       .addCase(fetchActivityLog.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload as string;
+        state.error = action.payload ?? "Failed to fetch logs";
       })
       .addCase(fetchActivityLog.fulfilled, (state, action) => {
         state.loading = false;
@@ -92,4 +105,4 @@ const ActivityLogSlice = createSlice({
   },
 });
 
-export default ActivityLogSlice.reducer;
+export default ActivityLogSlice.reducer
