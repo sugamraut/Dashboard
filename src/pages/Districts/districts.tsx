@@ -29,7 +29,7 @@ import {
   fetchDistrictByIdAsync,
   fetchDistrictsByStateIdAsync,
 } from "../../store/districts/DistrictsSlice";
-import AddEditPage from "./addedit";
+import AddEditPage from "./add_edit";
 import type { DistrictType } from "../../globals/typeDeclaration";
 import { useAppDispatch } from "../../store/hook";
 

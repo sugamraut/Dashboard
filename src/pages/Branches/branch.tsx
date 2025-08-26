@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import  { useEffect, useState } from "react";
 import {
   Box,
   Typography,
@@ -13,24 +13,27 @@ import {
   IconButton,
   Stack,
 } from "@mui/material";
-import { useDispatch, useSelector } from "react-redux";
-import type { RootState, AppDispatch } from "../../store/store";
+
+import type { RootState} from "../../store/store";
 import {
   fetchBranchData,
   updateBranch,
   createBranch,
-} from "../../store/branchSlice/BranchSlice";
+} from "../../store/branch/BranchSlice";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import EditIcon from "@mui/icons-material/Edit";
 import FilterAltOffIcon from "@mui/icons-material/FilterAltOff";
-import BranchFormModal from "./addedit";
+import BranchFormModal from "./add_edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import type { Branch } from "../../globals/typeDeclaration";
+import { useAppDispatch, useAppSelector } from "../../store/hook";
+import { toast } from "react-toastify";
 
 export default function BranchesPage() {
-  const dispatch = useDispatch<AppDispatch>();
-  const branches = useSelector((state: RootState) => state.branch.list) || [];
-  const loading = useSelector((state: RootState) => state.branch.loading);
+  // const dispatch = useDispatch<AppDispatch>();
+  const dispatch =useAppDispatch();
+  const branches = useAppSelector((state: RootState) => state.branch.list) || [];
+  const loading = useAppSelector((state: RootState) => state.branch.loading);
   // const error = useSelector((state: RootState) => state.branch.error);
 
   const [search, setSearch] = useState("");
@@ -64,8 +67,10 @@ export default function BranchesPage() {
           data: formData,
         })
       );
+      toast.success("update the branch successfully ")
     } else {
       await dispatch(createBranch(formData));
+      toast.success("createt the branch successfully")
     }
     dispatch(fetchBranchData());
   }
