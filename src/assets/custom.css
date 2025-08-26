@@ -136,3 +136,11 @@ body {
   padding: 16px;
   background-color: #fff;
 }
+
+.nav-link{
+  text-decoration: none;
+ font-family:
+    "lato ",
+    Segoe UI !important;
+    color: #043ba0;
+}
