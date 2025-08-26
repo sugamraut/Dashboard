@@ -53,17 +53,29 @@ export default function CityPage() {
     dispatch(fetchAllCities());
   }, [dispatch]);
 
+  // useEffect(() => {
+  //   const districtId = selectedDistrict?.id;
+  //   dispatch(
+  //     fetchCityBypaginated({
+  //       districtId,
+  //       page: page + 1,
+  //       rowsPerPage,
+  //       search: search.trim() || undefined,
+  //     })
+  //   );
+  // }, [dispatch, selectedDistrict, page, rowsPerPage, search]);
+
   useEffect(() => {
-    const districtId = selectedDistrict?.id;
-    dispatch(
-      fetchCityBypaginated({
-        districtId,
-        page: page + 1,
-        rowsPerPage,
-        search: search.trim() || undefined,
-      })
-    );
-  }, [dispatch, selectedDistrict, page, rowsPerPage, search]);
+  dispatch(
+    fetchCityBypaginated({
+      districtId: selectedDistrict?.id,
+      page: page + 1,
+      rowsPerPage,
+      search: search.trim() || undefined,
+    })
+  );
+}, [dispatch, selectedDistrict, page, rowsPerPage, search]);
+
 
   const districts = useMemo(() => {
     if (!fulldistrict) return [];
@@ -113,6 +125,9 @@ export default function CityPage() {
     });
   }, [cityList]);
 
+  console.log("cityList from redux:", cityList);
+
+
   return (
     <Box marginLeft={10} padding={2}>
       <Box className="header">
@@ -121,6 +136,8 @@ export default function CityPage() {
         </Typography>
 
         <Stack direction="row" spacing={2} alignItems="center">
+          
+        
           <Autocomplete
             size="small"
             sx={{ minWidth: 250 }}
@@ -129,7 +146,7 @@ export default function CityPage() {
             value={selectedDistrict}
             onChange={(_, newValue) => {
               setSelectedDistrict(newValue);
-              setPage(0);
+              setPage(0); 
             }}
             isOptionEqualToValue={(option, value) => option.id === value?.id}
             renderInput={(params) => (
@@ -145,7 +162,7 @@ export default function CityPage() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             onKeyDown={(e) => {
-              if (e.key === "Enter") setPage(0);
+              if (e.key === "Enter") setPage(0); 
             }}
           />
 
@@ -167,7 +184,7 @@ export default function CityPage() {
               <TableCell className="table-header">Name</TableCell>
               <TableCell className="table-header">state</TableCell>
               <TableCell className="table-header">District</TableCell>
-              
+
               <TableCell align="center" className="table-header">
                 Actions
               </TableCell>
@@ -187,11 +204,11 @@ export default function CityPage() {
                     {page * rowsPerPage + index + 1}
                   </TableCell>
                   <TableCell className="table-data">{city.name}</TableCell>
-                   <TableCell className="table-data">{city.state}</TableCell>
+                  <TableCell className="table-data">{city.state}</TableCell>
                   <TableCell className="table-data">
                     {city.district || "N/A"}
                   </TableCell>
-                 
+
                   <TableCell align="center" className="table-data">
                     <IconButton
                       onClick={() => handleEditClick(city)}
