@@ -6,7 +6,7 @@ import store from "./store/store";
 import { Bounce, ToastContainer} from "react-toastify";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
-  <React.StrictMode>
+  // <React.StrictMode>
     <Provider store={store}>
       <App />
       <ToastContainer
@@ -23,5 +23,5 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         transition={Bounce}
       />
     </Provider>
-  </React.StrictMode>
+  // </React.StrictMode>
 );
