@@ -155,7 +155,7 @@ export default function DistrictPage() {
             size="small"
             sx={{ minWidth: 250 }}
             label="Search by District Name"
-            placeholder="Type a district name"
+            // placeholder="Type a district name"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             onKeyDown={(e) => {
@@ -214,27 +214,8 @@ export default function DistrictPage() {
                     {district.state?.nameCombined || "N/A"}
                   </TableCell>
                   <TableCell align="center" className="table-data">
-                    {/* <IconButton
-                      color="primary"
-                      onClick={() => handleEditClick(district)}
-                    >
-                      <EditIcon />
-                    </IconButton> */}
                     <IconButton
                       onClick={() => handleEditClick(district)}
-                      // sx={
-                      //   {
-                      //     borderRadius: "50%",
-                      //     backgroundColor: "#043BA0 ",
-                      //     width: 10,
-                      //     height: 10,
-                      //     padding: 2,
-                      //     color: "#ffffff",
-                      //     "&:hover": {
-                      //       backgroundColor: "#043BA0 ",
-                      //     },
-                      //   }
-                      // }
                       className="action-icon-btn"
                     >
                       <EditIcon />

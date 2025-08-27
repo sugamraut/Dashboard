@@ -14,7 +14,7 @@ import {
 } from "../../store/districts/DistrictsSlice";
 import InputField from "../../components/Input_field";
 
-import type { DistrictType, StateType } from "../../globals/typeDeclaration";
+import type { DistrictType } from "../../globals/typeDeclaration";
 
 interface EditDistrictFormProps {
   initialData?: Partial<DistrictType> & {
