@@ -1,3 +1,4 @@
+
 import React, { useEffect, useMemo, useState } from "react";
 import {
   Box,
@@ -13,9 +14,6 @@ import {
   TextField,
   Stack,
   TablePagination,
-  Dialog,
-  DialogTitle,
-  DialogContent,
   Autocomplete,
 } from "@mui/material";
 
@@ -35,7 +33,6 @@ export default function CityPage() {
 
   const fulldistrict = useSelector((state: RootState) => state.city.fullList);
   const cityList = useSelector((state: RootState) => state.city.list ?? []);
-
   const totalCount = useSelector((state: RootState) => state.city.totalCount);
 
   const [search, setSearch] = useState("");
@@ -53,24 +50,21 @@ export default function CityPage() {
     dispatch(fetchAllCities());
   }, [dispatch]);
 
-
   useEffect(() => {
-  dispatch(
-    fetchCityBypaginated({
-      districtId: selectedDistrict?.id,
-      page: page + 1,
-      rowsPerPage,
-      search: search.trim() || undefined,
-    })
-  );
-}, [dispatch, selectedDistrict, page, rowsPerPage, search]);
-
+    dispatch(
+      fetchCityBypaginated({
+        districtId: selectedDistrict?.id,
+        page: page + 1,
+        rowsPerPage,
+        search: search.trim() || undefined,
+      })
+    );
+  }, [dispatch, selectedDistrict, page, rowsPerPage, search]);
 
   const districts = useMemo(() => {
     if (!fulldistrict) return [];
 
     const uniqueMap = new Map<string, { id: number; district: string }>();
-
     for (const item of fulldistrict) {
       const key = item.district.trim().toLowerCase();
       if (!uniqueMap.has(key)) {
@@ -109,13 +103,9 @@ export default function CityPage() {
   const sortedCityList = useMemo(() => {
     return [...cityList].sort((a, b) => {
       if (a.id !== b.id) return a.id - b.id;
-
       return a.name.localeCompare(b.name);
     });
   }, [cityList]);
-
-  // console.log("cityList from redux:", cityList);
-
 
   return (
     <Box marginLeft={10} padding={2}>
@@ -125,8 +115,6 @@ export default function CityPage() {
         </Typography>
 
         <Stack direction="row" spacing={2} alignItems="center">
-          
-        
           <Autocomplete
             size="small"
             sx={{ minWidth: 250 }}
@@ -135,7 +123,7 @@ export default function CityPage() {
             value={selectedDistrict}
             onChange={(_, newValue) => {
               setSelectedDistrict(newValue);
-              setPage(0); 
+              setPage(0);
             }}
             isOptionEqualToValue={(option, value) => option.id === value?.id}
             renderInput={(params) => (
@@ -151,7 +139,7 @@ export default function CityPage() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             onKeyDown={(e) => {
-              if (e.key === "Enter") setPage(0); 
+              if (e.key === "Enter") setPage(0);
             }}
           />
 
@@ -165,15 +153,14 @@ export default function CityPage() {
         </Stack>
       </Box>
 
-      <TableContainer >
+      <TableContainer>
         <Table size="small">
           <TableHead>
             <TableRow>
               <TableCell className="table-header">#</TableCell>
               <TableCell className="table-header">Name</TableCell>
-              <TableCell className="table-header">state</TableCell>
+              <TableCell className="table-header">State</TableCell>
               <TableCell className="table-header">District</TableCell>
-
               <TableCell align="center" className="table-header">
                 Actions
               </TableCell>
@@ -182,27 +169,19 @@ export default function CityPage() {
           <TableBody>
             {cityList.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={4} align="center">
+                <TableCell colSpan={5} align="center">
                   No cities found
                 </TableCell>
               </TableRow>
             ) : (
               sortedCityList.map((city, index) => (
                 <TableRow key={page * rowsPerPage + index + 1}>
-                  <TableCell className="table-data">
-                    {page * rowsPerPage + index + 1}
-                  </TableCell>
-                  <TableCell className="table-data">{city.name}</TableCell>
-                  <TableCell className="table-data">{city.state}</TableCell>
-                  <TableCell className="table-data">
-                    {city.district || "N/A"}
-                  </TableCell>
-
-                  <TableCell align="center" className="table-data">
-                    <IconButton
-                      onClick={() => handleEditClick(city)}
-                      className="action-icon-btn"
-                    >
+                  <TableCell>{page * rowsPerPage + index + 1}</TableCell>
+                  <TableCell>{city.name}</TableCell>
+                  <TableCell>{city.state}</TableCell>
+                  <TableCell>{city.district || "N/A"}</TableCell>
+                  <TableCell align="center">
+                    <IconButton onClick={() => handleEditClick(city)} className="action-icon-btn">
                       <EditIcon />
                     </IconButton>
                   </TableCell>
@@ -211,7 +190,6 @@ export default function CityPage() {
             )}
           </TableBody>
         </Table>
-
         <TablePagination
           rowsPerPageOptions={[5, 10, 25, 50]}
           component="div"
@@ -223,20 +201,12 @@ export default function CityPage() {
         />
       </TableContainer>
 
-      <Dialog
-        open={editDialogOpen}
-        onClose={handleDialogClose}
-        maxWidth="md"
-        fullWidth
-      >
-        <DialogTitle>{selectedCityItem ? "Edit City" : "Add City"}</DialogTitle>
-        <DialogContent dividers>
-          <AddEditCity
-            initialData={selectedCityItem ?? undefined}
-            onClose={handleDialogClose}
-          />
-        </DialogContent>
-      </Dialog>
+      {editDialogOpen && (
+        <AddEditCity
+          initialData={selectedCityItem ?? undefined}
+          onClose={handleDialogClose}
+        />
+      )}
     </Box>
   );
 }

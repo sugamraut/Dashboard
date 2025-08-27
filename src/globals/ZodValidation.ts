@@ -27,3 +27,12 @@ export const BranchSchema = z.object({
   state: z.string().min(1, "State is required"),
   district: z.string().min(1, "District is required"),
 });
+
+
+
+ export const citySchema = z.object({
+  name: z.string().min(1, "City name is required"),
+  nameNp: z.string().min(1, "City name in Nepali is required"),
+  state: z.string().min(1, "State is required"),
+  district: z.string().min(1, "District is required"),
+});

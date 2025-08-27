@@ -7,7 +7,6 @@ import {
   TableRow,
   TableCell,
   TableBody,
-  Paper,
   IconButton,
   Typography,
   TextField,
@@ -17,6 +16,7 @@ import {
   DialogTitle,
   DialogContent,
   Autocomplete,
+  CircularProgress,
 } from "@mui/material";
 
 import EditIcon from "@mui/icons-material/Edit";
@@ -103,9 +103,19 @@ export default function DistrictPage() {
     setEditDialogOpen(true);
   };
 
+ 
   const handleDialogClose = () => {
     setEditDialogOpen(false);
     setSelectedDistrictItem(null);
+
+   
+    if (selectedState) {
+      dispatch(
+        fetchDistrictsByStateIdAsync(selectedState.id, page + 1, rowsPerPage)
+      );
+    } else {
+      dispatch(fetchDistrictAsync(page + 1, rowsPerPage, "", search.trim()));
+    }
   };
 
   const handleChangePage = (_: unknown, newPage: number) => setPage(newPage);
@@ -116,6 +126,7 @@ export default function DistrictPage() {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
+
   const handleClearFilters = () => {
     setSelectedState(null);
     setSearch("");
@@ -155,7 +166,6 @@ export default function DistrictPage() {
             size="small"
             sx={{ minWidth: 250 }}
             label="Search by District Name"
-            // placeholder="Type a district name"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             onKeyDown={(e) => {
@@ -183,7 +193,7 @@ export default function DistrictPage() {
         </Stack>
       </Box>
 
-      <TableContainer component={Paper}>
+      <TableContainer>
         <Table size="small">
           <TableHead>
             <TableRow>
@@ -195,8 +205,15 @@ export default function DistrictPage() {
               </TableCell>
             </TableRow>
           </TableHead>
+ 
           <TableBody>
-            {districtList.length === 0 ? (
+            {status === "loading" ? (
+              <TableRow>
+                <TableCell colSpan={5} align="center">
+                <CircularProgress size={24} />
+                </TableCell>
+              </TableRow>
+            ) : districtList.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={5} align="center">
                   No districts found

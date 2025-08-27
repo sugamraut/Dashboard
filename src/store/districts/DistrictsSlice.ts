@@ -129,6 +129,40 @@ export const fetchDistrictAsync = (
   };
 };
 
+// export const updateDistrictAsync = ({
+//   id,
+//   data,
+// }: {
+//   id: number | string;
+//   data: Partial<DistrictType>;
+// }) => {
+//   return async (dispatch: AppDispatch) => {
+//     dispatch(setStatus(Status.Loading));
+
+//     const token = localStorage.getItem("jwt");
+//     if (!token) {
+//       dispatch(setError("No auth token found."));
+//       return Promise.reject("No token");
+//     }
+
+//     try {
+//       const response = await API.put(`/api/v1/districts/${id}`, data);
+
+//       console.log("Update success:", response.data);
+
+//       dispatch(updateDistrictInStore(response.data));
+//       dispatch(setStatus(Status.Success));
+//       return Promise.resolve(response.data);
+//     } catch (error: any) {
+//       console.error("Update failed:", error.response?.data || error.message);
+//       const message =
+//         error.response?.data?.message || error.message || "Update error";
+//       dispatch(setError(message));
+//       return Promise.reject(message);
+//     }
+//   };
+// };
+
 export const updateDistrictAsync = ({
   id,
   data,
@@ -162,6 +196,7 @@ export const updateDistrictAsync = ({
     }
   };
 };
+
 
 export const fetchAllDistrictsAsync = () => {
   return async (dispatch: AppDispatch) => {
