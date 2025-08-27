@@ -40,8 +40,8 @@ export default function BranchesPage() {
   const [Edit, setEdit] = useState(false);
   const [editBranch, setEditBranch] = useState<Branch | null>(null);
 
-  const [states, setStates] = useState<string[]>([]);
-  const [districts, setDistricts] = useState<string[]>([]);
+  const [states] = useState<string[]>([]);
+  const [districts] = useState<string[]>([]);
 
   useEffect(() => {
     dispatch(fetchBranchData());
