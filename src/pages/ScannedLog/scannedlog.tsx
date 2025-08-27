@@ -23,6 +23,10 @@ import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import { useEffect, useState } from "react";
 import { fetchLogs } from "../../store/scannedlog/ScannedSlice";
 import { useAppDispatch, useAppSelector } from "../../store/hook";
+import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
+
+import dayjs, { Dayjs } from "dayjs";
+
 
 const ScannedLog = () => {
   const dispatch = useAppDispatch();
@@ -30,27 +34,44 @@ const ScannedLog = () => {
   const { data, metaData, loading, error } = useAppSelector(
     (state) => state.scannedLog
   );
+const [selectedDate, setSelectedDate] = useState<Dayjs | null>(null);
 
-  const [selectedDate, setSelectedDate] = useState(null);
+  // const [selectedDate, setSelectedDate] = useState(null);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(25);
 
-  const loadLogs = () => {
-    dispatch(
-      fetchLogs({
-        page: page + 1,
-        rowsPerPage,
-        sortBy: null,
-        sortOrder: "desc",
-        query: "",
-        filters: selectedDate
-          ? {
-              date: selectedDate.format("YYYY-MM-DD"),
-            }
-          : undefined,
-      })
-    );
-  };
+  // const loadLogs = () => {
+  //   dispatch(
+  //     fetchLogs({
+  //       page: page + 1,
+  //       rowsPerPage,
+  //       sortBy: null,
+  //       sortOrder: "desc",
+  //       query: "",
+  //       // filters: selectedDate
+  //       //   ? {
+  //       //       date: selectedDate.format("YYYY-MM-DD"),
+  //       //     }
+  //       //   : undefined,
+  //     })
+  //   );
+  // };
+const loadLogs = () => {
+  dispatch(
+    fetchLogs({
+      page: page + 1,
+      rowsPerPage,
+      sortBy: null,
+      sortOrder: "desc",
+      query: "",
+      filters: selectedDate
+        ? {
+            date: selectedDate.format("YYYY-MM-DD"), 
+          }
+        : undefined,
+    })
+  );
+};
 
   useEffect(() => {
     loadLogs();
@@ -79,19 +100,32 @@ const ScannedLog = () => {
   return (
     <Box marginLeft={9} padding={2} mb={2}>
       <Box display="flex" justifyContent="space-between" alignItems="center">
-        <Typography variant="h6" fontWeight="bold">
+        <Typography variant="h5" fontWeight="bold" sx={{ color: "#043ba0" }}>
           Scanned Logs
         </Typography>
 
         <Box display="flex" alignItems="center" gap={1}>
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DatePicker
-              label="By Date"
-              value={selectedDate}
-              onChange={(newValue) => setSelectedDate(newValue)}
-              slots={{ openPickerIcon: CalendarTodayIcon }}
-              slotProps={{ textField: { size: "small" } }}
-            />
+          <LocalizationProvider dateAdapter={AdapterDayjs} >
+            <DemoContainer
+              components={["DatePicker"]}
+              sx={{
+                // "&.MuiPickersTextField": {
+                //   maxWidth: "500px",
+                //   width: "500px",
+                // },
+                  " &.MuiPickersOutlinedInput-sectionsContainer ": {
+                    width: "140px",
+                  },
+             
+              }}
+            >
+              <DatePicker
+                label="By Date"
+                value={selectedDate}
+                onChange={(newValue) => setSelectedDate(newValue)}
+                
+              />
+            </DemoContainer>
           </LocalizationProvider>
 
           <IconButton color="error" onClick={handleClearFilter}>

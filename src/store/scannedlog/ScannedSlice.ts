@@ -44,7 +44,6 @@ export const fetchLogs = createAsyncThunk<LogsResponse, FetchLogsParams>(
           sortOrder: params.sortOrder ?? "desc",
           query: params.query ?? "",
           filters: JSON.stringify(params.filters ?? {}),
-          //...(params.filters?.date && { date: params.filters.date }),
         },
       });
       return response.data;

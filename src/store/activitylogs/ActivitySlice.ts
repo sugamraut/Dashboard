@@ -13,7 +13,7 @@ interface ActivityStatus {
   metaData: MetaData | null;
   loading: boolean;
   error: string | null;
-  user: ActivityUser | null; 
+  user: ActivityUser | null;
 }
 
 const initialState: ActivityStatus = {
@@ -38,38 +38,41 @@ export const fetchActivityLog = createAsyncThunk<
   ActivityResponse,
   FetchLogsParams,
   { rejectValue: string }
->("ActivityLog/fetch", async (
-  {
-    page = 1,
-    rowsPerPage = 25,
-    sortBy = null,
-    sortOrder = "desc",
-    query = "",
-    filters = {},
-  },
-  { rejectWithValue }
-) => {
-  try {
-    const response = await API.get(`/api/v1/logs`, {
-      params: {
-        page,
-        rowsPerPage,
-        sortBy,
-        sortOrder,
-        query,
-        filters: JSON.stringify(filters),
-      },
-    });
+>(
+  "ActivityLog/fetch",
+  async (
+    {
+      page = 1,
+      rowsPerPage = 25,
+      sortBy = null,
+      sortOrder = "desc",
+      query = "",
+      filters = {},
+    },
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await API.get(`/api/v1/logs`, {
+        params: {
+          page,
+          rowsPerPage,
+          sortBy,
+          sortOrder,
+          query,
+          filters: JSON.stringify(filters),
+        },
+      });
 
-    return response.data as ActivityResponse;
-  } catch (error: any) {
-    const errorMessage =
-      typeof error === "string"
-        ? error
-        : error?.response?.data?.message || error.message || "Unknown error";
-    return rejectWithValue(errorMessage);
+      return response.data as ActivityResponse;
+    } catch (error: any) {
+      const errorMessage =
+        typeof error === "string"
+          ? error
+          : error?.response?.data?.message || error.message || "Unknown error";
+      return rejectWithValue(errorMessage);
+    }
   }
-});
+);
 
 const ActivityLogSlice = createSlice({
   name: "activityLog",
@@ -91,18 +94,8 @@ const ActivityLogSlice = createSlice({
         state.total = action.payload.total;
         state.metaData = action.payload.metaData;
 
-      
-        const firstLogUser = action.payload.data?.[0]?.user;
-        if (firstLogUser) {
-          state.user = {
-            name: firstLogUser.name,
-            username: firstLogUser.username,
-          };
-        } else {
-          state.user = null;
-        }
       });
   },
 });
 
-export default ActivityLogSlice.reducer
+export default ActivityLogSlice.reducer;

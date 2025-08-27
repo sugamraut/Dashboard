@@ -31,27 +31,42 @@ const ActivityLog = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState(searchQuery);
 
+  // const userOptions = useMemo(() => {
+  //   return Array.from(
+  //     new Map(
+  //       data
+  //         .filter((log) => log.user?.username)
+  //         .map((log) => [
+  //           log.user!.username,
+  //           {
+  //             username: log.user!.username,
+  //             name: log.user!.name,
+  //           },
+  //         ])
+  //     ).values()
+  //   );
+  // }, [data]);
+
   const userOptions = useMemo(() => {
-    return Array.from(
-      new Map(
-        data
-          .filter((log) => log.user?.username)
-          .map((log) => [
-            log.user!.username,
-            {
-              username: log.user!.username,
-              name: log.user!.name,
-            },
-          ])
-      ).values()
-    );
+    const userSet = new Set<string>();
+    const uniqueUsers: { username: string; name: string }[] = [];
+
+    data.forEach((log) => {
+      const user = log.user;
+      if (user?.username && !userSet.has(user.username)) {
+        userSet.add(user.username);
+        uniqueUsers.push({
+          username: user.username,
+          name: user.name,
+        });
+      }
+    });
+
+    return uniqueUsers;
   }, [data]);
 
   const loadLogs = () => {
     const filters: Record<string, any> = { type: 0 };
-    if (selectedUser) filters["user"] = selectedUser;
-    if (selectedRole) filters["role"] = selectedRole;
-
     dispatch(
       fetchActivityLog({
         page: page + 1,
