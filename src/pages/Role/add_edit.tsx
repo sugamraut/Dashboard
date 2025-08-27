@@ -38,7 +38,7 @@ const ADDEDIT: React.FC<AddEditProps> = ({ initialData, roleId, onCancel }) => {
   );
   const [loading, setLoading] = useState(false);
 
-  const { handleSubmit, control, reset, watch, setValue } = useForm<FormValues>(
+  const { handleSubmit, control, reset,watch,setValue } = useForm<FormValues>(
     {
       defaultValues: {
         name: "",
@@ -100,7 +100,7 @@ const ADDEDIT: React.FC<AddEditProps> = ({ initialData, roleId, onCancel }) => {
 
     try {
       if (roleId) {
-        await dispatch(updateRole({ id: roleId, data: payload })).unwrap();
+        await dispatch(updateRole({ userId: roleId, data: payload })).unwrap();
         toast.success("Role updated successfully");
       } else {
         await dispatch(createRole(payload)).unwrap();
@@ -139,6 +139,7 @@ const ADDEDIT: React.FC<AddEditProps> = ({ initialData, roleId, onCancel }) => {
     onCancel?.(); 
   };
 
+  // console.log("=====>",watchedPermissions)
   return (
     <Box
       sx={{
@@ -153,10 +154,10 @@ const ADDEDIT: React.FC<AddEditProps> = ({ initialData, roleId, onCancel }) => {
         <Controller
           name="name"
           control={control}
-          rules={{ required: "Code is required" }}
+          rules={{ required: "Name is required" }}
           render={({ field, fieldState }) => (
             <InputField
-              label="Code"
+              label="name"
               {...field}
               error={!!fieldState.error}
               helperText={fieldState.error?.message}
@@ -183,12 +184,12 @@ const ADDEDIT: React.FC<AddEditProps> = ({ initialData, roleId, onCancel }) => {
         />
 
         {Object.entries(grouped).map(([group, perms]) => {
-          const codes = perms.map((p) => p.name);
-          const allChecked = codes.every(
+          const name = perms.map((p) => p.name);
+          const allChecked = name.every(
             (code) => watchedPermissions[`${group}-${code}`]
           );
           const someChecked =
-            codes.some((code) => watchedPermissions[`${group}-${code}`]) &&
+            name.some((code) => watchedPermissions[`${group}-${code}`]) &&
             !allChecked;
 
           return (
@@ -199,7 +200,7 @@ const ADDEDIT: React.FC<AddEditProps> = ({ initialData, roleId, onCancel }) => {
                     checked={allChecked}
                     indeterminate={someChecked}
                     onChange={(e) =>
-                      handleGroupCheck(group, e.target.checked, codes)
+                      handleGroupCheck(group, e.target.checked, name)
                     }
                   />
                 }
@@ -239,7 +240,10 @@ const ADDEDIT: React.FC<AddEditProps> = ({ initialData, roleId, onCancel }) => {
           );
         })}
 
-        <Box mt={2} display="flex" gap={2}>
+        <Box mt={2} textAlign="end" gap={2} >
+          <Button color="error" onClick={handleCancel} className="me-2">
+            Cancel
+          </Button>
           <Button
             type="submit"
             variant="contained"
@@ -254,9 +258,7 @@ const ADDEDIT: React.FC<AddEditProps> = ({ initialData, roleId, onCancel }) => {
               "Create Role"
             )}
           </Button>
-          <Button variant="outlined" color="error" onClick={handleCancel}>
-            Cancel
-          </Button>
+          
         </Box>
       </form>
     </Box>
@@ -264,3 +266,5 @@ const ADDEDIT: React.FC<AddEditProps> = ({ initialData, roleId, onCancel }) => {
 };
 
 export default ADDEDIT;
+
+
