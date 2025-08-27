@@ -100,7 +100,8 @@ export interface UserProfile {
   id: number;
   name: string;
   username: string;
-  mobilenumber: string;
+  mobile: string;
+  mobilenumber?: string;
   email: string;
   gender?: string;
   role?: string;
@@ -125,6 +126,7 @@ export interface LogsResponse {
 export interface ActivityUser {
   name: string;
   username: string;
+  roles:[]
 }
 
 export interface ActivityLog {
@@ -160,3 +162,5 @@ export interface Setting {
   description: string;
   value: string;
 }
+
+

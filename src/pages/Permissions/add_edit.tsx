@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Autocomplete, Box, Button, TextField } from "@mui/material";
 import { useForm, Controller } from "react-hook-form";
-import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../../store/store";
 import {
   fetchPermissionsByGroup,
@@ -10,6 +9,8 @@ import {
   fetchAllPermissions,
 } from "../../store/Permission/PermissionSlice";
 import type { Permission } from "../../globals/typeDeclaration";
+import { useAppDispatch, useAppSelector } from "../../store/hook";
+import { toast } from "react-toastify";
 
 interface ExtraGroupOption {
   name: any;
@@ -18,6 +19,7 @@ interface ExtraGroupOption {
   displayName: string;
   displayNameNp: string;
   group: string;
+  // Permission :Permission []
 }
 
 interface AddEditPageProps {
@@ -42,10 +44,10 @@ interface FormValues {
 }
 
 const AddEditPage: React.FC<AddEditPageProps> = ({ initialData, onClose }) => {
-  const dispatch = useDispatch<AppDispatch>();
-  const [localError, setLocalError] = useState<string | null>(null);
+  const dispatch = useAppDispatch<AppDispatch>();
+  const [_, setLocalError] = useState<string | null>(null);
 
-  const { groupedPermissions, ActionData } = useSelector(
+  const { groupedPermissions, ActionData } = useAppSelector(
     (state: RootState) => state.permissions
   );
 
@@ -71,9 +73,10 @@ const AddEditPage: React.FC<AddEditPageProps> = ({ initialData, onClose }) => {
 
   const onSubmit = async (data: FormValues) => {
     setLocalError(null);
-    console.log("===>" + data);
     if (!data.displayName) {
-      setLocalError("Display Name is required");
+      // setLocalError("Display Name is required");
+      toast.error("Display Name is required");
+      return;
     }
 
     try {
@@ -89,11 +92,12 @@ const AddEditPage: React.FC<AddEditPageProps> = ({ initialData, onClose }) => {
       };
 
       if (initialData?.id) {
-        +(await dispatch(
+        (await dispatch(
           updatePermission({
-            ...payload, id: initialData.id,
+            ...payload,
+            id: initialData.id,
             code: undefined,
-            permissions: undefined
+            permissions: undefined,
           })
         ).unwrap());
       } else {
@@ -105,8 +109,6 @@ const AddEditPage: React.FC<AddEditPageProps> = ({ initialData, onClose }) => {
       setLocalError(String(error));
     }
   };
-
-  // console.log(ActionData);
 
   return (
     <Box component="form" noValidate onSubmit={handleSubmit(onSubmit)}>
@@ -133,9 +135,11 @@ const AddEditPage: React.FC<AddEditPageProps> = ({ initialData, onClose }) => {
           <Autocomplete<Permission>
             disablePortal
             options={groupedPermissions}
-            // getOptionLabel={(option) => option.name}
             onChange={(_, data) => field.onChange(data)}
-            value={field.value}
+            value={
+              groupedPermissions.find((perm) => perm.name === field.value) ||
+              null
+            }
             renderInput={(params) => (
               <TextField
                 {...params}
@@ -149,14 +153,14 @@ const AddEditPage: React.FC<AddEditPageProps> = ({ initialData, onClose }) => {
           />
         )}
       />
-      
+
       <Controller
         control={control}
         name="extraGroups"
         render={({ field }) => (
           <Autocomplete
             multiple
-            options={ActionData}
+            options={ActionData ?? []}
             getOptionLabel={(option) => option.name || ""}
             value={field.value || []}
             onChange={(_, data) => field.onChange(data)}

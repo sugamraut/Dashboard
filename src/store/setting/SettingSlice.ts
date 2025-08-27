@@ -42,16 +42,16 @@ export const fetchsetting = createAsyncThunk<
   FetchSettingResponse,
   FetchLogsParams,
   { rejectValue: string }
->("setting/fetch", async (params, { rejectWithValue }) => {
+>("setting/fetch", async (FetchLogsParams, { rejectWithValue }) => {
   try {
     const response = await API.get("api/v1/settings", {
       params: {
-        page: params.page ?? 1,
-        rowPerPage: params.rowPerPage ?? 25,
-        sortBy: params.sortBy ?? null,
-        sortOrder: params.sortOrder ?? "dec",
-        query: params.query ?? "",
-        filters: JSON.stringify(params.filters ?? {}),
+        page: FetchLogsParams.page ?? 1,
+        rowPerPage: FetchLogsParams.rowPerPage ?? 25,
+        sortBy: FetchLogsParams.sortBy ?? null,
+        sortOrder: FetchLogsParams.sortOrder ?? "dec",
+        query: FetchLogsParams.query ?? "",
+        filters: JSON.stringify(FetchLogsParams.filters ?? {}),
       },
     });
 

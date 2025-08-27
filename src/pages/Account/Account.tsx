@@ -30,6 +30,7 @@ import {
 import AddEditPage from "./add_edit";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../store/store";
+import { toast } from "react-toastify";
 
 const AccountPage: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -87,16 +88,17 @@ const AccountPage: React.FC = () => {
     interest: string;
     description: string;
     minBalance: string;
-    insurance: string;
+    // insurance: string;
     imageUrl: string;
   }) => {
     console.log(editingAccount ? "Update" : "Add new", {
+      id: data.id,
       name: data.title,
       code: data.code,
       interest: data.interest,
       description: data.description,
       minBalance: data.minBalance,
-      insurance: data.insurance,
+      // insurance: data.insurance,
       imageUrl: data.imageUrl,
     });
     handleClose();
@@ -134,7 +136,7 @@ const AccountPage: React.FC = () => {
         </Stack>
       </Box>
 
-      <TableContainer component={Paper}>
+      <TableContainer >
         <Table>
           <TableHead>
             <TableRow>
@@ -154,7 +156,10 @@ const AccountPage: React.FC = () => {
             ) : error ? (
               <TableRow>
                 <TableCell colSpan={4} align="center">
-                  <Typography color="error">{error}</Typography>
+                  <Typography color="error">
+                    {/* {error} */}
+                    {toast.error(error)}
+                  </Typography>
                   {/* toast.error(error) */}
                 </TableCell>
               </TableRow>
@@ -214,7 +219,7 @@ const AccountPage: React.FC = () => {
               title: editingAccount?.title || "",
               code: editingAccount?.code || "",
               interest: editingAccount?.interest || "",
-              details: editingAccount?.description || "",
+              description: editingAccount?.description || "",
               minimumblance: editingAccount?.minBalance || "",
               // insurance: editingAccount?.insurance || "",
               imageUrl: editingAccount?.imageUrl || "",

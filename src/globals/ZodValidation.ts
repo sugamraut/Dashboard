@@ -18,3 +18,12 @@ export const userSchema = z
   });
 
 export type UserFormData = z.infer<typeof userSchema>;
+
+
+
+export const BranchSchema = z.object({
+  branchName: z.string().min(1, "Branch Name is required"),
+  code: z.string().min(1, "Code is required"),
+  state: z.string().min(1, "State is required"),
+  district: z.string().min(1, "District is required"),
+});

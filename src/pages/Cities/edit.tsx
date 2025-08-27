@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Box, Alert, Button, Autocomplete, TextField } from "@mui/material";
 import InputField from "../../components/Input_field";
-import { fetchStates } from "../../store/state/stateSlice";
+import { fetchStates } from "../../store/state/StateSlice";
 import { createCity, updatecity } from "../../store/cities/CitiesSlice";
 import { useAppDispatch, useAppSelector } from "../../store/hook";
 
@@ -12,6 +12,7 @@ interface EditBranchFormProps {
 }
 
 export interface FormDataState {
+  id: number;
   name: string;
   state: string;
   district: string;
@@ -23,6 +24,7 @@ const defaultFormData: FormDataState = {
   state: "",
   district: "",
   nameNp: "",
+  id: 0,
 };
 
 const AddEditPage: React.FC<EditBranchFormProps> = ({
@@ -89,9 +91,15 @@ const AddEditPage: React.FC<EditBranchFormProps> = ({
     }
 
     const payload = {
+      id: formData.id,
       name: formData.name,
-      stateId: parseInt(formData.state, 10),
-      districtId: parseInt(formData.district, 10),
+      nameNp: formData.nameNp || "",
+      nameCombined: `${formData.name}, ${formData.nameNp}`,
+      code: null,
+      stateId: parseInt(formData.state),
+      districtId: parseInt(formData.district),
+      state: formData.state,
+      district: formData.district,
     };
 
     try {
@@ -99,7 +107,7 @@ const AddEditPage: React.FC<EditBranchFormProps> = ({
         await dispatch(
           updatecity({
             ...payload,
-            id: initialData.id,
+            id: initialData.id!,
             nameNp: formData.nameNp,
             nameCombined: formData.nameNp,
             code: null,

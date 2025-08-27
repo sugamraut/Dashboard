@@ -86,7 +86,7 @@ export default function Sidebar() {
         aria-expanded={open ? "true" : undefined}
         onClick={handleClick}
       >
-        <img src={companyLogo} alt="Logo" width="45" className="rounded-1" />
+        <img src={companyLogo} alt="Logo" width="58" className="rounded-1" />
       </Button>
       <Menu
         id="basic-menu"
@@ -107,7 +107,7 @@ export default function Sidebar() {
         </Link>
       </Menu>
 
-      <List sx={{ mt: 2 }}>
+      <List sx={{ mt: 1 }}>
         {sidebarIcons.map(({ icon, label, path }, index) => {
           const isActive = location.pathname === path;
           return (

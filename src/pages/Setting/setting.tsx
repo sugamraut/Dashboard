@@ -38,13 +38,13 @@ const Setting = () => {
   const [editData, setEditData] = useState<Setting | null>(null);
 
   const [page, setPage] = useState(0);
-  const [rowPerPage, setRowsPerPage] = useState(25);
+  const [rowPerPage, setRowsPerPage] = useState(10);
 
   const loadlogs = () => {
     dispatch(
       fetchsetting({
         page: page + 1,
-        rowPerPage,
+        rowPerPage:rowPerPage,
         sortBy: null,
         sortOrder: "dec",
         query: "",
@@ -150,7 +150,11 @@ const Setting = () => {
                       },
                     }}
                   >
-                    <TableCell className="table-data">{index + 1}</TableCell>
+                    <TableCell className="table-data">
+                     {page * rowPerPage + index + 1}
+                      {/* {index + 1} */}
+
+                    </TableCell>
                     <TableCell className="table-data">{log.name}</TableCell>
                     <TableCell className="table-data">
                       {log.description}

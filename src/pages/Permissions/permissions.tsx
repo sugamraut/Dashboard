@@ -15,7 +15,6 @@ import {
   DialogContent,
   DialogTitle,
   IconButton,
-  Paper,
   Stack,
   Table,
   TableBody,
@@ -32,7 +31,7 @@ import type { Permission } from "../../globals/typeDeclaration";
 
 const Permissions: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { data, metaData, loading, error } = useSelector(
+  const { data, metaData, error } = useSelector(
     (state: RootState) => state.permissions
   );
 
@@ -143,7 +142,7 @@ const Permissions: React.FC = () => {
         </Stack>
       </Box>
 
-      <TableContainer component={Paper}>
+      <TableContainer >
         <Table size="small">
           <TableHead>
             <TableRow>

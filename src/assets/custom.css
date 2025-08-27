@@ -1,16 +1,27 @@
 body {
-  font-family:
-    "lato ",
-    Segoe UI !important;
+  font-family: "lato ", Segoe UI !important;
+
+  background: #f1f5f8;
+  color: #344563;
+  border-radius: 30px;
+}
+
+.Table-Continer {
+  background: #f1f5f8;
+  color: #344563;
+  border-radius: 30px;
 }
 
 .login-section {
-  background-color: linear-gradient(to bottom, #0033cc, #cc0000);
+  /* background-color: linear-gradient(to bottom, #0033cc, #cc0000); */
+  background: linear-gradient(180deg, #002b5c, 30%, #8b0000 100%);
 }
 
 .login-container {
   height: 100vh;
-  background: linear-gradient(to bottom, #0033cc, #cc0000);
+  /* background: linear-gradient(to bottom, #0033cc, #cc0000); */
+  background: linear-gradient(180deg, #002b5c 30%, #8b0000 100%);
+
   display: flex;
   justify-content: center;
   align-items: center;
@@ -34,12 +45,13 @@ body {
 .card-design {
   position: relative;
   min-height: 120px;
-  min-width: 420px;
-  box-shadow: 6px;
+  min-width: 350px;
+  /* box-shadow: 6px; */
+  border-radius: 15px !important;
 }
 
 .avatar-icon-style {
-  position: absolute !important;
+  position: absolute ;
   top: 14px;
   left: 16px;
   width: 32px;
@@ -74,10 +86,8 @@ body {
   padding: 40px;
   max-width: 600;
   border-radius: 8px;
-  box-shadow:
-    rgba(0, 0, 0, 0.2) 0px 12px 38px 0px,
-    rgba(0, 0, 0, 0.14) 0px 18px 46px 0px,
-    rgba(0, 0, 0, 0.12) 0px 7px 15px 0px;
+  box-shadow: rgba(0, 0, 0, 0.2) 0px 12px 38px 0px,
+    rgba(0, 0, 0, 0.14) 0px 18px 46px 0px, rgba(0, 0, 0, 0.12) 0px 7px 15px 0px;
 }
 
 .table-data {
@@ -113,23 +123,23 @@ body {
   color: #ffffff !important;
 }
 
-
-.sidebar-drawer{
+.sidebar-drawer {
   width: 70px;
   flex-shrink: 0;
 }
 
-.sidebar-drawer .MuiDrawer-paper{
- width: 75px;
+.sidebar-drawer .MuiDrawer-paper {
+  width: 75px;
   box-sizing: border-box;
-  background: linear-gradient(to bottom, #002b5c, #8b0000);
+  /* background: linear-gradient(to bottom, #002b5c, #8b0000); */
+  background: linear-gradient(145deg, #002b5c 50%, #8b0000 95%);
+
   color: white;
   display: flex;
   align-items: center;
   padding-top: 16px;
-
 }
-.editAddPageContainer{
+.editAddPageContainer {
   max-width: 800px;
   margin-left: auto;
   margin-right: auto;
@@ -137,10 +147,20 @@ body {
   background-color: #fff;
 }
 
-.nav-link{
+.nav-link {
   text-decoration: none;
- font-family:
-    "lato ",
-    Segoe UI !important;
-    color: #043ba0;
+  font-family: "lato ", Segoe UI !important;
+  color: #043ba0;
 }
+
+.main-container {
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 16px;
+  background-color: #fff;
+}
+
+/* background: #f1f5f8;
+    color: #344563;
+    border-radius: 30px; */

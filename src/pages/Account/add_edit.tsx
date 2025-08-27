@@ -55,12 +55,13 @@ interface AddEditPageProps {
     title?: string;
     code?: string;
     interest?: string;
-    details?: string;
+    description?: string;
     minimumblance?: string;
-    insurance?: string;
+    // insurance?: string;
     imageUrl?: string;
   };
-  onSave: () => void;
+  // onSave: () => void;
+  onSave:() => void;
   onCancel: () => void;
   isEdit?: boolean;
 }
@@ -103,10 +104,10 @@ const AddEditPage = ({
         code: initialData.code || "",
         interest: initialData.interest || "",
         minimumblance: initialData.minimumblance || "",
-        interestPayment: initialData.insurance || "",
+        // interestPayment: initialData.insurance || "",
       });
       if (editorRef.current) {
-        editorRef.current.innerHTML = initialData.details || "";
+        editorRef.current.innerHTML = initialData. description || "";
       }
       setUploadFileName(initialData.imageUrl);
       setImagePreviewUrl(initialData.imageUrl || null);
@@ -185,14 +186,12 @@ const AddEditPage = ({
         return;
       }
 
-      const payload: Partial<AccountType> & { file?: File } = {
+      const payload: AccountType & { file?: File } = {
         id: initialData?.id!,
         title: getValues("title") || "",
         code: getValues("code") || "",
         interest: getValues("interest") || "",
-        // details: editorRef.current?.innerHTML || "",
         minBalance: getValues("minimumblance") || "",
-        // insurance: getValues("interestPayment") || "",
         file: selectedFile || undefined,
       };
 

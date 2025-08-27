@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import image from "../../assets/image/company_name.png";
-import { Box, Button, Typography, Alert } from "@mui/material";
+import { Box, Button, Typography} from "@mui/material";
 import LoginInput from "../../components/Login";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { z } from "zod";
@@ -25,7 +25,9 @@ type LoginFormInputs = z.infer<typeof loginSchema>;
 const LoginPage: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
-  const { status, error,accessToken } = useSelector((state: RootState) => state.auth);
+  const { status, error, accessToken } = useSelector(
+    (state: RootState) => state.auth
+  );
   const navigate = useNavigate();
 
   const {
@@ -40,22 +42,17 @@ const LoginPage: React.FC = () => {
     dispatch(fetchAuthAsync(data));
   };
 
- useEffect(() => {
-  if (status === Status.Success && accessToken) {
-    localStorage.setItem("jwt", accessToken);
-   navigate("/admin/dashboard");
-    //  sessionStorage.getItem("alreadyNavigated");
+  useEffect(() => {
+    if (status === Status.Success && accessToken) {
+      localStorage.setItem("jwt", accessToken);
+      navigate("/admin/dashboard");
+      //  sessionStorage.getItem("alreadyNavigated");
       toast.success("Login successful! Redirecting...");
-    // // if (!hasNavigated) {
-    // //   navigate("/admin/dashboard");
-    // //   sessionStorage.setItem("alreadyNavigated", "true");
-    // // }
-  }else if (status === Status.Error && error) {
+    } else if (status === Status.Error && error) {
       toast.error(error);
       localStorage.removeItem("jwt");
     }
-}, [status, accessToken, navigate]);
-
+  }, [status, accessToken, navigate]);
 
   return (
     <div className="login-section">
@@ -76,11 +73,7 @@ const LoginPage: React.FC = () => {
             </Typography>
           </div>
 
-          <Box
-            component="form"
-            onSubmit={handleSubmit(onSubmit)}
-            noValidate
-          >
+          <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate>
             <LoginInput
               id="username"
               label="Username"
@@ -93,7 +86,7 @@ const LoginPage: React.FC = () => {
               id="password"
               label="Password"
               // type={showPassword ? "text" : "password"}
-                type="password"  
+              type="password"
               {...register("password")}
               error={!!errors.password}
               helperText={errors.password?.message}
@@ -113,7 +106,7 @@ const LoginPage: React.FC = () => {
         </div>
       </div>
     </div>
-  )
+  );
 };
 
-export default LoginPage
+export default LoginPage;

@@ -53,17 +53,6 @@ export default function CityPage() {
     dispatch(fetchAllCities());
   }, [dispatch]);
 
-  // useEffect(() => {
-  //   const districtId = selectedDistrict?.id;
-  //   dispatch(
-  //     fetchCityBypaginated({
-  //       districtId,
-  //       page: page + 1,
-  //       rowsPerPage,
-  //       search: search.trim() || undefined,
-  //     })
-  //   );
-  // }, [dispatch, selectedDistrict, page, rowsPerPage, search]);
 
   useEffect(() => {
   dispatch(
@@ -125,7 +114,7 @@ export default function CityPage() {
     });
   }, [cityList]);
 
-  console.log("cityList from redux:", cityList);
+  // console.log("cityList from redux:", cityList);
 
 
   return (
@@ -176,7 +165,7 @@ export default function CityPage() {
         </Stack>
       </Box>
 
-      <TableContainer component={Paper}>
+      <TableContainer >
         <Table size="small">
           <TableHead>
             <TableRow>

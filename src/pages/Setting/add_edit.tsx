@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useAppDispatch } from "../../store/hook";
 import { createSetting, updateSetting } from "../../store/setting/SettingSlice";
 import type { Setting } from "../../globals/typeDeclaration";
+import { toast } from "react-toastify";
 
 interface AddEditProps {
   initialData?: Setting | null;
@@ -47,28 +48,32 @@ const ADDEDIT = ({ initialData, onSuccess, onCancel }: AddEditProps) => {
       if (initialData) {
         await dispatch(
           updateSetting({
-            id: initialData.id,
+            id: String(initialData.id),
             updatedData: formData,
           }) as any
         ).unwrap();
+        toast.success("Setting updated successfully");
       } else {
         await dispatch(createSetting(formData as Setting) as any).unwrap();
+        toast.success("Setting created successfully");
       }
       onSuccess();
     } catch (err) {
-      console.error("Error saving setting:", err);
+      // console.error("Error saving setting:", err);
+      toast.error(`Failed to save setting: ${err}`);
     }
   };
 
   return (
     <Box
-      sx={{
-        maxWidth: 800,
-        mx: "auto",
-        p: 2,
-        bgcolor: "background.paper",
-        borderRadius: 2,
-      }}
+      // sx={{
+      //   maxWidth: 800,
+      //   mx: "auto",
+      //   p: 2,
+      //   bgcolor: "background.paper",
+      //   borderRadius: 2,
+      // }}
+      className="main-container"
       component="form"
       onSubmit={handleSubmit}
     >
