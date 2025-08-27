@@ -57,10 +57,6 @@ const userSlice = createSlice({
   name: "profile",
   initialState,
   reducers: {
-    clearProfileStatus(state) {
-      state.success = false;
-      state.error = null;
-    },
   },
   extraReducers: (builder) => {
     builder
@@ -101,5 +97,5 @@ const userSlice = createSlice({
   },
 });
 
-export const { clearProfileStatus } = userSlice.actions;
+// export const { clearProfileStatus } = userSlice.actions;
 export default userSlice.reducer;

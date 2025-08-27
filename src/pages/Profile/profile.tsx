@@ -11,17 +11,14 @@ import { Visibility, VisibilityOff, Lock } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../../store/store";
 import {
-  clearProfileStatus,
   fetchProfile,
   updateProfile,
 } from "../../store/profile/ProfileSlice";
+import { toast } from "react-toastify";
 
 const Profile = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { data, loading, error, success } = useSelector(
-    (state: RootState) => state.profile
-  );
-  // const {list,loading}=useSelector((state:RootState)=>state.)
+  const { data, loading } = useSelector((state: RootState) => state.profile);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -63,23 +60,25 @@ const Profile = () => {
     e.preventDefault();
 
     if (formData.password && formData.password !== formData.confirmPassword) {
-      alert("Passwords do not match");
+      toast.error("Passwords do not match");
       return;
     }
 
-    dispatch(updateProfile(formData));
+    dispatch(
+      updateProfile({
+        id: data?.id !== undefined ? data.id : 0,
+        name: formData.name,
+        username: formData.username,
+        email: formData.email,
+        mobile: formData.mobile,
+        password: formData.password,
+        confirmPassword: formData.confirmPassword,
+      })
+    );
   };
 
-  useEffect(() => {
-    if (success || error) {
-      const timer = setTimeout(() => {
-        dispatch(clearProfileStatus());
-      }, 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [success, error, dispatch]);
 
-  console.log("==>", data);
+  // console.log("==>", data);
   return (
     <Box marginLeft={9} padding={2}>
       <Typography variant="h5" fontWeight="bold" color="#043BA0" fontSize={24}>
