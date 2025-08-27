@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import {
   Autocomplete,
@@ -16,35 +17,31 @@ import {
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useForm, Controller } from "react-hook-form";
-import { useDispatch, useSelector } from "react-redux";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useSelector } from "react-redux";
 import type { RootState } from "../../store/store";
-import { updateuserdataThunk } from "../../store/user/userSlice";
-import type { UserProfile } from "../../globals/typeDeclaration";
+import { createUser, updateUser } from "../../store/user/UserSlice";
+import { fetchAllRole } from "../../store/role/RoleSlice";
+import { useAppDispatch, useAppSelector } from "../../store/hook";
+import { userSchema, type UserFormData } from "../../globals/ZodValidation";
 
 interface EditUserProps {
   open: boolean;
   onClose: () => void;
-  userId: number;
+  userId: number | null;
 }
 
 const genderOptions = ["Male", "Female", "Other"];
-const roleOptions = ["Admin", "User", "Manager"];
-
-interface FormValues {
-  name: string;
-  mobilenumber: string;
-  email: string;
-  username: string;
-  gender: string;
-  role: string;
-  password: string;
-  confirmPassword: string;
-}
 
 const EditUser: React.FC<EditUserProps> = ({ open, onClose, userId }) => {
-  const dispatch = useDispatch();
-  const users = useSelector((state: RootState) => state.User.list||[]);
+  const dispatch = useAppDispatch();
+  const users = useSelector((state: RootState) => state.User.list || []);
+  const Rolelist = useAppSelector((state: RootState) => state.roles?.fullList ?? []);
   const [showPassword, setShowPassword] = useState(false);
+
+  useEffect(() => {
+    dispatch(fetchAllRole());
+  }, [dispatch]);
 
   const {
     control,
@@ -52,7 +49,8 @@ const EditUser: React.FC<EditUserProps> = ({ open, onClose, userId }) => {
     reset,
     register,
     formState: { errors },
-  } = useForm<FormValues>({
+  } = useForm<UserFormData>({
+    resolver: zodResolver(userSchema),
     defaultValues: {
       name: "",
       mobilenumber: "",
@@ -66,50 +64,54 @@ const EditUser: React.FC<EditUserProps> = ({ open, onClose, userId }) => {
   });
 
   useEffect(() => {
-    const user = users.find((u) => u.id === userId);
-    if (user) {
-      reset({
-        name: user.name || "",
-        mobilenumber: user.mobilenumber || "",
-        email: user.email || "",
-        username: user.username || "",
-        gender: user.gender || "",
-        role: user.role || "",
-        password: "",
-        confirmPassword: "",
-      });
+    if (userId !== null) {
+      const user = users.find((u) => u.id === userId);
+      if (user) {
+        reset({
+          name: user.name || "",
+          mobilenumber: user.mobilenumber || "",
+          email: user.email || "",
+          username: user.username || "",
+          gender: user.gender || "",
+          role: user.role || "",
+          password: "",
+          confirmPassword: "",
+        });
+      }
+    } else {
+      reset();
     }
   }, [userId, users, reset]);
 
   const togglePasswordVisibility = () => setShowPassword((prev) => !prev);
 
-  const onSubmit = async (data: FormValues) => {
-    if (data.password && data.password !== data.confirmPassword) {
-      alert("Passwords do not match!");
-      return;
-    }
-
+  const onSubmit = async (data: UserFormData) => {
     const { confirmPassword, ...payload } = data;
 
     try {
-      await dispatch(updateuserdataThunk(userId, payload) as any);
+      if (userId !== null) {
+        await dispatch(updateUser({ id: userId, ...payload })).unwrap();
+      } else {
+        await dispatch(createUser(payload)).unwrap();
+      }
       onClose();
+      reset();
     } catch (err) {
-      console.error("Update failed:", err);
+      console.error("Save failed:", err);
+      alert("Failed to save user.");
     }
   };
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
-      <DialogTitle>Edit User</DialogTitle>
+      <DialogTitle>{userId ? "Edit User" : "Add User"}</DialogTitle>
       <DialogContent>
         <Box component="form" noValidate onSubmit={handleSubmit(onSubmit)}>
-
           <TextField
             label="Name"
             fullWidth
             margin="normal"
-            {...register("name", { required: "Name is required" })}
+            {...register("name")}
             error={!!errors.name}
             helperText={errors.name?.message}
           />
@@ -119,13 +121,15 @@ const EditUser: React.FC<EditUserProps> = ({ open, onClose, userId }) => {
             fullWidth
             margin="normal"
             {...register("mobilenumber")}
+            error={!!errors.mobilenumber}
+            helperText={errors.mobilenumber?.message}
           />
 
           <TextField
             label="Email"
             fullWidth
             margin="normal"
-            {...register("email", { required: "Email is required" })}
+            {...register("email")}
             error={!!errors.email}
             helperText={errors.email?.message}
           />
@@ -135,6 +139,8 @@ const EditUser: React.FC<EditUserProps> = ({ open, onClose, userId }) => {
             fullWidth
             margin="normal"
             {...register("username")}
+            error={!!errors.username}
+            helperText={errors.username?.message}
           />
 
           <Controller
@@ -146,7 +152,14 @@ const EditUser: React.FC<EditUserProps> = ({ open, onClose, userId }) => {
                 value={field.value || ""}
                 onChange={(_, val) => field.onChange(val)}
                 renderInput={(params) => (
-                  <TextField {...params} label="Gender" margin="normal" fullWidth />
+                  <TextField
+                    {...params}
+                    label="Gender"
+                    margin="normal"
+                    fullWidth
+                    error={!!errors.gender}
+                    helperText={errors.gender?.message}
+                  />
                 )}
               />
             )}
@@ -157,11 +170,18 @@ const EditUser: React.FC<EditUserProps> = ({ open, onClose, userId }) => {
             name="role"
             render={({ field }) => (
               <Autocomplete
-                options={roleOptions}
+                options={Rolelist.map((role) => role.name)}
                 value={field.value || ""}
                 onChange={(_, val) => field.onChange(val)}
                 renderInput={(params) => (
-                  <TextField {...params} label="Role" margin="normal" fullWidth />
+                  <TextField
+                    {...params}
+                    label="Role"
+                    margin="normal"
+                    fullWidth
+                    error={!!errors.role}
+                    helperText={errors.role?.message}
+                  />
                 )}
               />
             )}
@@ -180,7 +200,9 @@ const EditUser: React.FC<EditUserProps> = ({ open, onClose, userId }) => {
                 </InputAdornment>
               }
               label="Password"
+              error={!!errors.password}
             />
+            <p style={{ color: "red", margin: 0 }}>{errors.password?.message}</p>
           </FormControl>
 
           <FormControl fullWidth variant="outlined" margin="normal">
@@ -196,13 +218,19 @@ const EditUser: React.FC<EditUserProps> = ({ open, onClose, userId }) => {
                 </InputAdornment>
               }
               label="Confirm Password"
+              error={!!errors.confirmPassword}
             />
+            <p style={{ color: "red", margin: 0 }}>
+              {errors.confirmPassword?.message}
+            </p>
           </FormControl>
         </Box>
       </DialogContent>
 
       <DialogActions>
-        <Button onClick={onClose} color="error">Cancel</Button>
+        <Button onClick={onClose} color="error">
+          Cancel
+        </Button>
         <Button onClick={handleSubmit(onSubmit)} variant="contained" color="primary">
           Save
         </Button>

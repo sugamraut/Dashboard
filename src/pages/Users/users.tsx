@@ -16,9 +16,10 @@ import {
 import FilterAltOffIcon from "@mui/icons-material/FilterAltOff";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import AddIcon from "@mui/icons-material/Add";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState, AppDispatch } from "../../store/store";
-import { fetchalluser } from "../../store/user/userSlice";
+import { fetchAllUsers } from "../../store/user/UserSlice";
 import EditUser from "./EditUser";
 
 const User = () => {
@@ -31,11 +32,20 @@ const User = () => {
   const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
 
   useEffect(() => {
-    dispatch(fetchalluser());
+    dispatch(fetchAllUsers());
   }, [dispatch]);
 
   const handleEditClick = (userId: number) => {
     setSelectedUserId(userId);
+    setEditOpen(true);
+  };
+
+  // const handelAddClick =()=>{
+  //   selectedUserId(null)
+  //   setEditOpen(true)
+  // }
+  const handleAddClick = () => {
+    setSelectedUserId(null);
     setEditOpen(true);
   };
 
@@ -56,6 +66,9 @@ const User = () => {
           <IconButton color="error">
             <FilterAltOffIcon />
           </IconButton>
+          <IconButton color="primary" onClick={handleAddClick}>
+            <AddIcon />
+          </IconButton>
         </Stack>
       </Box>
 
@@ -63,30 +76,35 @@ const User = () => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>#</TableCell>
-              <TableCell>Name</TableCell>
-              <TableCell>Username</TableCell>
-              <TableCell>Mobile No</TableCell>
-              <TableCell>Email</TableCell>
-              <TableCell>Actions</TableCell>
+              <TableCell className="table-header">#</TableCell>
+              <TableCell className="table-header">Name</TableCell>
+              <TableCell className="table-header">Username</TableCell>
+              <TableCell className="table-header">Mobile No</TableCell>
+              <TableCell className="table-header">Email</TableCell>
+              <TableCell className="table-header">Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {userList.map((user, index) => (
               <TableRow key={user.id}>
-                <TableCell>{index + 1}</TableCell>
-                <TableCell>{user.name}</TableCell>
-                <TableCell>{user.username}</TableCell>
-                <TableCell>{user.mobilenumber}</TableCell>
-                <TableCell>{user.email}</TableCell>
-                <TableCell>
+                <TableCell className="table-data">{index + 1}</TableCell>
+                <TableCell className="table-data">{user.name}</TableCell>
+                <TableCell className="table-data">{user.username}</TableCell>
+                <TableCell className="table-data">
+                  {user.mobilenumber}
+                </TableCell>
+                <TableCell className="table-data">{user.email}</TableCell>
+                <TableCell className="table-data">
                   <IconButton
-                    color="primary"
+                    className="action-icon-btn "
                     onClick={() => handleEditClick(user.id)}
                   >
                     <EditIcon />
                   </IconButton>
-                  <IconButton color="error">
+                  <IconButton
+                    color="error"
+                    className="action-icon-btn-delete ms-2"
+                  >
                     <DeleteIcon />
                   </IconButton>
                 </TableCell>
@@ -102,12 +120,10 @@ const User = () => {
           </TableBody>
         </Table>
       </TableContainer>
-
-
-      {selectedUserId !== null && (
+      {editOpen && (
         <EditUser
           open={editOpen}
-          onClose={handleClose} 
+          onClose={handleClose}
           userId={selectedUserId}
         />
       )}
