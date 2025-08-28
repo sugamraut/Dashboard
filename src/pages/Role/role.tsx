@@ -1,9 +1,7 @@
-
-import  { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Box,
   IconButton,
-  Paper,
   Stack,
   Table,
   TableBody,
@@ -26,8 +24,7 @@ import { useSelector } from "react-redux";
 import type { RootState } from "../../store/store";
 import { useAppDispatch } from "../../store/hook";
 import { fetchRoles } from "../../store/role/RoleSlice";
-import ADDEDIT from "./add_edit"; 
-
+import ADDEDIT from "./add_edit";
 
 function RolePage() {
   const dispatch = useAppDispatch();
@@ -46,7 +43,7 @@ function RolePage() {
   };
 
   const handleOpenEdit = (role: any) => {
-    setEditData(role); 
+    setEditData(role);
     setOpenDialog(true);
   };
 
@@ -77,7 +74,7 @@ function RolePage() {
           </IconButton>
         </Stack>
       </Box>
-      <TableContainer component={Paper}>
+      <TableContainer>
         <Table size="small">
           <TableHead>
             <TableRow>
@@ -96,7 +93,10 @@ function RolePage() {
                     <IconButton color="primary">
                       <FileCopyIcon />
                     </IconButton>
-                    <IconButton color="primary" onClick={() => handleOpenEdit(role)}>
+                    <IconButton
+                      color="primary"
+                      onClick={() => handleOpenEdit(role)}
+                    >
                       <EditIcon />
                     </IconButton>
                     <IconButton color="error">
@@ -115,19 +115,13 @@ function RolePage() {
           </TableBody>
         </Table>
       </TableContainer>
+      {openDialog && (
+        <ADDEDIT
+          initialData={editData ?? undefined}
+          onCancel={handleCloseDialog}
+        />
+      )}
 
-      <Dialog
-        open={openDialog}
-        onClose={handleCloseDialog}
-        maxWidth="sm"
-        fullWidth
-      >
-        <DialogTitle>{editData ? "Edit Role" : "Add Role"}</DialogTitle>
-        <DialogContent>
-          <ADDEDIT initialData={editData} onCancel={handleCloseDialog} />
-        </DialogContent>
-        
-      </Dialog>
     </Box>
   );
 }

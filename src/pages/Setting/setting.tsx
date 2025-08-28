@@ -38,7 +38,7 @@ const Setting = () => {
   const [editData, setEditData] = useState<Setting | null>(null);
 
   const [page, setPage] = useState(0);
-  const [rowPerPage, setRowsPerPage] = useState(10);
+  const [rowPerPage, setRowsPerPage] = useState(25);
 
   const loadlogs = () => {
     dispatch(
@@ -128,7 +128,7 @@ const Setting = () => {
           Error: {error}
         </Typography>
       ) : (
-        <TableContainer component={Paper}>
+        <TableContainer >
           <Table size="small">
             <TableHead>
               <TableRow>

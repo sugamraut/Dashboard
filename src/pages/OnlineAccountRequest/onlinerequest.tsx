@@ -6,7 +6,8 @@ import {
   FormControlLabel,
   IconButton,
   InputAdornment,
-  Paper,
+  InputLabel,
+  OutlinedInput,
   Stack,
   Table,
   TableBody,
@@ -26,9 +27,11 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import FilterAltOffIcon from "@mui/icons-material/FilterAltOff";
 import { useAppDispatch, useAppSelector } from "../../store/hook";
 import type { RootState } from "../../store/store";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { fetchOnlineAccount } from "../../store/onlineaccount/OnlineAccountSlice";
-import EditIcon from '@mui/icons-material/Edit';
+import EditIcon from "@mui/icons-material/Edit";
+
+import SearchIcon from "@mui/icons-material/Search";
 // import dayjs from "dayjs";
 
 const OnlineAccountRequest = () => {
@@ -36,7 +39,6 @@ const OnlineAccountRequest = () => {
   const list = useAppSelector(
     (state: RootState) => state.onlineAccount.list ?? []
   );
-  console.log("list=====>", list);
 
   useEffect(() => {
     dispatch(fetchOnlineAccount());
@@ -64,6 +66,9 @@ const OnlineAccountRequest = () => {
       year: 1980,
     },
   ];
+  // console.log("list", list);
+  // const state=useMemo()
+
   return (
     <Box marginLeft={10} padding={2}>
       <Box
@@ -94,7 +99,7 @@ const OnlineAccountRequest = () => {
             />
           </FormControl>
 
-          <Autocomplete
+          {/* <Autocomplete
             sx={{
               "& .MuiOutlinedInput-root": {
                 minWidth: 200,
@@ -114,7 +119,15 @@ const OnlineAccountRequest = () => {
                 }}
               />
             )}
-          />
+          /> */}
+          {/* <Autocomplete
+          sx={{
+              "& .MuiOutlinedInput-root": {
+                minWidth: 200,
+              },
+            }}
+            disablePortal
+          /> */}
 
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DemoContainer
@@ -130,15 +143,12 @@ const OnlineAccountRequest = () => {
                 label="Basic date picker"
                 sx={{
                   bottom: "4px",
-                  // "& .MuiPickersTextField-root":{
-                  //     minWidth:"180px"
-                  // }
                 }}
               />
             </DemoContainer>
           </LocalizationProvider>
 
-          <TextField
+          {/* <TextField
             size="medium"
             sx={{
               "& .MuiOutlinedInput-root": {
@@ -161,17 +171,38 @@ const OnlineAccountRequest = () => {
                 // ),
               }
             }
-          />
+          /> */}
+
+          <FormControl sx={{ m: 1, width: "25ch" }} variant="outlined">
+            <InputLabel htmlFor="outlined-adornment-password">
+              Search
+            </InputLabel>
+            <OutlinedInput
+              id="outlined-adornment-password"
+              endAdornment={
+                <InputAdornment position="end">
+                  <IconButton edge="end">
+                    <SearchIcon />
+                  </IconButton>
+                </InputAdornment>
+              }
+              label="Password"
+            />
+          </FormControl>
           <IconButton color="error">
             <FilterAltOffIcon />
           </IconButton>
         </Stack>
       </Box>
-      <TableContainer component={Paper}>
+      <TableContainer>
         <Table size="small">
           <TableHead>
             <TableRow>
-              <TableCell>
+              <TableCell className="table-header" sx={{
+                "& .MuiFormControl-root":{
+                  verticalAlign:"inherit",
+                }
+              }}>
                 <FormControl component="fieldset">
                   <FormControlLabel
                     value="end"
@@ -184,8 +215,8 @@ const OnlineAccountRequest = () => {
                     labelPlacement="end"
                   />
                 </FormControl>
+                #
               </TableCell>
-              <TableCell className="table-header">#</TableCell>
               <TableCell className="table-header">Name</TableCell>
               <TableCell className="table-header"> Status</TableCell>
               <TableCell className="table-header"> created At</TableCell>
@@ -198,24 +229,25 @@ const OnlineAccountRequest = () => {
                 <TableRow key={onlineAccount.id}>
                   <TableCell className="table-data">{index + 1}</TableCell>
                   <TableCell className="table-data">
-                    {onlineAccount.name}
+                    {onlineAccount.firstname} {onlineAccount.middleName}{" "}
+                    {onlineAccount.lastName}
                   </TableCell>
                   <TableCell className="table-data">
                     {onlineAccount.status}
                   </TableCell>
                   <TableCell className="table-data">
-                    {onlineAccount.createdat}
+                    {onlineAccount.createdate}
                   </TableCell>
                   <TableCell className="table-data">
                     <IconButton className="action-icon-btn">
-                      <EditIcon/>
+                      <EditIcon />
                     </IconButton>
                   </TableCell>
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={5} align="center">
+                <TableCell colSpan={10} align="center">
                   No Online Request Found.
                 </TableCell>
               </TableRow>

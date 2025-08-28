@@ -5,7 +5,8 @@ import {
   FormControlLabel,
   Typography,
   Button,
-  CircularProgress,
+  Dialog,
+  DialogTitle,
 } from "@mui/material";
 import { useForm, Controller } from "react-hook-form";
 import InputField from "../../components/Input_field";
@@ -15,13 +16,25 @@ import { fetchAllPermissions } from "../../store/Permission/PermissionSlice";
 import { createRole, updateRole } from "../../store/role/RoleSlice";
 import { toast } from "react-toastify";
 
+import { roleSchema } from "../../globals/ZodValidation";
+import { zodResolver } from "@hookform/resolvers/zod";
+import type z from "zod";
+
+type FormData=z.infer<typeof roleSchema>;
+
+// interface AddEditProps {
+//   roleId?: number | null;
+//   initialData?: {
+//     id?: number;
+//     name?: string;
+//     displayName?: string;
+//     Permissions?: string[];
+//   } | null;
+//   onCancel?: () => void;
+// }
 interface AddEditProps {
+  initialData?: Partial<FormData> & { id?: number };
   roleId?: number | null;
-  initialData?: {
-    name?: string;
-    displayName?: string;
-    Permissions?: string[];
-  } | null;
   onCancel?: () => void;
 }
 
@@ -36,10 +49,11 @@ const ADDEDIT: React.FC<AddEditProps> = ({ initialData, roleId, onCancel }) => {
   const permissions = useAppSelector(
     (state: RootState) => state.permissions.fulllist ?? []
   );
-  const [loading, setLoading] = useState(false);
+  const [_, setLoading] = useState(false);
 
-  const { handleSubmit, control, reset,watch,setValue } = useForm<FormValues>(
+  const { handleSubmit, control, reset, watch, setValue,formState:{errors} } = useForm<FormValues>(
     {
+      
       defaultValues: {
         name: "",
         displayName: "",
@@ -99,8 +113,8 @@ const ADDEDIT: React.FC<AddEditProps> = ({ initialData, roleId, onCancel }) => {
     };
 
     try {
-      if (roleId) {
-        await dispatch(updateRole({ userId: roleId, data: payload })).unwrap();
+      if (initialData?.id) {
+        await dispatch(updateRole({ userId: roleId!, data: payload })).unwrap();
         toast.success("Role updated successfully");
       } else {
         await dispatch(createRole(payload)).unwrap();
@@ -136,135 +150,122 @@ const ADDEDIT: React.FC<AddEditProps> = ({ initialData, roleId, onCancel }) => {
       })(),
     });
 
-    onCancel?.(); 
+    onCancel?.();
   };
 
-  // console.log("=====>",watchedPermissions)
+  console.log("=====>",errors)
   return (
-    <Box
-      sx={{
-        maxWidth: 800,
-        mx: "auto",
-        p: 2,
-        bgcolor: "background.paper",
-        borderRadius: 2,
-      }}
-    >
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <Controller
-          name="name"
-          control={control}
-          rules={{ required: "Name is required" }}
-          render={({ field, fieldState }) => (
-            <InputField
-              label="name"
-              {...field}
-              error={!!fieldState.error}
-              helperText={fieldState.error?.message}
-              fullWidth
-              margin="normal"
-            />
-          )}
-        />
-
-        <Controller
-          name="displayName"
-          control={control}
-          rules={{ required: "Name is required" }}
-          render={({ field, fieldState }) => (
-            <InputField
-              label="Name"
-              {...field}
-              error={!!fieldState.error}
-              helperText={fieldState.error?.message}
-              fullWidth
-              margin="normal"
-            />
-          )}
-        />
-
-        {Object.entries(grouped).map(([group, perms]) => {
-          const name = perms.map((p) => p.name);
-          const allChecked = name.every(
-            (code) => watchedPermissions[`${group}-${code}`]
-          );
-          const someChecked =
-            name.some((code) => watchedPermissions[`${group}-${code}`]) &&
-            !allChecked;
-
-          return (
-            <Box key={group} mb={2}>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={allChecked}
-                    indeterminate={someChecked}
-                    onChange={(e) =>
-                      handleGroupCheck(group, e.target.checked, name)
-                    }
-                  />
-                }
-                label={
-                  <Typography fontSize={18} fontWeight={600}>
-                    {group}
-                  </Typography>
-                }
+    <Dialog open={true} onClose={onCancel} maxWidth="md" fullWidth>
+      <DialogTitle>{initialData?.id ? "Edit Role" : "Add Role"}</DialogTitle>
+      <Box
+        className="main-container"
+      >
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <Controller
+            name="name"
+            control={control}
+            rules={{ required: {value:true,message:"rew"} }}
+            render={({ field, fieldState }) => (
+              <InputField
+                label="name"
+                {...field}
+                // error={!!fieldState.error}
+                // helperText={fieldState.error?.message}
+                error={!!errors.name}
+                helperText={errors.name?.message}
+                fullWidth
+                margin="normal"
               />
-              <Box sx={{ display: "flex", flexWrap: "wrap", ml: 4 }}>
-                {perms.map((perm) => {
-                  const key = `${group}-${perm.name}`;
-                  return (
-                    <Controller
-                      key={key}
-                      name={`permissions.${key}`}
-                      control={control}
-                      render={({ field }) => (
-                        <FormControlLabel
-                          control={
-                            <Checkbox {...field} checked={!!field.value} />
-                          }
-                          label={
-                            <Typography fontSize={16} fontWeight={450}>
-                              {perm.name}
-                            </Typography>
-                          }
-                          sx={{ minWidth: 150 }}
-                        />
-                      )}
-                    />
-                  );
-                })}
-              </Box>
-              <hr />
-            </Box>
-          );
-        })}
-
-        <Box mt={2} textAlign="end" gap={2} >
-          <Button color="error" onClick={handleCancel} className="me-2">
-            Cancel
-          </Button>
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            disabled={loading}
-          >
-            {loading ? (
-              <CircularProgress size={24} color="inherit" />
-            ) : roleId ? (
-              "Update Role"
-            ) : (
-              "Create Role"
             )}
-          </Button>
-          
-        </Box>
-      </form>
-    </Box>
+          />
+
+          <Controller
+            name="displayName"
+            control={control}
+            rules={{ required: "Name is required" }}
+            // register={register("displayName", { required: true })}
+            render={({ field, fieldState }) => (
+              <InputField
+                label="Display Name"
+                {...field}
+                // {...register("displayName", { required: true })}
+                error={!!fieldState.error}
+                helperText={fieldState.error?.message}
+                fullWidth
+                margin="normal"
+              />
+            )}
+          />
+
+          {Object.entries(grouped).map(([group, perms]) => {
+            const name = perms.map((p) => p.name);
+            const allChecked = name.every(
+              (code) => watchedPermissions[`${group}-${code}`]
+            );
+            const someChecked =
+              name.some((code) => watchedPermissions[`${group}-${code}`]) &&
+              !allChecked;
+
+            return (
+              <Box key={group} mb={2}>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={allChecked}
+                      indeterminate={someChecked}
+                      onChange={(e) =>
+                        handleGroupCheck(group, e.target.checked, name)
+                      }
+                    />
+                  }
+                  label={
+                    <Typography fontSize={18} fontWeight={600}>
+                      {group}
+                    </Typography>
+                  }
+                />
+                <Box sx={{ display: "flex", flexWrap: "wrap", ml: 4 }}>
+                  {perms.map((perm) => {
+                    const key = `${group}-${perm.name}`;
+                    return (
+                      <Controller
+                        key={key}
+                        name={`permissions.${key}`}
+                        control={control}
+                        render={({ field }) => (
+                          <FormControlLabel
+                            control={
+                              <Checkbox {...field} checked={!!field.value} />
+                            }
+                            label={
+                              <Typography fontSize={16} fontWeight={450}>
+                                {perm.name}
+                              </Typography>
+                            }
+                            sx={{ minWidth: 150 }}
+                          />
+                        )}
+                      />
+                    );
+                  })}
+                </Box>
+                <hr />
+              </Box>
+            );
+          })}
+
+          <Box mt={2} textAlign="end" gap={2}>
+            <Button color="error" onClick={handleCancel} className="me-2">
+              Cancel
+            </Button>
+            <Button type="submit" variant="contained" color="primary">
+              {initialData ? "update" : "Submit"}
+            </Button>
+          </Box>
+        </form>
+      </Box>
+    </Dialog>
   );
 };
 
 export default ADDEDIT;
-
-

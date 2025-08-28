@@ -18,12 +18,15 @@ import { createCity, updatecity } from "../../store/cities/CitiesSlice";
 import { useAppDispatch, useAppSelector } from "../../store/hook";
 import { citySchema } from "../../globals/ZodValidation";
 
+
+type FormData = z.infer<typeof citySchema>;
+
 interface EditBranchFormProps {
   initialData?: Partial<FormData> & { id?: number };
   onClose?: () => void;
 }
 
-type FormData = z.infer<typeof citySchema>;
+
 
 const AddEditCity: React.FC<EditBranchFormProps> = ({
   initialData,

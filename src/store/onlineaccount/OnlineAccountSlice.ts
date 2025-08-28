@@ -8,10 +8,13 @@ import API from "../../http";
 import axios from "axios";
 
 interface OnlineAccount {
-  name: string;
+  firstname: string;
+  middleName: string;
+  lastName: string;
+  gender: string;
   id: number;
   status: string;
-  createdat: string;
+  createdate: string;
 }
 
 interface CreateblacklistStatus {
@@ -21,6 +24,7 @@ interface CreateblacklistStatus {
   nationality: string;
   dob: string;
   citizenshipNumber: string;
+  
 }
 
 interface OnlineAccountStatus {

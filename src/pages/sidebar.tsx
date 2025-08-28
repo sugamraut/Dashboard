@@ -1,5 +1,4 @@
 import {
-  Button,
   Drawer,
   IconButton,
   List,
@@ -7,23 +6,28 @@ import {
   Menu,
   MenuItem,
   Tooltip,
+  Button,
 } from "@mui/material";
-import { Link, useLocation } from "react-router-dom";
-
-import HomeIcon from "@mui/icons-material/Home";
-import FolderIcon from "@mui/icons-material/Folder";
-import TextSnippetIcon from "@mui/icons-material/TextSnippet";
-import PeopleIcon from "@mui/icons-material/People";
-import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
-import LogoutIcon from "@mui/icons-material/Logout";
-import ApartmentIcon from "@mui/icons-material/Apartment";
-import AccountTreeIcon from "@mui/icons-material/AccountTree";
-import ArticleIcon from "@mui/icons-material/Article";
-import FolderSharedIcon from "@mui/icons-material/FolderShared";
-import QrCodeScannerIcon from "@mui/icons-material/QrCodeScanner";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import AutorenewIcon from "@mui/icons-material/Autorenew";
-import SettingsIcon from "@mui/icons-material/Settings";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import {
+  Home as HomeIcon,
+  Folder as FolderIcon,
+  TextSnippet as TextSnippetIcon,
+  People as PeopleIcon,
+  AdminPanelSettings as AdminPanelSettingsIcon,
+  Logout as LogoutIcon,
+  Apartment as ApartmentIcon,
+  AccountTree as AccountTreeIcon,
+  Article as ArticleIcon,
+  FolderShared as FolderSharedIcon,
+  QrCodeScanner as QrCodeScannerIcon,
+  AccountCircle as AccountCircleIcon,
+  Autorenew as AutorenewIcon,
+  Settings as SettingsIcon,
+} from "@mui/icons-material";
+import { useDispatch } from "react-redux";
+import { resetAuth } from "../store/auth/LoginSlice";
+import { toast } from "react-toastify";
 
 import companyLogo from "../assets/image/company_name.png";
 import React from "react";
@@ -38,7 +42,7 @@ const sidebarIcons = [
   { icon: <TextSnippetIcon />, label: "Account Type", path: "/admin/Account" },
   { icon: <AccountTreeIcon />, label: "Branches", path: "/admin/branch" },
   { icon: <ArticleIcon />, label: "District", path: "/admin/district" },
-  { icon: <ApartmentIcon />, label: "Citites", path: "/admin/cities" },
+  { icon: <ApartmentIcon />, label: "Cities", path: "/admin/cities" },
   { icon: <PeopleIcon />, label: "Users", path: "/admin/User" },
   {
     icon: <AdminPanelSettingsIcon />,
@@ -52,7 +56,7 @@ const sidebarIcons = [
   },
   {
     icon: <AutorenewIcon />,
-    label: "Activity log",
+    label: "Activity Log",
     path: "/admin/activitylog",
   },
   {
@@ -62,76 +66,111 @@ const sidebarIcons = [
   },
   { icon: <SettingsIcon />, label: "Setting", path: "/admin/setting" },
   { icon: <AccountCircleIcon />, label: "Profile", path: "/admin/profile" },
-  { icon: <LogoutIcon />, label: "Logout", path: "/admin/logout" },
+  { icon: <LogoutIcon />, label: "Logout", action: "logout" }, // ← Now uses 'action'
 ];
 
 export default function Sidebar() {
   const location = useLocation();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
+
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
+
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("jwt");
+    sessionStorage.removeItem("jwt");
+    dispatch(resetAuth());
+    toast.success("Successfully logged out");
+    navigate("/admin", { replace: true });
   };
 
   return (
     <Drawer variant="permanent" className="sidebar-drawer">
       <Button
-        id="basic-button"
-        aria-controls={open ? "basic-menu" : undefined}
+        id="profile-menu-button"
+        aria-controls={open ? "profile-menu" : undefined}
         aria-haspopup="true"
         aria-expanded={open ? "true" : undefined}
         onClick={handleClick}
       >
         <img src={companyLogo} alt="Logo" width="58" className="rounded-1" />
       </Button>
+
       <Menu
-        id="basic-menu"
+        id="profile-menu"
         anchorEl={anchorEl}
         open={open}
         onClose={handleClose}
         slotProps={{
           list: {
-            "aria-labelledby": "basic-button",
+            "aria-labelledby": "profile-menu-button",
           },
         }}
       >
         <Link to={"/admin/profile"} className="nav-link">
           <MenuItem onClick={handleClose}>Profile</MenuItem>
         </Link>
-        <Link to={"/admin/logout"} className="nav-link">
-          <MenuItem onClick={handleClose}>Logout</MenuItem>
-        </Link>
+        <MenuItem
+          onClick={() => {
+            handleClose();
+            handleLogout();
+          }}
+        >
+          Logout
+        </MenuItem>
       </Menu>
 
       <List sx={{ mt: 1 }}>
-        {sidebarIcons.map(({ icon, label, path }, index) => {
-          const isActive = location.pathname === path;
-          return (
-            <Tooltip title={label} placement="right" arrow key={index}>
-              <ListItem disablePadding sx={{ mt: 1 }}>
-                <Link to={path}>
-                  <IconButton
-                    sx={{
-                      color: isActive ? "#877d43ff" : "white",
-                      backgroundColor: isActive
-                        ? "rgba(255, 255, 255, 0.15)"
-                        : "transparent",
-                      "&:hover": {
-                        backgroundColor: "rgba(255, 255, 255, 0.2)",
-                      },
-                    }}
-                  >
-                    {icon}
-                  </IconButton>
-                </Link>
-              </ListItem>
-            </Tooltip>
-          );
-        })}
+        {sidebarIcons
+          .filter(({ path }) => typeof path === "string")
+          .map(({ icon, label, path, action }, index) => {
+            const isActive = location.pathname === path;
+
+            return (
+              <Tooltip title={label} placement="right" arrow key={index}>
+                <ListItem disablePadding sx={{ mt: 1 }}>
+                  {action === "logout" ? (
+                    <IconButton
+                      onClick={handleLogout}
+                      sx={{
+                        color: "white",
+                        "&:hover": {
+                          backgroundColor: "rgba(255, 255, 255, 0.2)",
+                        },
+                      }}
+                    >
+                      {icon}
+                    </IconButton>
+                  ) : (
+                    <Link to={path as string}>
+                      <IconButton
+                        sx={{
+                          color: isActive ? "#877d43ff" : "white",
+                          backgroundColor: isActive
+                            ? "rgba(255, 255, 255, 0.15)"
+                            : "transparent",
+                          "&:hover": {
+                            backgroundColor: "rgba(255, 255, 255, 0.2)",
+                          },
+                        }}
+                      >
+                        {icon}
+                      </IconButton>
+                    </Link>
+                  )}
+                </ListItem>
+              </Tooltip>
+            );
+          })}
       </List>
     </Drawer>
   );

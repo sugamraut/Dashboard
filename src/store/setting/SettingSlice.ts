@@ -60,6 +60,20 @@ export const fetchsetting = createAsyncThunk<
     return rejectWithValue(error.response?.data?.message || error.message);
   }
 });
+// export const fetchsetting = createAsyncThunk<
+//   FetchSettingResponse,
+//   void,
+//   { rejectValue: string }
+// >("setting/fetch", async (_arg, { rejectWithValue }) => {
+//   try {
+//     const response = await API.get("api/v1/settings"); 
+
+//     return response.data as FetchSettingResponse;
+//   } catch (error: any) {
+//     return rejectWithValue(error.response?.data?.message || error.message);
+//   }
+// });
+
 
 export const fetchSettingById = createAsyncThunk<
   Setting,
