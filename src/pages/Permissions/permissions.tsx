@@ -11,9 +11,6 @@ import {
 import type { AppDispatch, RootState } from "../../store/store";
 import {
   Box,
-  Dialog,
-  DialogContent,
-  DialogTitle,
   IconButton,
   Stack,
   Table,
@@ -44,9 +41,9 @@ const Permissions: React.FC = () => {
     null
   );
 
-    useEffect(()=>{
-      fetchAllPermissions()
-    },[dispatch])
+  useEffect(() => {
+    fetchAllPermissions();
+  }, [dispatch]);
 
   useEffect(() => {
     dispatch(
@@ -117,7 +114,6 @@ const Permissions: React.FC = () => {
             size="small"
             placeholder="Search by name or group"
             value={searchQuery}
-
             onChange={(e) => {
               setSearchQuery(e.target.value);
               setPage(0);
@@ -142,7 +138,7 @@ const Permissions: React.FC = () => {
         </Stack>
       </Box>
 
-      <TableContainer >
+      <TableContainer>
         <Table size="small">
           <TableHead>
             <TableRow>
@@ -177,12 +173,11 @@ const Permissions: React.FC = () => {
                   <TableCell className="table-data">
                     <IconButton
                       onClick={() => handleEditClick(permission)}
-                       className="action-icon-btn"
+                      className="action-icon-btn"
                     >
                       <EditIcon />
                     </IconButton>
-                    <IconButton  className="action-icon-btn-delete ms-2" >
-                      
+                    <IconButton className="action-icon-btn-delete ms-2">
                       <DeleteIcon />
                     </IconButton>
                   </TableCell>
@@ -208,22 +203,12 @@ const Permissions: React.FC = () => {
         />
       </TableContainer>
 
-      <Dialog
-        open={openDialog}
-        onClose={handleCloseDialog}
-        fullWidth
-        maxWidth="sm"
-      >
-        <DialogTitle>
-          {editingPermission ? "Edit Permission" : "Add Permission"}
-        </DialogTitle>
-        <DialogContent dividers>
-          <AddEditPage
-            initialData={editingPermission}
-            onClose={handleCloseDialog}
-          />
-        </DialogContent>
-      </Dialog>
+      {openDialog && (
+        <AddEditPage
+          initialData={editingPermission}
+          onClose={handleCloseDialog}
+        />
+      )}
     </Box>
   );
 };

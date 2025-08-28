@@ -1,5 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Autocomplete, Box, Button, TextField } from "@mui/material";
+import {
+  Autocomplete,
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  TextField,
+} from "@mui/material";
 import { useForm, Controller } from "react-hook-form";
 import type { AppDispatch, RootState } from "../../store/store";
 import {
@@ -12,7 +21,7 @@ import type { Permission } from "../../globals/typeDeclaration";
 import { useAppDispatch, useAppSelector } from "../../store/hook";
 import { toast } from "react-toastify";
 
-interface ExtraGroupOption {
+interface ActionOption {
   name: any;
   id: number;
   title: string;
@@ -29,7 +38,7 @@ interface AddEditPageProps {
     displayName: string;
     displayNameNp?: string;
     group?: string;
-    extraGroups?: ExtraGroupOption[];
+    ActionGroups?: ActionOption[];
   } | null;
   onClose: () => void;
 }
@@ -40,7 +49,7 @@ interface FormValues {
   displayName: string;
   displayNameNp: string;
   group: string;
-  extraGroups: ExtraGroupOption[];
+  ActionGroups: ActionOption[];
 }
 
 const AddEditPage: React.FC<AddEditPageProps> = ({ initialData, onClose }) => {
@@ -62,7 +71,7 @@ const AddEditPage: React.FC<AddEditPageProps> = ({ initialData, onClose }) => {
       displayName: initialData?.displayName || "",
       displayNameNp: initialData?.displayNameNp || "",
       group: initialData?.group || "",
-      extraGroups: initialData?.extraGroups ?? [],
+      ActionGroups: initialData?.ActionGroups ?? [],
     },
   });
 
@@ -88,18 +97,18 @@ const AddEditPage: React.FC<AddEditPageProps> = ({ initialData, onClose }) => {
         group: data.group ?? "",
         guardName: "",
         label: data.displayName,
-        extraGroups: data.extraGroups.map((g) => g.name) || [],
+        extraGroups: data.ActionGroups.map((g) => g.name) || [],
       };
 
       if (initialData?.id) {
-        (await dispatch(
+        await dispatch(
           updatePermission({
             ...payload,
             id: initialData.id,
             code: undefined,
             permissions: undefined,
           })
-        ).unwrap());
+        ).unwrap();
       } else {
         await dispatch(addPermission(payload)).unwrap();
       }
@@ -111,76 +120,88 @@ const AddEditPage: React.FC<AddEditPageProps> = ({ initialData, onClose }) => {
   };
 
   return (
-    <Box component="form" noValidate onSubmit={handleSubmit(onSubmit)}>
-      <TextField
-        label="Display Name"
-        fullWidth
-        margin="normal"
-        {...register("displayName", { required: "Display name is required" })}
-        error={!!errors.displayName}
-        helperText={errors.displayName?.message}
-      />
+    <Dialog open={true} onClose={onClose} maxWidth="md" fullWidth>
+      <DialogTitle>
+        {" "}
+        {initialData?.id ? "Edit Permission" : "Add City"}
+      </DialogTitle>
+      <DialogContent dividers>
+        <Box component="form" noValidate onSubmit={handleSubmit(onSubmit)}>
+          <TextField
+            label="Display Name"
+            fullWidth
+            margin="normal"
+            {...register("displayName", {
+              required: "Display name is required",
+            })}
+            error={!!errors.displayName}
+            helperText={errors.displayName?.message}
+          />
 
-      <TextField
-        label="Display Name (Nepali)"
-        fullWidth
-        margin="normal"
-        {...register("displayNameNp")}
-      />
+          <TextField
+            label="Display Name (Nepali)"
+            fullWidth
+            margin="normal"
+            {...register("displayNameNp")}
+          />
 
-      <Controller
-        control={control}
-        name="group"
-        render={({ field }) => (
-          <Autocomplete<Permission>
-            disablePortal
-            options={groupedPermissions}
-            onChange={(_, data) => field.onChange(data)}
-            value={
-              groupedPermissions.find((perm) => perm.name === field.value) ||
-              null
-            }
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                label="Group"
-                margin="normal"
-                {...register("group")}
-                error={!!errors.group}
-                helperText={errors.group?.message as string}
+          <Controller
+            control={control}
+            name="group"
+            render={({ field }) => (
+              <Autocomplete<Permission>
+                disablePortal
+                options={groupedPermissions}
+                onChange={(_, data) => field.onChange(data)}
+                value={
+                  groupedPermissions.find(
+                    (perm) => perm.name === field.value
+                  ) || null
+                }
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Group"
+                    margin="normal"
+                    {...register("group")}
+                    error={!!errors.group}
+                    helperText={errors.group?.message as string}
+                  />
+                )}
               />
             )}
           />
-        )}
-      />
 
-      <Controller
-        control={control}
-        name="extraGroups"
-        render={({ field }) => (
-          <Autocomplete
-            multiple
-            options={ActionData ?? []}
-            getOptionLabel={(option) => option.name || ""}
-            value={field.value || []}
-            onChange={(_, data) => field.onChange(data)}
-            isOptionEqualToValue={(option, value) => option.id === value.id}
-            renderInput={(params) => (
-              <TextField {...params} label="Action type" margin="normal" />
+          <Controller
+            control={control}
+            name="ActionGroups"
+            render={({ field }) => (
+              <Autocomplete
+                multiple
+                options={ActionData ?? []}
+                getOptionLabel={(option) => option.name || ""}
+                //@ts-ignore
+                value={field.value || []}
+                onChange={(_, data) => field.onChange(data)}
+                isOptionEqualToValue={(option, value) => option.id === value.id}
+                renderInput={(params) => (
+                  <TextField {...params} label="Action type" margin="normal" />
+                )}
+              />
             )}
           />
-        )}
-      />
 
-      <Box mt={3} textAlign="right">
-        <Button color="error" sx={{ mr: 2 }} onClick={onClose}>
-          Cancel
-        </Button>
-        <Button variant="contained" color="primary" type="submit">
-          {initialData ? "Update" : "Submit"}
-        </Button>
-      </Box>
-    </Box>
+          <DialogActions sx={{ mt: 2 }}>
+            <Button color="error" sx={{ mr: 2 }} onClick={onClose}>
+              Cancel
+            </Button>
+            <Button variant="contained" color="primary" type="submit">
+              {initialData ? "Update" : "Submit"}
+            </Button>
+          </DialogActions>
+        </Box>
+      </DialogContent>
+    </Dialog>
   );
 };
 
