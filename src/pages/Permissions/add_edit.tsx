@@ -24,27 +24,6 @@ import type z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 type FormData = z.infer<typeof permissionSchema>;
-// interface ActionOption {
-//   name: any;
-//   id: number;
-//   title: string;
-//   displayName: string;
-//   displayNameNp: string;
-//   group: string;
-//   // Permission :Permission []
-// }
-
-// interface AddEditPageProps {
-//   initialData?: {
-//     id?: number;
-//     name: string;
-//     displayName: string;
-//     displayNameNp?: string;
-//     group?: string;
-//     ActionGroups?: ActionOption[];
-//   } | null;
-//   onClose: () => void;
-// }
 interface AddEditPageProps {
   initialData?: Partial<FormData> & { id?: number };
   onClose?: () => void;
@@ -183,12 +162,18 @@ const AddEditPage: React.FC<AddEditPageProps> = ({ initialData, onClose }) => {
                 multiple
                 options={ActionData ?? []}
                 getOptionLabel={(option) => option.name || ""}
-                //@ts-ignore
                 value={field.value || []}
                 onChange={(_, data) => field.onChange(data)}
                 isOptionEqualToValue={(option, value) => option.id === value.id}
                 renderInput={(params) => (
-                  <TextField {...params} label="Action type" margin="normal" />
+                  <TextField
+                    {...params}
+                    label="Action type"
+                    margin="normal"
+                    // {...register("ActionGroups")}
+                    // error={!!errors.ActionGroups}
+                    // helperText={errors.ActionGroups?.message as string}
+                  />
                 )}
               />
             )}
