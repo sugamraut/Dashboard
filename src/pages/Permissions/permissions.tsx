@@ -42,10 +42,6 @@ const Permissions: React.FC = () => {
   );
 
   useEffect(() => {
-    fetchAllPermissions();
-  }, [dispatch]);
-
-  useEffect(() => {
     dispatch(
       fetchPermissions({
         page: page + 1,
@@ -92,10 +88,24 @@ const Permissions: React.FC = () => {
     setOpenDialog(true);
   };
 
-  const handleCloseDialog = () => {
-    setOpenDialog(false);
-    setEditingPermission(null);
-  };
+  // const handleCloseDialog = () => {
+  //   setOpenDialog(false);
+  //   setEditingPermission(null);
+  // };
+const handleCloseDialog = () => {
+  setOpenDialog(false);
+  setEditingPermission(null);
+
+  dispatch(
+    fetchPermissions({
+      page: page + 1,
+      rowsPerPage,
+      query: searchQuery,
+      sortBy: null,
+      sortOrder: "desc",
+    })
+  );
+};
 
   return (
     <Box marginLeft={9} padding={2}>
@@ -205,7 +215,7 @@ const Permissions: React.FC = () => {
 
       {openDialog && (
         <AddEditPage
-          initialData={editingPermission}
+          initialData={editingPermission ?? undefined}
           onClose={handleCloseDialog}
         />
       )}

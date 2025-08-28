@@ -157,7 +157,7 @@ export const fetchAllPermissions = createAsyncThunk<
 //   try {
 //     // const response =await.API.
 //   } catch (error) {
-    
+
 //   }
 // })
 const permissionsSlice = createSlice({
@@ -214,6 +214,7 @@ const permissionsSlice = createSlice({
         state.loading = false;
         state.data.push(action.payload);
       })
+
       .addCase(addPermission.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload ?? "Failed to add permission";

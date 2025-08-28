@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
   Autocomplete,
-  Box,
   Button,
   Dialog,
   DialogActions,
@@ -20,37 +19,37 @@ import {
 import type { Permission } from "../../globals/typeDeclaration";
 import { useAppDispatch, useAppSelector } from "../../store/hook";
 import { toast } from "react-toastify";
+import { permissionSchema } from "../../globals/ZodValidation";
+import type z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-interface ActionOption {
-  name: any;
-  id: number;
-  title: string;
-  displayName: string;
-  displayNameNp: string;
-  group: string;
-  // Permission :Permission []
-}
+type FormData = z.infer<typeof permissionSchema>;
+// interface ActionOption {
+//   name: any;
+//   id: number;
+//   title: string;
+//   displayName: string;
+//   displayNameNp: string;
+//   group: string;
+//   // Permission :Permission []
+// }
 
+// interface AddEditPageProps {
+//   initialData?: {
+//     id?: number;
+//     name: string;
+//     displayName: string;
+//     displayNameNp?: string;
+//     group?: string;
+//     ActionGroups?: ActionOption[];
+//   } | null;
+//   onClose: () => void;
+// }
 interface AddEditPageProps {
-  initialData?: {
-    id?: number;
-    name: string;
-    displayName: string;
-    displayNameNp?: string;
-    group?: string;
-    ActionGroups?: ActionOption[];
-  } | null;
-  onClose: () => void;
+  initialData?: Partial<FormData> & { id?: number };
+  onClose?: () => void;
 }
-
-interface FormValues {
-  id?: number;
-  name: string;
-  displayName: string;
-  displayNameNp: string;
-  group: string;
-  ActionGroups: ActionOption[];
-}
+type FormValues = z.infer<typeof permissionSchema>;
 
 const AddEditPage: React.FC<AddEditPageProps> = ({ initialData, onClose }) => {
   const dispatch = useAppDispatch<AppDispatch>();
@@ -66,7 +65,9 @@ const AddEditPage: React.FC<AddEditPageProps> = ({ initialData, onClose }) => {
     handleSubmit,
     formState: { errors },
   } = useForm<FormValues>({
+    resolver: zodResolver(permissionSchema),
     defaultValues: {
+      id: initialData?.id || 0,
       name: initialData?.name || "",
       displayName: initialData?.displayName || "",
       displayNameNp: initialData?.displayNameNp || "",
@@ -81,9 +82,7 @@ const AddEditPage: React.FC<AddEditPageProps> = ({ initialData, onClose }) => {
   }, [dispatch]);
 
   const onSubmit = async (data: FormValues) => {
-    setLocalError(null);
     if (!data.displayName) {
-      // setLocalError("Display Name is required");
       toast.error("Display Name is required");
       return;
     }
@@ -91,13 +90,12 @@ const AddEditPage: React.FC<AddEditPageProps> = ({ initialData, onClose }) => {
     try {
       const payload = {
         id: data.id ?? 0,
-        name: data.name,
         displayName: data.displayName,
         displayNameNp: data.displayNameNp,
         group: data.group ?? "",
         guardName: "",
         label: data.displayName,
-        extraGroups: data.ActionGroups.map((g) => g.name) || [],
+        name: (data.ActionGroups.map((g) => g.name) || []).join(","),
       };
 
       if (initialData?.id) {
@@ -109,11 +107,13 @@ const AddEditPage: React.FC<AddEditPageProps> = ({ initialData, onClose }) => {
             permissions: undefined,
           })
         ).unwrap();
+        toast.success("Permission updated successfully");
       } else {
         await dispatch(addPermission(payload)).unwrap();
+        toast.success("Permission added successfully");
       }
 
-      onClose();
+      onClose?.();
     } catch (error) {
       setLocalError(String(error));
     }
@@ -122,11 +122,10 @@ const AddEditPage: React.FC<AddEditPageProps> = ({ initialData, onClose }) => {
   return (
     <Dialog open={true} onClose={onClose} maxWidth="md" fullWidth>
       <DialogTitle>
-        {" "}
         {initialData?.id ? "Edit Permission" : "Add City"}
       </DialogTitle>
       <DialogContent dividers>
-        <Box component="form" noValidate onSubmit={handleSubmit(onSubmit)}>
+        <form noValidate onSubmit={handleSubmit(onSubmit)}>
           <TextField
             label="Display Name"
             fullWidth
@@ -142,7 +141,11 @@ const AddEditPage: React.FC<AddEditPageProps> = ({ initialData, onClose }) => {
             label="Display Name (Nepali)"
             fullWidth
             margin="normal"
-            {...register("displayNameNp")}
+            {...register("displayNameNp", {
+              required: "Display name in Nepali is required",
+            })}
+            error={!!errors.displayNameNp}
+            helperText={errors.displayNameNp?.message}
           />
 
           <Controller
@@ -199,7 +202,7 @@ const AddEditPage: React.FC<AddEditPageProps> = ({ initialData, onClose }) => {
               {initialData ? "Update" : "Submit"}
             </Button>
           </DialogActions>
-        </Box>
+        </form>
       </DialogContent>
     </Dialog>
   );
