@@ -1,47 +1,30 @@
-import React, {  Suspense } from "react";
-import { createBrowserRouter, Navigate} from "react-router-dom";
+import React, { Suspense } from "react";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 
-import PrivateRoute from "./privateroute";
+import PrivateRoute from "./private_route";
 import RootLayout from "../layouts/rootlayout";
 import Login from "../pages/Auth/login";
 import LoadingButtons from "../pages/loader";
 
-const lazyWithDelay = (importFunc: () => Promise<any>) =>
-  React.lazy(
-    () =>
-      new Promise((resolve) => {
-        setTimeout(() => {
-          resolve(importFunc());
-        });
-      })
-  );
+const Dashboard = React.lazy(() => import("../pages/Dashboard/dashboard"));
+const Sidebar = React.lazy(() => import("../pages/sidebar"));
+const BrandingSignInPage = React.lazy(() => import("../pages/Branches/branch"));
+const District = React.lazy(() => import("../pages/Districts/districts"));
+const Cities = React.lazy(() => import("../pages/Cities/cities"));
 
-const Dashboard = lazyWithDelay(() => import("../pages/Dashboard/dashboard"));
-const Sidebar = lazyWithDelay(() => import("../pages/sidebar"));
-const BrandingSignInPage = lazyWithDelay(
-  () => import("../pages/Branches/branch")
-);
-const District = lazyWithDelay(() => import("../pages/Districts/districts"));
-const Cities = lazyWithDelay(() => import("../pages/Cities/cities"));
-
-const User = lazyWithDelay(() => import("../pages/Users/users"));
-const Account = lazyWithDelay(() => import("../pages/Account/Account"));
-// const Xyz =lazyWithDelay(()=>import("../xyz"))
-const Permission = lazyWithDelay(
-  () => import("../pages/Permissions/permissions")
-);
-const Role = lazyWithDelay(() => import("../pages/Role/role"));
-const Add = lazyWithDelay(() => import("../pages/Permissions/add_edit"));
-const Profile = lazyWithDelay(() => import("../pages/Profile/profile"));
-const ScannedLog = lazyWithDelay(
-  () => import("../pages/ScannedLog/scannedlog")
-);
-const ActivityLog = lazyWithDelay(
+const User = React.lazy(() => import("../pages/Users/users"));
+const Account = React.lazy(() => import("../pages/Account/Account"));
+const Permission = React.lazy(() => import("../pages/Permissions/permissions"));
+const Role = React.lazy(() => import("../pages/Role/role"));
+// const Add = React.lazy(() => import("../pages/Permissions/add_edit"));
+const Profile = React.lazy(() => import("../pages/Profile/profile"));
+const ScannedLog = React.lazy(() => import("../pages/ScannedLog/scannedlog"));
+const ActivityLog = React.lazy(
   () => import("../pages/ActivityLog/activitylog")
 );
-const Setting = lazyWithDelay(() => import("../pages/Setting/setting"));
-const Logout = lazyWithDelay(() => import("../pages/Logout/logout"));
-const OnlineAccount = lazyWithDelay(
+const Setting = React.lazy(() => import("../pages/Setting/setting"));
+const Logout = React.lazy(() => import("../pages/Logout/logout"));
+const OnlineAccount = React.lazy(
   () => import("../pages/OnlineAccountRequest/onlinerequest")
 );
 
@@ -64,8 +47,8 @@ const router = createBrowserRouter([
         // <Login />
       },
       {
-      path:"/admin",
-      element:<Login/>
+        path: "/admin",
+        element: <Login />,
       },
       {
         path: "/admin",
@@ -80,7 +63,7 @@ const router = createBrowserRouter([
           { path: "Account", element: withSuspense(Account) },
           { path: "permission", element: withSuspense(Permission) },
           { path: "role", element: withSuspense(Role) },
-          { path: "Add", element: withSuspense(Add) },
+          // { path: "Add", element: withSuspense(Add) },
           { path: "profile", element: withSuspense(Profile) },
           { path: "scannedlog", element: withSuspense(ScannedLog) },
           { path: "activitylog", element: withSuspense(ActivityLog) },
