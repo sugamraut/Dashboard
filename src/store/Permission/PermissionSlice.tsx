@@ -81,24 +81,6 @@ export const fetchPermissions = createAsyncThunk<
   }
 });
 
-export const updatePermission = createAsyncThunk<
-  Permission,
-  Permission,
-  { rejectValue: string }
->("permissions/update", async (permissionData, { rejectWithValue }) => {
-  try {
-    const response = await API.put(
-      `/api/v1/permissions/${permissionData.id}`,
-      permissionData
-    );
-    return response.data;
-  } catch (error: any) {
-    return rejectWithValue(
-      error.response?.data?.message || error.message || "Update failed"
-    );
-  }
-});
-
 export const fetchPermissionsByGroup = createAsyncThunk<
   Permission[],
   void,
@@ -149,7 +131,39 @@ export const fetchAllPermissions = createAsyncThunk<
     );
   }
 });
+export const updatePermission = createAsyncThunk<
+  Permission,
+  Permission,
+  { rejectValue: string }
+>("permissions/update", async (permissionData, { rejectWithValue }) => {
+  try {
+    const response = await API.put(
+      `/api/v1/permissions/${permissionData.id}`,
+      permissionData
+    );
+    return response.data;
+  } catch (error: any) {
+    return rejectWithValue(
+      error.response?.data?.message || error.message || "Update failed"
+    );
+  }
+});
 
+export const DeletePermission = createAsyncThunk<
+  Permission,
+  Permission,
+  { rejectValue: string }
+>("permission/delete", async (permissionData, { rejectWithValue }) => {
+  try {
+    const response = await API.delete(
+      `/api/v1/permissions/${permissionData.id}`
+    );
+
+    return response.data ?? permissionData;
+  } catch (error: any) {
+    return rejectWithValue(error.response?.data?.message || "delete failed");
+  }
+});
 const permissionsSlice = createSlice({
   name: "permissions",
   initialState,

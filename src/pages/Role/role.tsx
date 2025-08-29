@@ -14,6 +14,7 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
+  type DialogProps,
 } from "@mui/material";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import FilterAltOffIcon from "@mui/icons-material/FilterAltOff";
@@ -25,13 +26,21 @@ import type { RootState } from "../../store/store";
 import { useAppDispatch } from "../../store/hook";
 import { fetchRoles } from "../../store/role/RoleSlice";
 import ADDEDIT from "./add_edit";
+import React from "react";
 
 function RolePage() {
   const dispatch = useAppDispatch();
   const { list } = useSelector((state: RootState) => state.roles);
+  const [scroll, setScroll] = React.useState<DialogProps["scroll"]>("paper");
 
   const [openDialog, setOpenDialog] = useState(false);
   const [editData, setEditData] = useState(null);
+
+  const handleClickOpen = (scrollType: DialogProps["scroll"]) => () => {
+    setOpenDialog(true);
+    setEditData(null);
+    setScroll(scrollType);
+  };
 
   useEffect(() => {
     dispatch(fetchRoles({ page: 1, rowsPerPage: 10 }));
@@ -90,16 +99,23 @@ function RolePage() {
                   <TableCell>{index + 1}</TableCell>
                   <TableCell>{role.name}</TableCell>
                   <TableCell>
-                    <IconButton color="primary">
+                    <IconButton
+                      color="primary"
+                      className="action-icon-btn me-2 copy-color p-2 "
+                    >
                       <FileCopyIcon />
                     </IconButton>
                     <IconButton
                       color="primary"
                       onClick={() => handleOpenEdit(role)}
+                      className="action-icon-btn me-2  "
                     >
                       <EditIcon />
                     </IconButton>
-                    <IconButton color="error">
+                    <IconButton
+                      color="error"
+                      className="action-icon-btn-delete me-2"
+                    >
                       <DeleteIcon />
                     </IconButton>
                   </TableCell>
@@ -121,7 +137,6 @@ function RolePage() {
           onCancel={handleCloseDialog}
         />
       )}
-
     </Box>
   );
 }

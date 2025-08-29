@@ -1,5 +1,13 @@
 import React, { useEffect, useMemo } from "react";
-import { Box, Alert, TextField, Autocomplete, Button } from "@mui/material";
+import {
+  Box,
+  Alert,
+  TextField,
+  Autocomplete,
+  Button,
+  Dialog,
+  DialogTitle,
+} from "@mui/material";
 import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -12,6 +20,7 @@ import {
 import InputField from "../../components/Input_field";
 
 import type { DistrictType } from "../../globals/typeDeclaration";
+import { toast } from "react-toastify";
 
 interface EditDistrictFormProps {
   initialData?: Partial<DistrictType> & {
@@ -19,7 +28,6 @@ interface EditDistrictFormProps {
   };
   onClose?: () => void;
 }
-
 
 const schema = z.object({
   name: z.string().min(1, "District name is required"),
@@ -68,7 +76,6 @@ const EditDistrictForm: React.FC<EditDistrictFormProps> = ({
       });
   }, [districts]);
 
-
   const onSubmit = async (data: FormValues) => {
     if (!initialData?.id) return;
 
@@ -83,100 +90,104 @@ const EditDistrictForm: React.FC<EditDistrictFormProps> = ({
           },
         })
       );
+      toast.success("District upadated successfully....");
 
       onClose?.();
     } catch (err) {
-      console.error("Update error:", err);
+
+      toast.error(err?.toString() || "District update failed")
     }
   };
 
   return (
-    <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate>
-      {apiError && <Alert severity="error">{apiError}</Alert>}
+    <Dialog open={true} onClose={onClose} maxWidth="md" fullWidth  >
+      <DialogTitle> {initialData.id?"Edit District ":"Add District"}</DialogTitle>
+      <form  onSubmit={handleSubmit(onSubmit)} noValidate className="p-3">
+        {apiError && <Alert severity="error">{apiError}</Alert>}
 
-      <Controller
-        name="state"
-        control={control}
-        render={({ field }) => (
-          <Autocomplete
-            options={uniqueStates}
-            getOptionLabel={(option) =>
-              option?.nameCombined || option?.nameNp || ""
-            }
-            isOptionEqualToValue={(option, value) => option.id === value?.id}
-            value={
-              uniqueStates.find((s) => s.id.toString() === field.value) || null
-            }
-            onChange={(_, newValue) => {
-              field.onChange(newValue ? String(newValue.id) : "");
-            }}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                label="State"
-                margin="normal"
-                required
-                error={!!errors.state}
-                helperText={errors.state?.message}
-              />
-            )}
-          />
-        )}
-      />
+        <Controller
+          name="state"
+          control={control}
+          render={({ field }) => (
+            <Autocomplete
+              options={uniqueStates}
+              getOptionLabel={(option) =>
+                option?.nameCombined || option?.nameNp || ""
+              }
+              isOptionEqualToValue={(option, value) => option.id === value?.id}
+              value={
+                uniqueStates.find((s) => s.id.toString() === field.value) ||
+                null
+              }
+              onChange={(_, newValue) => {
+                field.onChange(newValue ? String(newValue.id) : "");
+              }}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="State"
+                  margin="normal"
+                  required
+                  error={!!errors.state}
+                  helperText={errors.state?.message}
+                />
+              )}
+            />
+          )}
+        />
 
-   
-      <Controller
-        name="name"
-        control={control}
-        render={({ field }) => (
-          <InputField
-            {...field}
-            label="District Name"
-            required
-            fullWidth
-            margin="normal"
-            error={!!errors.name}
-            helperText={errors.name?.message}
-          />
-        )}
-      />
+        <Controller
+          name="name"
+          control={control}
+          render={({ field }) => (
+            <InputField
+              {...field}
+              label="District Name"
+              required
+              fullWidth
+              margin="normal"
+              error={!!errors.name}
+              helperText={errors.name?.message}
+            />
+          )}
+        />
 
-   
-      <Controller
-        name="nameNp"
-        control={control}
-        render={({ field }) => (
-          <InputField
-            {...field}
-            value={field.value ?? ""}
-            label="Name Combined"
-            fullWidth
-            margin="normal"
-            error={!!errors.nameNp}
-            helperText={errors.nameNp?.message}
-          />
-        )}
-      />
+        <Controller
+          name="nameNp"
+          control={control}
+          render={({ field }) => (
+            <InputField
+              {...field}
+              value={field.value ?? ""}
+              label="Name Combined"
+              fullWidth
+              margin="normal"
+              error={!!errors.nameNp}
+              helperText={errors.nameNp?.message}
+            />
+          )}
+        />
 
-      <Box mt={3} textAlign="right">
-        <Button
-          color="error"
-          onClick={onClose}
-          disabled={isSubmitting}
-          sx={{ mr: 2 }}
-        >
-          Cancel
-        </Button>
-        <Button
-          variant="contained"
-          color="primary"
-          type="submit"
-          disabled={isSubmitting}
-        >
-          Submit
-        </Button>
-      </Box>
-    </Box>
+        <Box mt={3} textAlign="right">
+          <Button
+            color="error"
+            onClick={onClose}
+            disabled={isSubmitting}
+            sx={{ mr: 2 }}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            type="submit"
+            disabled={isSubmitting}
+          >
+            Submit
+          </Button>
+        </Box>
+      </form>
+    </Dialog>
   );
 };
 

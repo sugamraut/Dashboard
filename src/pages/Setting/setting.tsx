@@ -44,7 +44,7 @@ const Setting = () => {
     dispatch(
       fetchsetting({
         page: page + 1,
-        rowPerPage:rowPerPage,
+        rowPerPage: rowPerPage,
         sortBy: null,
         sortOrder: "dec",
         query: "",
@@ -128,7 +128,7 @@ const Setting = () => {
           Error: {error}
         </Typography>
       ) : (
-        <TableContainer >
+        <TableContainer>
           <Table size="small">
             <TableHead>
               <TableRow>
@@ -151,9 +151,8 @@ const Setting = () => {
                     }}
                   >
                     <TableCell className="table-data">
-                     {page * rowPerPage + index + 1}
+                      {page * rowPerPage + index + 1}
                       {/* {index + 1} */}
-
                     </TableCell>
                     <TableCell className="table-data">{log.name}</TableCell>
                     <TableCell className="table-data">
@@ -196,35 +195,22 @@ const Setting = () => {
           />
         </TableContainer>
       )}
-      <Dialog
-        open={openDialog}
-        onClose={handleCloseDialog}
-        maxWidth="sm"
-        fullWidth
-      >
-        <DialogTitle>{editData ? "Edit Setting" : "Add Setting"}</DialogTitle>
-        <DialogContent
-          sx={{
-            "&.MuiDialogContent-root": {
-              padding: "0px",
-            },
+
+      {openDialog && (
+        <ADDEDIT
+          initialData={editData}
+          onSuccess={() => {
+            handleCloseDialog();
+            loadlogs();
+            toast.success(
+              editData
+                ? "Setting updated successfully"
+                : "Setting created successfully"
+            );
           }}
-        >
-          <ADDEDIT
-            initialData={editData}
-            onSuccess={() => {
-              handleCloseDialog();
-              loadlogs();
-              toast.success(
-                editData
-                  ? "Setting updated successfully"
-                  : "Setting created successfully"
-              );
-            }}
-            onCancel={handleCloseDialog}
-          />
-        </DialogContent>
-      </Dialog>
+          onCancel={handleCloseDialog}
+        />
+      )}
     </Box>
   );
 };

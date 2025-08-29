@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import {
   Box,
   IconButton,
-  Paper,
   Stack,
   Table,
   TableCell,
@@ -117,7 +116,7 @@ const AccountPage: React.FC = () => {
   return (
     <Box marginLeft={10} padding={2}>
       <Box className="header">
-        <Typography variant="h5" fontWeight="bold" marginBottom={2}>
+        <Typography variant="h5" fontWeight="bold" marginBottom={2} sx={{ color: "#043ba0",fontFamily:"lato" }}>
           Account Types
         </Typography>
         <Stack direction="row" spacing={2} alignItems="center" marginBottom={2}>

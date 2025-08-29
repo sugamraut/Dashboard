@@ -22,6 +22,7 @@ import { toast } from "react-toastify";
 import { permissionSchema } from "../../globals/ZodValidation";
 import type z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import InputField from "../../components/Input_field";
 
 type FormData = z.infer<typeof permissionSchema>;
 interface AddEditPageProps {
@@ -99,32 +100,47 @@ const AddEditPage: React.FC<AddEditPageProps> = ({ initialData, onClose }) => {
   };
 
   return (
-    <Dialog open={true} onClose={onClose} maxWidth="md" fullWidth>
+    <Dialog open={true} onClose={onClose} maxWidth="md">
       <DialogTitle>
         {initialData?.id ? "Edit Permission" : "Add City"}
       </DialogTitle>
       <DialogContent dividers>
         <form noValidate onSubmit={handleSubmit(onSubmit)}>
-          <TextField
-            label="Display Name"
-            fullWidth
-            margin="normal"
-            {...register("displayName", {
-              required: "Display name is required",
-            })}
-            error={!!errors.displayName}
-            helperText={errors.displayName?.message}
+          <Controller
+            name="displayName"
+            control={control}
+            render={({ field }) => (
+              <InputField
+                {...field}
+                label="Display Name"
+                fullWidth
+                margin="normal"
+                {...register("displayNameNp", {
+                  required: "Display name in Nepali is required",
+                })}
+                error={!!errors.displayNameNp}
+                helperText={errors.displayNameNp?.message}
+              />
+            )}
           />
 
-          <TextField
-            label="Display Name (Nepali)"
-            fullWidth
-            margin="normal"
-            {...register("displayNameNp", {
-              required: "Display name in Nepali is required",
-            })}
-            error={!!errors.displayNameNp}
-            helperText={errors.displayNameNp?.message}
+          <Controller
+            name="displayNameNp"
+            control={control}
+            render={({ field }) => (
+              <InputField
+                {...field}
+                value={field.value ?? ""}
+                label="Display Nmae (Nepali)"
+                fullWidth
+                margin="normal"
+                {...register("displayNameNp", {
+                  required: "Display name in Nepali is required",
+                })}
+                error={!!errors.displayNameNp}
+                helperText={errors.displayNameNp?.message}
+              />
+            )}
           />
 
           <Controller
@@ -170,9 +186,9 @@ const AddEditPage: React.FC<AddEditPageProps> = ({ initialData, onClose }) => {
                     {...params}
                     label="Action type"
                     margin="normal"
-                    // {...register("ActionGroups")}
-                    // error={!!errors.ActionGroups}
-                    // helperText={errors.ActionGroups?.message as string}
+                    {...register("ActionGroups")}
+                    error={!!errors.ActionGroups}
+                    helperText={errors.ActionGroups?.message as string}
                   />
                 )}
               />

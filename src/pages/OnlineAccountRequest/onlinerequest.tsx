@@ -83,7 +83,7 @@ const OnlineAccountRequest = () => {
           variant="h5"
           fontWeight="bold"
           paddingBottom={2}
-          sx={{ color: "#043ba0" }}
+          sx={{ color: "#043ba0" ,fontFamily:"lato"}}
         >
           Online Account Request
         </Typography>

@@ -103,12 +103,10 @@ export default function DistrictPage() {
     setEditDialogOpen(true);
   };
 
- 
   const handleDialogClose = () => {
     setEditDialogOpen(false);
     setSelectedDistrictItem(null);
 
-   
     if (selectedState) {
       dispatch(
         fetchDistrictsByStateIdAsync(selectedState.id, page + 1, rowsPerPage)
@@ -142,7 +140,7 @@ export default function DistrictPage() {
   return (
     <Box marginLeft={10} padding={2}>
       <Box className="header">
-        <Typography variant="h5" fontWeight="bold" paddingBottom={2}>
+        <Typography variant="h5" fontWeight="bold" paddingBottom={2} sx={{color: "#043ba0"}}>
           Districts
         </Typography>
 
@@ -205,12 +203,12 @@ export default function DistrictPage() {
               </TableCell>
             </TableRow>
           </TableHead>
- 
+
           <TableBody>
             {status === "loading" ? (
               <TableRow>
                 <TableCell colSpan={5} align="center">
-                <CircularProgress size={24} />
+                  <CircularProgress size={24} />
                 </TableCell>
               </TableRow>
             ) : districtList.length === 0 ? (
@@ -255,22 +253,12 @@ export default function DistrictPage() {
         />
       </TableContainer>
 
-      <Dialog
-        open={editDialogOpen}
-        onClose={handleDialogClose}
-        maxWidth="md"
-        fullWidth
-      >
-        <DialogTitle>
-          {selectedDistrictItem ? "Edit District" : "Add District"}
-        </DialogTitle>
-        <DialogContent dividers>
-          <AddEditPage
-            initialData={selectedDistrictItem ?? undefined}
-            onClose={handleDialogClose}
-          />
-        </DialogContent>
-      </Dialog>
+      {editDialogOpen && (
+        <AddEditPage
+          initialData={selectedDistrictItem ?? undefined}
+          onClose={handleDialogClose}
+        />
+      )}
     </Box>
   );
 }

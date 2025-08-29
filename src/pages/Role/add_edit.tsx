@@ -7,6 +7,10 @@ import {
   Button,
   Dialog,
   DialogTitle,
+  type DialogProps,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
 } from "@mui/material";
 import { useForm, Controller } from "react-hook-form";
 import InputField from "../../components/Input_field";
@@ -20,18 +24,8 @@ import { roleSchema } from "../../globals/ZodValidation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type z from "zod";
 
-type FormData=z.infer<typeof roleSchema>;
+type FormData = z.infer<typeof roleSchema>;
 
-// interface AddEditProps {
-//   roleId?: number | null;
-//   initialData?: {
-//     id?: number;
-//     name?: string;
-//     displayName?: string;
-//     Permissions?: string[];
-//   } | null;
-//   onCancel?: () => void;
-// }
 interface AddEditProps {
   initialData?: Partial<FormData> & { id?: number };
   roleId?: number | null;
@@ -51,16 +45,20 @@ const ADDEDIT: React.FC<AddEditProps> = ({ initialData, roleId, onCancel }) => {
   );
   const [_, setLoading] = useState(false);
 
-  const { handleSubmit, control, reset, watch, setValue,formState:{errors} } = useForm<FormValues>(
-    {
-      
-      defaultValues: {
-        name: "",
-        displayName: "",
-        permissions: {},
-      },
-    }
-  );
+  const {
+    handleSubmit,
+    control,
+    reset,
+    watch,
+    setValue,
+    formState: { errors },
+  } = useForm<FormValues>({
+    defaultValues: {
+      name: "",
+      displayName: "",
+      permissions: {},
+    },
+  });
 
   const watchedPermissions = watch("permissions");
 
@@ -153,117 +151,149 @@ const ADDEDIT: React.FC<AddEditProps> = ({ initialData, roleId, onCancel }) => {
     onCancel?.();
   };
 
-  console.log("=====>",errors)
+  const [scroll] = React.useState<DialogProps["scroll"]>("paper");
+  const [open] = React.useState(false);
+
+  const descriptionElementRef = React.useRef<HTMLElement>(null);
+  React.useEffect(() => {
+    if (open) {
+      const { current: descriptionElement } = descriptionElementRef;
+      if (descriptionElement !== null) {
+        descriptionElement.focus();
+      }
+    }
+  }, [open]);
+
   return (
-    <Dialog open={true} onClose={onCancel} maxWidth="md" fullWidth>
-      <DialogTitle>{initialData?.id ? "Edit Role" : "Add Role"}</DialogTitle>
-      <Box
-        className="main-container"
-      >
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <Controller
-            name="name"
-            control={control}
-            rules={{ required: {value:true,message:"rew"} }}
-            render={({ field, fieldState }) => (
-              <InputField
-                label="name"
-                {...field}
-                // error={!!fieldState.error}
-                // helperText={fieldState.error?.message}
-                error={!!errors.name}
-                helperText={errors.name?.message}
-                fullWidth
-                margin="normal"
+    <Dialog
+      open={true}
+      onClose={onCancel}
+      maxWidth="md"
+      fullWidth
+      scroll={scroll}
+      aria-labelledby="scroll-dialog-title"
+      aria-describedby="scroll-dialog-description"
+    >
+      <DialogTitle id="scroll-dialog-title">
+        {initialData?.id ? "Edit Role" : "Add Role"}
+      </DialogTitle>
+      <DialogContent dividers={scroll === "paper"}>
+        <DialogContentText
+          id="scroll-dialog-description"
+          ref={descriptionElementRef}
+          tabIndex={-1}
+        >
+          <Box className="main-container">
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <Controller
+                name="name"
+                control={control}
+                rules={{ required: { value: true, message: "rew" } }}
+                render={({ field }) => (
+                  <InputField
+                    label="name"
+                    {...field}
+                    // error={!!fieldState.error}
+                    // helperText={fieldState.error?.message}
+                    error={!!errors.name}
+                    helperText={errors.name?.message}
+                    fullWidth
+                    margin="normal"
+                  />
+                )}
               />
-            )}
-          />
 
-          <Controller
-            name="displayName"
-            control={control}
-            rules={{ required: "Name is required" }}
-            // register={register("displayName", { required: true })}
-            render={({ field, fieldState }) => (
-              <InputField
-                label="Display Name"
-                {...field}
-                // {...register("displayName", { required: true })}
-                error={!!fieldState.error}
-                helperText={fieldState.error?.message}
-                fullWidth
-                margin="normal"
+              <Controller
+                name="displayName"
+                control={control}
+                rules={{ required: "Name is required" }}
+                // register={register("displayName", { required: true })}
+                render={({ field, fieldState }) => (
+                  <InputField
+                    label="Display Name"
+                    {...field}
+                    // {...register("displayName", { required: true })}
+                    error={!!fieldState.error}
+                    helperText={fieldState.error?.message}
+                    fullWidth
+                    margin="normal"
+                  />
+                )}
               />
-            )}
-          />
 
-          {Object.entries(grouped).map(([group, perms]) => {
-            const name = perms.map((p) => p.name);
-            const allChecked = name.every(
-              (code) => watchedPermissions[`${group}-${code}`]
-            );
-            const someChecked =
-              name.some((code) => watchedPermissions[`${group}-${code}`]) &&
-              !allChecked;
+              {Object.entries(grouped).map(([group, perms]) => {
+                const name = perms.map((p) => p.name);
+                const allChecked = name.every(
+                  (code) => watchedPermissions[`${group}-${code}`]
+                );
+                const someChecked =
+                  name.some((code) => watchedPermissions[`${group}-${code}`]) &&
+                  !allChecked;
 
-            return (
-              <Box key={group} mb={2}>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={allChecked}
-                      indeterminate={someChecked}
-                      onChange={(e) =>
-                        handleGroupCheck(group, e.target.checked, name)
+                return (
+                  <Box key={group} mb={2}>
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={allChecked}
+                          indeterminate={someChecked}
+                          onChange={(e) =>
+                            handleGroupCheck(group, e.target.checked, name)
+                          }
+                        />
+                      }
+                      label={
+                        <Typography fontSize={18} fontWeight={600}>
+                          {group}
+                        </Typography>
                       }
                     />
-                  }
-                  label={
-                    <Typography fontSize={18} fontWeight={600}>
-                      {group}
-                    </Typography>
-                  }
-                />
-                <Box sx={{ display: "flex", flexWrap: "wrap", ml: 4 }}>
-                  {perms.map((perm) => {
-                    const key = `${group}-${perm.name}`;
-                    return (
-                      <Controller
-                        key={key}
-                        name={`permissions.${key}`}
-                        control={control}
-                        render={({ field }) => (
-                          <FormControlLabel
-                            control={
-                              <Checkbox {...field} checked={!!field.value} />
-                            }
-                            label={
-                              <Typography fontSize={16} fontWeight={450}>
-                                {perm.name}
-                              </Typography>
-                            }
-                            sx={{ minWidth: 150 }}
+                    <Box sx={{ display: "flex", flexWrap: "wrap", ml: 4 }}>
+                      {perms.map((perm) => {
+                        const key = `${group}-${perm.name}`;
+                        return (
+                          <Controller
+                            key={key}
+                            name={`permissions.${key}`}
+                            control={control}
+                            render={({ field }) => (
+                              <FormControlLabel
+                                control={
+                                  <Checkbox
+                                    {...field}
+                                    checked={!!field.value}
+                                  />
+                                }
+                                label={
+                                  <Typography fontSize={16} fontWeight={450}>
+                                    {perm.name}
+                                  </Typography>
+                                }
+                                sx={{ minWidth: 150 }}
+                              />
+                            )}
                           />
-                        )}
-                      />
-                    );
-                  })}
-                </Box>
-                <hr />
-              </Box>
-            );
-          })}
-
-          <Box mt={2} textAlign="end" gap={2}>
-            <Button color="error" onClick={handleCancel} className="me-2">
-              Cancel
-            </Button>
-            <Button type="submit" variant="contained" color="primary">
-              {initialData ? "update" : "Submit"}
-            </Button>
+                        );
+                      })}
+                    </Box>
+                    <hr />
+                  </Box>
+                );
+              })}
+            </form>
           </Box>
-        </form>
-      </Box>
+        </DialogContentText>
+      </DialogContent>
+      <DialogActions>
+        <Box mt={2} textAlign="end" gap={2}>
+          <Button color="error" onClick={handleCancel} className="me-2">
+            Cancel
+          </Button>
+          <Button type="submit" variant="contained" color="primary">
+            {initialData ? "update" : "Submit"}
+          </Button>
+        </Box>
+      </DialogActions>
     </Dialog>
   );
 };

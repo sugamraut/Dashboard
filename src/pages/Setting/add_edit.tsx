@@ -1,4 +1,11 @@
-import { Box, Button, TextField } from "@mui/material";
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  TextField,
+} from "@mui/material";
 import { useEffect, useState } from "react";
 import { useAppDispatch } from "../../store/hook";
 import { createSetting, updateSetting } from "../../store/setting/SettingSlice";
@@ -59,66 +66,70 @@ const ADDEDIT = ({ initialData, onSuccess, onCancel }: AddEditProps) => {
       }
       onSuccess();
     } catch (err) {
-      // console.error("Error saving setting:", err);
       toast.error(`Failed to save setting: ${err}`);
     }
   };
 
   return (
-    <Box
-      // sx={{
-      //   maxWidth: 800,
-      //   mx: "auto",
-      //   p: 2,
-      //   bgcolor: "background.paper",
-      //   borderRadius: 2,
-      // }}
-      className="main-container"
-      component="form"
-      onSubmit={handleSubmit}
-    >
-      <TextField
-        label="Name"
-        name="name"
-        onChange={handleInputChange}
-        value={formData.name}
-        margin="normal"
-        fullWidth
-        required
-      />
+    <Dialog open={true} maxWidth="sm" fullWidth>
+      <DialogTitle>
+        {" "}
+        {initialData?.id ? "Edit Setting" : "Add Setting"}
+      </DialogTitle>
+      <DialogContent
+        sx={{
+          "&.MuiDialogContent-root": {
+            padding: "0px",
+          },
+        }}
+      >
+        <hr/>
+        <form className="main-container" onSubmit={handleSubmit}>
+          <TextField
+            label="Name"
+            name="name"
+            onChange={handleInputChange}
+            value={formData.name}
+            margin="normal"
+            fullWidth
+            required
+          />
 
-      <TextField
-        label="Description"
-        name="description"
-        onChange={handleInputChange}
-        value={formData.description}
-        margin="normal"
-        fullWidth
-        required
-      />
+          <TextField
+            label="Description"
+            name="description"
+            onChange={handleInputChange}
+            value={formData.description}
+            margin="normal"
+            fullWidth
+            required
+          />
 
-      <TextField
-        label="Value"
-        name="value"
-        placeholder="Enter the value"
-        multiline
-        minRows={4}
-        onChange={handleInputChange}
-        value={formData.value}
-        margin="normal"
-        fullWidth
-        required
-      />
+          <TextField
+            label="Value"
+            name="value"
+            placeholder="Enter the value"
+            multiline
+            minRows={4}
+            onChange={handleInputChange}
+            value={formData.value}
+            margin="normal"
+            fullWidth
+            required
+          />
+          <hr/>
 
-      <Box mt={2} display="flex" justifyContent="flex-end" gap={2}>
-        <Button variant="outlined" color="error" onClick={onCancel}>
-          Cancel
-        </Button>
-        <Button variant="contained" type="submit" color="primary">
-          {initialData ? "Update" : "Create"}
-        </Button>
-      </Box>
-    </Box>
+          <Box mt={2} display="flex" justifyContent="flex-end" gap={2}>
+            <Button variant="outlined" color="error" onClick={onCancel}>
+              Cancel
+            </Button>
+            <Button variant="contained" type="submit" color="primary">
+              {initialData ? "Update" : "Create"}
+            </Button>
+          </Box>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 };
 

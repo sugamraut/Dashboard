@@ -1,6 +1,7 @@
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import FilterAltOffIcon from "@mui/icons-material/FilterAltOff";
 import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import {
@@ -91,20 +92,20 @@ const Permissions: React.FC = () => {
   //   setOpenDialog(false);
   //   setEditingPermission(null);
   // };
-const handleCloseDialog = () => {
-  setOpenDialog(false);
-  setEditingPermission(null);
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+    setEditingPermission(null);
 
-  dispatch(
-    fetchPermissions({
-      page: page + 1,
-      rowsPerPage,
-      query: searchQuery,
-      sortBy: null,
-      sortOrder: "desc",
-    })
-  );
-};
+    dispatch(
+      fetchPermissions({
+        page: page + 1,
+        rowsPerPage,
+        query: searchQuery,
+        sortBy: null,
+        sortOrder: "desc",
+      })
+    );
+  };
 
   return (
     <Box marginLeft={9} padding={2}>
@@ -185,6 +186,9 @@ const handleCloseDialog = () => {
                       className="action-icon-btn"
                     >
                       <EditIcon />
+                    </IconButton>
+                    <IconButton className="action-icon-btn-delete m-2 p-6" >
+                      <DeleteIcon />
                     </IconButton>
                   </TableCell>
                 </TableRow>

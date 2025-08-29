@@ -102,7 +102,7 @@ export default function BranchesPage() {
         </Stack>
       </Box>
 
-      <TableContainer component={Paper}>
+      <TableContainer >
         <Table>
           <TableHead>
             <TableRow>

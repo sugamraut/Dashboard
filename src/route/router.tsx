@@ -27,6 +27,7 @@ const Logout = React.lazy(() => import("../pages/Logout/logout"));
 const OnlineAccount = React.lazy(
   () => import("../pages/OnlineAccountRequest/onlinerequest")
 );
+const Loading= React.lazy(() => import("../pages/loader"));
 
 const withSuspense = (
   Component: React.LazyExoticComponent<React.ComponentType<any>>
@@ -70,6 +71,7 @@ const router = createBrowserRouter([
           { path: "setting", element: withSuspense(Setting) },
           { path: "logout", element: withSuspense(Logout) },
           { path: "onlineaccount", element: withSuspense(OnlineAccount) },
+          {path: "loader", element: withSuspense(Loading) },
         ],
       },
     ],
