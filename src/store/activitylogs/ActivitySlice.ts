@@ -57,7 +57,7 @@ export const fetchActivityLog = createAsyncThunk<
       toast.error("No auth token found")
     }
     try {
-      const response = await API.get(`/api/v1/logs`, {
+      const response = await API.get(`/logs`, {
         params: {
           page,
           rowsPerPage,

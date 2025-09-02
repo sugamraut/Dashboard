@@ -29,7 +29,7 @@ export const fetchProfile = createAsyncThunk<
   { rejectValue: string }
 >("user/fetchProfile", async (_, { rejectWithValue }) => {
   try {
-    const response = await API.get("/api/v1/users/profile",{headers:{
+    const response = await API.get("/users/profile",{headers:{
       ...getAuthHeader()
     }});
     return response.data;
@@ -46,7 +46,7 @@ export const updateProfile = createAsyncThunk<
   { rejectValue: string }
 >("user/updateProfile", async (formData, { rejectWithValue }) => {
   try {
-    const response = await API.put("/api/v1/users/profile", formData,{headers:{
+    const response = await API.put("/users/profile", formData,{headers:{
       ...getAuthHeader()
     }});
     return response.data;

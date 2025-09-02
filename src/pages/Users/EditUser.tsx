@@ -56,7 +56,7 @@ const EditUser: React.FC<EditUserProps> = ({ open, onClose, userId }) => {
     defaultValues: {
       id: undefined,
       name: "",
-      mobilenumber: "",
+      mobile: "",
       email: "",
       username: "",
       gender: "",
@@ -73,7 +73,7 @@ const EditUser: React.FC<EditUserProps> = ({ open, onClose, userId }) => {
         reset({
           id: user.id || undefined,
           name: user.name || "",
-          mobilenumber: user.mobilenumber || "",
+          mobile: user.mobilenumber || "",
           email: user.email || "",
           username: user.username || "",
           gender: user.gender || "",
@@ -124,9 +124,9 @@ const EditUser: React.FC<EditUserProps> = ({ open, onClose, userId }) => {
             label="Mobile Number"
             fullWidth
             margin="normal"
-            {...register("mobilenumber")}
-            error={!!errors.mobilenumber}
-            helperText={errors.mobilenumber?.message}
+            {...register("mobile")}
+            error={!!errors.mobile}
+            helperText={errors.mobile?.message}
           />
 
           <TextField

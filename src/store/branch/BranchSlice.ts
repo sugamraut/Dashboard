@@ -2,9 +2,7 @@ import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { Status, type StatusType } from "../../globals/status";
 import type { Branch, StateType } from "../../globals/typeDeclaration";
 import type { AppDispatch } from "../store";
-import axios from "axios";
-import { server_Url } from "../../globals/config";
-import { getAuthHeader } from "../../http";
+import API, { getAuthHeader } from "../../http";
 import { toast } from "react-toastify";
 
 interface BranchState {
@@ -78,7 +76,11 @@ export function fetchBranchData() {
   return async function fetchBranchDataThunk(dispatch: AppDispatch) {
     dispatch(setBranchStatus(Status.Loading));
     try {
-      const response = await axios.get(`${server_Url}/api/v1/branches/list`);
+      const response = await API.get(`/branches/list`, {
+        headers: {
+          ...getAuthHeader(),
+        },
+      });
       dispatch(setBranch(response.data.data));
       dispatch(setBranchStatus(Status.Success));
     } catch (error: any) {
@@ -92,9 +94,14 @@ export function fetchBranchById(branchId: number) {
   return async function fetchBranchByIdThunk(dispatch: AppDispatch) {
     dispatch(setBranchStatus(Status.Loading));
     try {
-      const response = await axios.get(
-        `${server_Url}/api/v1/branches/${branchId}`
-      );
+      // const response = await axios.get(
+      //   `${server_Url}/api/v1/branches/${branchId}`
+      // );
+      const response = await API.get(`/branches/${branchId}`, {
+        headers: {
+          ...getAuthHeader(),
+        },
+      });
       dispatch(setBranch([response.data.data]));
       dispatch(setBranchStatus(Status.Success));
     } catch (error: any) {
@@ -118,18 +125,7 @@ export function updateBranch({ id, data }: UpdateBranchPayload) {
       toast.error("No auth token found");
     }
     try {
-      // const response = await axios.patch<Branch>(
-      //   `${server_Url}/api/v1/branches/${id}`,
-      //   data,
-      //   {
-      //     headers: {
-      //       Authorization: `${token}`,
-      //       "Content-Type": "application/json",
-      //       Accept: "application/json",
-      //     },
-      //   }
-      // );
-      const response = await axios.put<Branch>(`/api/v1/branch/${id}`, data, {
+      const response = await API.put<Branch>(`branch/${id}`, data, {
         headers: {
           ...getAuthHeader(),
         },
@@ -149,25 +145,13 @@ export function updateBranch({ id, data }: UpdateBranchPayload) {
 export function createBranch(data: Partial<Branch>) {
   return async function createBranchThunk(dispatch: AppDispatch) {
     dispatch(setBranchStatus(Status.Loading));
-    // const token = localStorage.getItem("jwt");
+
     const token = getAuthHeader();
     if (!token) {
-      dispatch(setBranchError("No auth token found."));
-      return Promise.reject("No token");
+      toast.error("No auth token found");
     }
     try {
-      // const response = await axios.post(
-      //   `${server_Url}/api/v1/branches`,
-      //   data,
-      //   {
-      //     headers: {
-      //       Authorization: `${token}`,
-      //       "Content-Type": "application/json",
-      //       Accept: "application/json",
-      //     },
-      //   }
-      // );
-      const response = await axios.post(`/api/v1/branch`, data, {
+      const response = await API.post(`/branch`, data, {
         headers: {
           ...getAuthHeader(),
         },

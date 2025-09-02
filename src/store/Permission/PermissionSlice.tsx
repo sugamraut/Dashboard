@@ -55,7 +55,7 @@ export const fetchPermissions = createAsyncThunk<
       filters = {},
     } = params;
 
-    const response = await API.get(`/api/v1/permissions`, {
+    const response = await API.get(`/permissions`, {
       params: {
         page,
         rowsPerPage,
@@ -90,7 +90,7 @@ export const fetchPermissionsByGroup = createAsyncThunk<
   { rejectValue: string }
 >("permissions/fetchByGroup", async (_, { rejectWithValue }) => {
   try {
-    const response = await API.get(`/api/v1/permissions/groups`, {
+    const response = await API.get(`/permissions/groups`, {
       headers: {
         ...getAuthHeader(),
       },
@@ -111,7 +111,7 @@ export const addPermission = createAsyncThunk<
   { rejectValue: string }
 >("permissions/add", async (newPermission, { rejectWithValue }) => {
   try {
-    const response = await API.post(`/api/v1/permissions`, newPermission, {
+    const response = await API.post(`/permissions`, newPermission, {
       headers: {
         ...getAuthHeader(),
       },
@@ -132,7 +132,7 @@ export const fetchAllPermissions = createAsyncThunk<
   { rejectValue: string }
 >("permissions/fetchAll", async (_, { rejectWithValue }) => {
   try {
-    const response = await API.get(`/api/v1/permissions/all`, {
+    const response = await API.get(`/permissions/all`, {
       headers: {
         ...getAuthHeader(),
       },
@@ -153,7 +153,7 @@ export const updatePermission = createAsyncThunk<
 >("permissions/update", async (permissionData, { rejectWithValue }) => {
   try {
     const response = await API.put(
-      `/api/v1/permissions/${permissionData.id}`,
+      `/permissions/${permissionData.id}`,
       permissionData,
       {
         headers: {
@@ -176,7 +176,7 @@ export const DeletePermission = createAsyncThunk<
 >("permission/delete", async (permissionData, { rejectWithValue }) => {
   try {
     const response = await API.delete(
-      `/api/v1/permissions/${permissionData.id}`,
+      `//permissions/${permissionData.id}`,
       {
         headers: {
           ...getAuthHeader(),

@@ -36,7 +36,7 @@ export const fetchLogs = createAsyncThunk<LogsResponse, FetchLogsParams>(
   "logs/fetchLogs",
   async (params, { rejectWithValue }) => {
     try {
-      const response = await API.get(`/api/v1/logs`, {
+      const response = await API.get(`/logs`, {
         params: {
           page: params.page ?? 1,
           rowsPerPage: params.rowsPerPage ?? 25,

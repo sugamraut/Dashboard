@@ -41,7 +41,7 @@ export const fetchRoles = createAsyncThunk<
   { rejectValue: string }
 >("role/fetch", async ({ page, rowsPerPage } = {}, { rejectWithValue }) => {
   try {
-    const response = await API.get(`/api/v1/roles`, {
+    const response = await API.get(`/roles`, {
       params: { page, rowsPerPage },
       headers: {
         ...getAuthHeader(),
@@ -78,7 +78,7 @@ export const createRole = createAsyncThunk<
   { rejectValue: string }
 >("roles/create", async (data, { rejectWithValue }) => {
   try {
-    const response = await API.post("/api/v1/roles", data, {
+    const response = await API.post("/roles", data, {
       headers: {
         ...getAuthHeader(),
       },
@@ -97,7 +97,7 @@ export const updateRole = createAsyncThunk<
   { rejectValue: string }
 >("roles/update", async ({ userId, data }, { rejectWithValue }) => {
   try {
-    const response = await API.put(`/api/v1/roles/${userId}`, data, {
+    const response = await API.put(`/roles/${userId}`, data, {
       headers: {
         ...getAuthHeader(),
       },
@@ -116,7 +116,7 @@ export const deletedRole = createAsyncThunk<
   { rejectValue: string }
 >("roles/delete", async ({ userId }, { rejectWithValue }) => {
   try {
-    await API.delete(`/api/v1/roles/${userId}`, {
+    await API.delete(`/roles/${userId}`, {
       headers: {
         ...getAuthHeader(),
       },

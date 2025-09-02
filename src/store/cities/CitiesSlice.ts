@@ -33,7 +33,7 @@ export const fetchAllCities = createAsyncThunk<
   { rejectValue: string }
 >("city/fetchAll", async (_, { rejectWithValue }) => {
   try {
-    const response = await axios.get(`${server_Url}/api/v1/cities/all`);
+    const response = await API.get(`/cities/all`);
     return response.data.data;
   } catch (error: any) {
     return rejectWithValue(error.message || "Failed to fetch all cities");
@@ -52,7 +52,7 @@ export const fetchCityBypaginated = createAsyncThunk<
       if (districtId) filters.districtId = districtId;
       if (search) filters.name = search;
 
-      const response = await API.get(`/api/v1/cities`, {
+      const response = await API.get(`/cities`, {
         params: {
           page,
           rowsPerPage,
@@ -77,7 +77,7 @@ export const updatecity = createAsyncThunk<City, City, { rejectValue: string }>(
   "city/update",
   async (city, { rejectWithValue }) => {
     try {
-      const response = await API.put(`/api/v1/cities/${city.id}`, city, {
+      const response = await API.put(`/cities/${city.id}`, city, {
         headers: {
           ...getAuthHeader(),
         },
@@ -93,7 +93,7 @@ export const createCity = createAsyncThunk<City, City, { rejectValue: string }>(
   "city/create",
   async (city, { rejectWithValue }) => {
     try {
-      const response = await API.post(`/api/v1/cities`, city, {
+      const response = await API.post(`/cities`, city, {
         headers: {
           ...getAuthHeader(),
         },

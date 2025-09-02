@@ -96,7 +96,7 @@ const User = () => {
                 <TableCell className="table-data">{user.name}</TableCell>
                 <TableCell className="table-data">{user.username}</TableCell>
                 <TableCell className="table-data">
-                  {user.mobilenumber}
+                  {user.mobile}
                 </TableCell>
                 <TableCell className="table-data">{user.email}</TableCell>
                 <TableCell className="table-data">

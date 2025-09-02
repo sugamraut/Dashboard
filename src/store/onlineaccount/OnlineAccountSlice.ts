@@ -50,7 +50,7 @@ export const fetchOnlineAccount = createAsyncThunk<
   void
 >("fetch/onlineaccount", async (_, { rejectWithValue }) => {
   try {
-    const response = await API.get(`/api/v1/online-account-requests`, {
+    const response = await API.get(`/online-account-requests`, {
       headers: {
         ...getAuthHeader(),
       },
@@ -71,7 +71,7 @@ export const CreateOnlineRequest = createAsyncThunk<
 >("post.blacklist", async (onlinedata, { rejectWithValue }) => {
   try {
     const response = await API.post(
-      `/api/v1/online-account-requests`,
+      `//online-account-requests`,
       onlinedata,
       {
         headers: {

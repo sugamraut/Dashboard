@@ -19,7 +19,7 @@ export const fetchStates = createAsyncThunk<State[], void, { rejectValue: string
   'states/fetchStates',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await API.get(`/api/v1/states`,{
+      const response = await API.get(`/states`,{
         headers:{
           ...getAuthHeader()
         }

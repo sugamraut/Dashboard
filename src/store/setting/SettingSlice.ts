@@ -44,7 +44,7 @@ export const fetchsetting = createAsyncThunk<
   { rejectValue: string }
 >("setting/fetch", async (FetchLogsParams, { rejectWithValue }) => {
   try {
-    const response = await API.get("api/v1/settings", {
+    const response = await API.get("/settings", {
       params: {
         page: FetchLogsParams.page ?? 1,
         rowPerPage: 25,
@@ -70,7 +70,7 @@ export const fetchSettingById = createAsyncThunk<
   { rejectValue: string }
 >("setting/fetchById", async (id, { rejectWithValue }) => {
   try {
-    const response = await API.get(`api/v1/settings/${id}`, {
+    const response = await API.get(`/settings/${id}`, {
       headers: {
         ...getAuthHeader(),
       },
@@ -89,7 +89,7 @@ export const createSetting = createAsyncThunk<
   { rejectValue: string }
 >("setting/create", async (settingData, { rejectWithValue }) => {
   try {
-    const response = await API.post("api/v1/settings", settingData, {
+    const response = await API.post("/settings", settingData, {
       headers: {
         ...getAuthHeader(),
       },
@@ -110,7 +110,7 @@ export const updateSetting = createAsyncThunk<
   { rejectValue: string }
 >("setting/update", async ({ id, updatedData }, { rejectWithValue }) => {
   try {
-    const response = await API.put(`api/v1/settings/${id}`, updatedData,{
+    const response = await API.put(`/settings/${id}`, updatedData,{
       headers:{
         ...getAuthHeader()
       }

@@ -2,10 +2,21 @@
 import { z } from "zod";
 import { id } from "zod/v4/locales";
 
+export const loginSchema = z.object({
+  username: z.string().min(1, "Username is required"),
+  password: z
+    .string()
+    .min(4, "Password must be at least 4 characters")
+    .max(15, "Password is too long"),
+});
+
+export type LoginFormInputs = z.infer<typeof loginSchema>;
+
 export const userSchema = z
   .object({
+    id: z.number().optional(),
     name: z.string().min(1, "Name is required"),
-    mobilenumber: z.string().min(10, "Mobile number must be at least 10 digits"),
+    mobile: z.string().min(10, "Mobile number must be at least 10 digits"),
     email: z.string().email("Invalid email address"),
     username: z.string().min(1, "Username is required"),
     gender: z.string().nonempty("Gender is required"),
@@ -28,7 +39,6 @@ export const BranchSchema = z.object({
   state: z.string().min(1, "State is required"),
   district: z.string().min(1, "District is required"),
 });
-
 
 
  export const citySchema = z.object({
@@ -62,3 +72,28 @@ export const roleSchema = z.object({
     .array(z.string())
     .min(1, "At least one permission must be selected"),
 });
+
+export const districtSchema = z.object({
+  name: z.string().min(1, "District name is required"),
+  nameNp: z.string().optional(),
+  state: z.string().min(1, "State is required"),
+});
+
+export type DistrictFormData = z.infer<typeof districtSchema>;
+
+export const stateSchema = z.object({
+  name: z.string().min(1, "State name is required"),
+  nameNp: z.string().optional(),
+  code: z.string().min(1, "State code is required"),
+});
+
+export type StateFormData = z.infer<typeof stateSchema>;
+
+export const settingSchema = z.object({
+  id: z.number().optional(),
+  name: z.string().min(1, "Name is required"),
+  value: z.string().min(1, "Value is required"),
+  description: z.string().optional(),
+});
+
+export type SettingFormData = z.infer<typeof settingSchema>;

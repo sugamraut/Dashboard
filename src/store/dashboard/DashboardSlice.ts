@@ -14,12 +14,12 @@ interface dashboardState {
   error: string | null;
 }
 
-interface FetchParams {
-  page: number;
-  rowsPerPage: number;
-  sortBy: string;
-  sortOrder: "asc" | "desc";
-}
+// interface FetchParams {
+//   page: number;
+//   rowsPerPage: number;
+//   sortBy: string;
+//   sortOrder: "asc" | "desc";
+// }
 const initialState: dashboardState = {
   list: [],
   loading: false,
@@ -39,7 +39,7 @@ export const fetchdashboarddata = createAsyncThunk<
     { rejectWithValue }
   ) => {
     try {
-      const response = await API.get(`/api/v1/dashboard-data`,{
+      const response = await API.get(`/dashboard-data`,{
         headers: {
           ...getAuthHeader(),
         },

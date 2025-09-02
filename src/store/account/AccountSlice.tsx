@@ -71,7 +71,7 @@ export const fetchAccountTypes = createAsyncThunk<
       toast.error("No auth token found")
     }
     try {
-      const resp = await API.get<AccountTypesState>(`/api/v1/account-types`, {
+      const resp = await API.get<AccountTypesState>(`/account-types`, {
         params: { page, rowsPerPage, sortBy, sortOrder },
         headers:{
           ...getAuthHeader()
@@ -92,7 +92,7 @@ export const fetchAccountTypeById = createAsyncThunk<
   { rejectValue: string }
 >("accountTypes/fetchById", async (id, { rejectWithValue }) => {
   try {
-    const resp = await API.get(`${server_Url}/api/v1/account-types/${id}`);
+    const resp = await API.get(`/account-types/${id}`);
     return resp.data.data as AccountType;
   } catch (err: any) {
     return rejectWithValue(err.message || "Failed to fetch account type");
@@ -118,7 +118,7 @@ export const updateAccountType = createAsyncThunk<
     };
 
     const resp = await API.put(
-      `${server_Url}/api/v1/account-types/${accountType.id}`,
+      `/account-types/${accountType.id}`,
       payload,{
         headers: {
           ...getAuthHeader(),
@@ -138,12 +138,18 @@ export const deleteAccountType = createAsyncThunk<
   { rejectValue: string }
 >("accountTypes/delete", async (id, { rejectWithValue }) => {
   try {
-    await axios.delete(`${server_Url}/api/v1/account-types/${id}`,{
-        headers: {
-          ...getAuthHeader(),
-        },
-      });
-    return id;
+    // await axios.delete(`/account-types/${id}`,{
+    //     headers: {
+    //       ...getAuthHeader(),
+    //     },
+    //   });
+    const response =await axios.delete(`/account-types/${id}`,{
+      headers:{
+        ...getAuthHeader()
+      }
+    })
+    return response.data.data
+  
   } catch (error: any) {
     return rejectWithValue(error.message || "Failed to delete account type");
   }
@@ -158,7 +164,7 @@ export const uploadFile = createAsyncThunk<
     const formData = new FormData();
     formData.append("files", file);
 
-    const resp = await API.post(`/api/v1/file-upload/ACCOUNT-TYPE`, formData, {
+    const resp = await API.post(`/file-upload/ACCOUNT-TYPE`, formData, {
       headers: { "Content-Type": "multipart/form-data", ...getAuthHeader()},
     });
     return resp.data as UploadedFile;
@@ -181,7 +187,7 @@ export const createAccountTypeWithUpload = createAsyncThunk<
 
       const uploaded = await dispatch(uploadFile(accountType.file)).unwrap();
 
-      const resp = await API.post(`/api/v1/account-types`, {
+      const resp = await API.post(`/account-types`, {
         ...accountType,
         imageUrl: String(uploaded.id),
       },{

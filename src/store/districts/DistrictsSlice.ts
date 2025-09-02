@@ -1,6 +1,4 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import axios from "axios";
-import { server_Url } from "../../globals/config";
 import type { DistrictType } from "../../globals/typeDeclaration";
 import { Status, type StatusType } from "../../globals/status";
 import type { AppDispatch } from "../store";
@@ -96,7 +94,7 @@ export const fetchDistrictAsync = (
     }
 
     try {
-      const response = await API.get(`/api/v1/districts`, {
+      const response = await API.get(`/districts`, {
         params: {
           page,
           rowsPerPage,
@@ -147,7 +145,7 @@ export const updateDistrictAsync = ({
     }
 
     try {
-      const response = await API.put(`/api/v1/districts/${id}`, data, {
+      const response = await API.put(`/districts/${id}`, data, {
         headers: {
           ...getAuthHeader(),
         },
@@ -173,7 +171,7 @@ export const fetchAllDistrictsAsync = () => {
     dispatch(setStatus(Status.Loading));
 
     try {
-      const response = await API.get(`/api/v1/districts/all`, {
+      const response = await API.get(`/districts/all`, {
         headers: {
           ...getAuthHeader(),
         },
@@ -203,7 +201,7 @@ export const fetchDistrictsByStateIdAsync = (
 
     try {
       const response = await API.get(
-        `/api/v1/districts/state/${stateId}?page=${page}&limit=${limit}`,
+        `/districts/state/${stateId}?page=${page}&limit=${limit}`,
         {
           headers: {
             ...getAuthHeader(),
@@ -235,8 +233,8 @@ export const fetchDistrictByIdAsync = (districtId: number) => {
     dispatch(setStatus(Status.Loading));
 
     try {
-      const response = await axios.get<DistrictType>(
-        `${server_Url}/api/v1/districts/${districtId}`,
+      const response = await API.get<DistrictType>(
+        `/districts/${districtId}`,
         {
           headers: {
             ...getAuthHeader(),

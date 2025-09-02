@@ -29,10 +29,9 @@ export const fetchAllUsers = createAsyncThunk(
   "users/fetchAll",
   async (_, { rejectWithValue }) => {
     try {
-      const token = localStorage.getItem("jwt");
-      const response = await axios.get(`${server_Url}/api/v1/users`, {
+      const response = await API.get(`/users`, {
         headers: {
-          Authorization: `Bearer ${token}`,
+          ...getAuthHeader(),
         },
       });
 
@@ -60,7 +59,7 @@ export const fetchUserById = createAsyncThunk(
   "users/fetchById",
   async (userId: number, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`${server_Url}/api/v1/users/${userId}`);
+      const response = await API.get(`/users/${userId}`);
       return response.data.data;
     } catch (error: any) {
       return rejectWithValue(error?.message || "Failed to fetch user");
@@ -73,7 +72,7 @@ export const updateUser = createAsyncThunk<
   { rejectValue: string }
 >("users/update", async (Profile, { rejectWithValue }) => {
   try {
-    const response = await API.put(`/api/v1/users/${Profile.id}`, Profile, {
+    const response = await API.put(`/users/${Profile.id}`, Profile, {
       headers: {
         ...getAuthHeader(),
       },
@@ -88,8 +87,8 @@ export const deleteUser = createAsyncThunk(
   "users/delete",
   async (userId: number, { rejectWithValue }) => {
     try {
-      const response = await axios.delete(
-        `${server_Url}/api/v1/users/${userId}`,
+      const response = await API.delete(
+        `/users/${userId}`,
         {
           headers: {
             ...getAuthHeader(),
