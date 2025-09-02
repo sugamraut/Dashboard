@@ -27,14 +27,13 @@ import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 
 import dayjs, { Dayjs } from "dayjs";
 
-
 const ScannedLog = () => {
   const dispatch = useAppDispatch();
 
   const { data, metaData, loading, error } = useAppSelector(
     (state) => state.scannedLog
   );
-const [selectedDate, setSelectedDate] = useState<Dayjs | null>(null);
+  const [selectedDate, setSelectedDate] = useState<Dayjs | null>(null);
 
   // const [selectedDate, setSelectedDate] = useState(null);
   const [page, setPage] = useState(0);
@@ -56,22 +55,22 @@ const [selectedDate, setSelectedDate] = useState<Dayjs | null>(null);
   //     })
   //   );
   // };
-const loadLogs = () => {
-  dispatch(
-    fetchLogs({
-      page: page + 1,
-      rowsPerPage,
-      sortBy: null,
-      sortOrder: "desc",
-      query: "",
-      filters: selectedDate
-        ? {
-            date: selectedDate.format("YYYY-MM-DD"), 
-          }
-        : undefined,
-    })
-  );
-};
+  const loadLogs = () => {
+    dispatch(
+      fetchLogs({
+        page: page + 1,
+        rowsPerPage,
+        sortBy: null,
+        sortOrder: "desc",
+        query: "",
+        filters: selectedDate
+          ? {
+              date: selectedDate.format("YYYY-MM-DD"),
+            }
+          : undefined,
+      })
+    );
+  };
 
   useEffect(() => {
     loadLogs();
@@ -105,7 +104,7 @@ const loadLogs = () => {
         </Typography>
 
         <Box display="flex" alignItems="center" gap={1}>
-          <LocalizationProvider dateAdapter={AdapterDayjs} >
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DemoContainer
               components={["DatePicker"]}
               sx={{
@@ -113,17 +112,21 @@ const loadLogs = () => {
                 //   maxWidth: "500px",
                 //   width: "500px",
                 // },
-                  " &.MuiPickersOutlinedInput-sectionsContainer ": {
-                    width: "140px",
-                  },
-             
+                " &.MuiPickersOutlinedInput-sectionsContainer ": {
+                  width: "200px",
+                  padding: " 12.5px 0px 12.5px 0px",
+                },
+               
+                // "MuiPickersOutlinedInput-sectionsContainer"
               }}
             >
               <DatePicker
                 label="By Date"
                 value={selectedDate}
                 onChange={(newValue) => setSelectedDate(newValue)}
-                
+                sx={{ " &.MuiPickersTextField-root": {
+                  backgroundColor: "#0000000d",
+                },}}
               />
             </DemoContainer>
           </LocalizationProvider>

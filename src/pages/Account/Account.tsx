@@ -128,6 +128,9 @@ const AccountPage: React.FC = () => {
               setSearchQuery(e.target.value);
               setPage(0);
             }}
+            sx={{"& .MuiOutlinedInput-root": {
+              backgroundColor: "#0000000d",
+            }}}
           />
           <IconButton color="primary" onClick={handleAdd}>
             <AddCircleIcon />

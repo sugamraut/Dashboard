@@ -9,7 +9,6 @@ import {
   DialogTitle,
 } from "@mui/material";
 import { useForm, Controller } from "react-hook-form";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { useAppDispatch, useAppSelector } from "../../store/hook";
@@ -21,6 +20,10 @@ import InputField from "../../components/Input_field";
 
 import type { DistrictType } from "../../globals/typeDeclaration";
 import { toast } from "react-toastify";
+import {
+  districtSchema,
+  type DistrictFormData,
+} from "../../globals/ZodValidation";
 
 interface EditDistrictFormProps {
   initialData?: Partial<DistrictType> & {
@@ -28,14 +31,6 @@ interface EditDistrictFormProps {
   };
   onClose?: () => void;
 }
-
-const schema = z.object({
-  name: z.string().min(1, "District name is required"),
-  nameNp: z.string().optional(),
-  state: z.string().min(1, "State is required"),
-});
-
-type FormValues = z.infer<typeof schema>;
 
 const EditDistrictForm: React.FC<EditDistrictFormProps> = ({
   initialData = {},
@@ -50,8 +45,8 @@ const EditDistrictForm: React.FC<EditDistrictFormProps> = ({
     control,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<FormValues>({
-    resolver: zodResolver(schema),
+  } = useForm<DistrictFormData>({
+    resolver: zodResolver(districtSchema),
     defaultValues: {
       name: initialData?.name || "",
       nameNp: initialData?.nameNp || "",
@@ -76,7 +71,7 @@ const EditDistrictForm: React.FC<EditDistrictFormProps> = ({
       });
   }, [districts]);
 
-  const onSubmit = async (data: FormValues) => {
+  const onSubmit = async (data: DistrictFormData) => {
     if (!initialData?.id) return;
 
     try {
@@ -94,15 +89,17 @@ const EditDistrictForm: React.FC<EditDistrictFormProps> = ({
 
       onClose?.();
     } catch (err) {
-
-      toast.error(err?.toString() || "District update failed")
+      toast.error(err?.toString() || "District update failed");
     }
   };
 
   return (
-    <Dialog open={true} onClose={onClose} maxWidth="md" fullWidth  >
-      <DialogTitle> {initialData.id?"Edit District ":"Add District"}</DialogTitle>
-      <form  onSubmit={handleSubmit(onSubmit)} noValidate className="p-3">
+    <Dialog open={true} onClose={onClose} maxWidth="md" fullWidth>
+      <DialogTitle>
+        {" "}
+        {initialData.id ? "Edit District " : "Add District"}
+      </DialogTitle>
+      <form onSubmit={handleSubmit(onSubmit)} noValidate className="p-3">
         {apiError && <Alert severity="error">{apiError}</Alert>}
 
         <Controller

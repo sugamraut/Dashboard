@@ -140,7 +140,12 @@ export default function DistrictPage() {
   return (
     <Box marginLeft={10} padding={2}>
       <Box className="header">
-        <Typography variant="h5" fontWeight="bold" paddingBottom={2} sx={{color: "#043ba0"}}>
+        <Typography
+          variant="h5"
+          fontWeight="bold"
+          paddingBottom={2}
+          sx={{ color: "#043ba0" }}
+        >
           Districts
         </Typography>
 
@@ -156,13 +161,23 @@ export default function DistrictPage() {
             onChange={handleStateFilterChange}
             isOptionEqualToValue={(option, value) => option.id === value?.id}
             renderInput={(params) => (
-              <TextField {...params} label="Filter by State" />
+              <TextField
+                {...params}
+                label="Filter by State"
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    backgroundColor: "#0000000d",
+                  },
+                }}
+              />
             )}
           />
 
           <TextField
             size="small"
-            sx={{ minWidth: 250 }}
+            sx={{ minWidth: 250,"& .MuiOutlinedInput-root": {
+                          backgroundColor: "#0000000d",
+                          } }}
             label="Search by District Name"
             value={search}
             onChange={(e) => setSearch(e.target.value)}

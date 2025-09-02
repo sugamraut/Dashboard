@@ -18,6 +18,7 @@ import { useEffect, useState, useMemo } from "react";
 import { fetchActivityLog } from "../../store/activitylogs/ActivitySlice";
 import ClearIcon from "@mui/icons-material/FilterAltOff";
 import RefreshIcon from "@mui/icons-material/Refresh";
+import { red } from "@mui/material/colors";
 
 const ActivityLog = () => {
   const dispatch = useAppDispatch();
@@ -162,7 +163,18 @@ const ActivityLog = () => {
             onChange={(_, newValue) =>
               setSelectedUser(newValue?.username ?? null)
             }
-            sx={{ width: 250 }}
+            sx={{
+              width: 200,
+              "& .MuiInputBase-root,.MuiOutlinedInput-root ": {
+                // FontFace: "Lato",
+                fontFamily: "Lato",
+                backgroundColor: "#0000000d",
+              },
+              "& .MuiOutlinedInput-root":{
+                padding:"4.5px"
+              }
+              
+            }}
             renderInput={(params) => (
               <TextField {...params} label="Filter by User" />
             )}
@@ -180,7 +192,16 @@ const ActivityLog = () => {
               setSelectedRole(newValue?.value ?? null);
               setPage(0);
             }}
-            sx={{ width: 250 }}
+            sx={{
+              width: 200,
+              "& .MuiInputBase-root,.MuiOutlinedInput-root ": {
+                fontFamily: "Lato",
+                backgroundColor: "#0000000d",
+              },
+              "& .MuiOutlinedInput-root":{
+                padding:"4.5px"
+              }
+            }}
             renderInput={(params) => (
               <TextField {...params} label="Filter by Role" />
             )}
@@ -190,6 +211,19 @@ const ActivityLog = () => {
             size="medium"
             placeholder="Search by name or group"
             margin="normal"
+            sx={{
+              "& .MuiInputBase-root,.MuiOutlinedInput-root ": {
+                fontFamily: "Lato",
+                width: 200,
+                backgroundColor: "#0000000d",
+              
+              },
+              "& .MuiOutlinedInput-input": {
+                padding: "12px 6px",
+              },
+            }}
+           
+            label="Search"
             value={searchQuery}
             onChange={(e) => {
               setSearchQuery(e.target.value);

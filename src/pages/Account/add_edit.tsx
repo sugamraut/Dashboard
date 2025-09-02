@@ -2,7 +2,6 @@ import { useEffect, useRef, useState, type ChangeEvent } from "react";
 import {
   Box,
   IconButton,
-  TextField,
   Typography,
   Divider,
   Stack,
@@ -23,6 +22,7 @@ import {
 } from "../../store/account/AccountSlice";
 import { toast } from "react-toastify";
 import Text_editor from "../../components/Text_editor";
+import InputField from "../../components/Input_field";
 
 const VisuallyHiddenInput = styled("input")`
   clip: rect(0 0 0 0);
@@ -171,28 +171,31 @@ const AddEditPage = ({
 
   return (
     <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate>
-      <TextField
+      <InputField
         label="Title"
         fullWidth
         required
+        value={getValues("title")}
         margin="normal"
         {...register("title", { required: "Title is required" })}
         error={!!errors.title}
         helperText={errors.title?.message}
       />
-      <TextField
+      <InputField
         label="Code"
         fullWidth
+        value={getValues("code")}
         required
         margin="normal"
         {...register("code", { required: "Code is required" })}
         error={!!errors.code}
         helperText={errors.code?.message}
       />
-      <TextField
+      <InputField
         label="Interest"
         fullWidth
         required
+        value={getValues("interest")}
         margin="normal"
         {...register("interest", { required: "Interest is required" })}
         error={!!errors.interest}
@@ -207,10 +210,11 @@ const AddEditPage = ({
 
       <Text_editor />
 
-      <TextField
+      <InputField
         label="Minimum Balance"
         fullWidth
         required
+        value={getValues("minimumblance")}
         margin="normal"
         {...register("minimumblance", {
           required: "Minimum Balance is required",

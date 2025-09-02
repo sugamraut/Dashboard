@@ -11,7 +11,6 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Paper,
 } from "@mui/material";
 import FilterAltOffIcon from "@mui/icons-material/FilterAltOff";
 import EditIcon from "@mui/icons-material/Edit";
@@ -62,7 +61,13 @@ const User = () => {
         </Typography>
 
         <Stack direction="row" spacing={2}>
-          <TextField label="Search" size="small" />
+          <TextField label="Search" size="small" 
+          sx={{
+            "& .MuiOutlinedInput-root": {
+              backgroundColor: "#0000000d",
+            }
+          }}
+          />
           <IconButton color="error">
             <FilterAltOffIcon />
           </IconButton>
@@ -72,7 +77,7 @@ const User = () => {
         </Stack>
       </Box>
 
-      <TableContainer component={Paper}>
+      <TableContainer >
         <Table>
           <TableHead>
             <TableRow>

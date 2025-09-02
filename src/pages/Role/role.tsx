@@ -11,10 +11,6 @@ import {
   TableRow,
   TextField,
   Typography,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  type DialogProps,
 } from "@mui/material";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import FilterAltOffIcon from "@mui/icons-material/FilterAltOff";
@@ -24,27 +20,29 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../store/store";
 import { useAppDispatch } from "../../store/hook";
-import { fetchRoles } from "../../store/role/RoleSlice";
+import { deletedRole, fetchRoles } from "../../store/role/RoleSlice";
 import ADDEDIT from "./add_edit";
-import React from "react";
 
 function RolePage() {
   const dispatch = useAppDispatch();
   const { list } = useSelector((state: RootState) => state.roles);
-  const [scroll, setScroll] = React.useState<DialogProps["scroll"]>("paper");
 
   const [openDialog, setOpenDialog] = useState(false);
   const [editData, setEditData] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState(searchQuery);
 
-  const handleClickOpen = (scrollType: DialogProps["scroll"]) => () => {
-    setOpenDialog(true);
-    setEditData(null);
-    setScroll(scrollType);
-  };
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+    }, 500);
+
+    return () => clearTimeout(handler);
+  }, [searchQuery]);
 
   useEffect(() => {
     dispatch(fetchRoles({ page: 1, rowsPerPage: 10 }));
-  }, [dispatch]);
+  }, [dispatch, debouncedSearchQuery]);
 
   const handleOpenAdd = () => {
     setEditData(null);
@@ -61,6 +59,29 @@ function RolePage() {
     setEditData(null);
   };
 
+  const handleCopyRole = (role: any) => {
+    const copiedRole = {
+      ...role,
+      id: undefined,
+      name: `${role.name} (Copy)`,
+    };
+
+    setEditData(copiedRole);
+    setOpenDialog(true);
+  };
+  const handleDelete = (roleId: number) => {
+    if (window.confirm("Are you sure you want to delete this role?")) {
+      dispatch(deletedRole({ userId: roleId }))
+        .unwrap()
+        .then(() => {
+          dispatch(fetchRoles({ page: 1, rowsPerPage: 10 }));
+        })
+        .catch((error) => {
+          alert(`Delete failed: ${error}`);
+        });
+    }
+  };
+
   return (
     <Box marginLeft={10} padding={2}>
       <Box className="header">
@@ -74,7 +95,17 @@ function RolePage() {
           Roles
         </Typography>
         <Stack direction="row" spacing={2} alignItems="center">
-          <TextField size="small" placeholder="Search" />
+          <TextField
+            size="small"
+            placeholder="Search"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                backgroundColor: "#0000000d",
+              },
+            }}
+          />
           <IconButton color="error">
             <FilterAltOffIcon />
           </IconButton>
@@ -102,6 +133,7 @@ function RolePage() {
                     <IconButton
                       color="primary"
                       className="action-icon-btn me-2 copy-color p-2 "
+                      onClick={() => handleCopyRole(role)}
                     >
                       <FileCopyIcon />
                     </IconButton>
@@ -115,6 +147,7 @@ function RolePage() {
                     <IconButton
                       color="error"
                       className="action-icon-btn-delete me-2"
+                      onClick={() => handleDelete(role.id)}
                     >
                       <DeleteIcon />
                     </IconButton>

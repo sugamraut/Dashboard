@@ -15,7 +15,6 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  TextField,
   Typography,
 } from "@mui/material";
 
@@ -43,31 +42,29 @@ const OnlineAccountRequest = () => {
   useEffect(() => {
     dispatch(fetchOnlineAccount());
   });
-  const top100Films = [
-    { label: "The Shawshank Redemption", year: 1994 },
-    { label: "The Godfather", year: 1972 },
-    { label: "The Godfather: Part II", year: 1974 },
-    { label: "The Dark Knight", year: 2008 },
-    { label: "12 Angry Men", year: 1957 },
-    { label: "Schindler's List", year: 1993 },
-    { label: "Pulp Fiction", year: 1994 },
-    {
-      label: "The Lord of the Rings: The Return of the King",
-      year: 2003,
-    },
-    { label: "The Good, the Bad and the Ugly", year: 1966 },
-    { label: "Fight Club", year: 1999 },
-    {
-      label: "The Lord of the Rings: The Fellowship of the Ring",
-      year: 2001,
-    },
-    {
-      label: "Star Wars: Episode V - The Empire Strikes Back",
-      year: 1980,
-    },
-  ];
-  // console.log("list", list);
-  // const state=useMemo()
+  // const top100Films = [
+  //   { label: "The Shawshank Redemption", year: 1994 },
+  //   { label: "The Godfather", year: 1972 },
+  //   { label: "The Godfather: Part II", year: 1974 },
+  //   { label: "The Dark Knight", year: 2008 },
+  //   { label: "12 Angry Men", year: 1957 },
+  //   { label: "Schindler's List", year: 1993 },
+  //   { label: "Pulp Fiction", year: 1994 },
+  //   {
+  //     label: "The Lord of the Rings: The Return of the King",
+  //     year: 2003,
+  //   },
+  //   { label: "The Good, the Bad and the Ugly", year: 1966 },
+  //   { label: "Fight Club", year: 1999 },
+  //   {
+  //     label: "The Lord of the Rings: The Fellowship of the Ring",
+  //     year: 2001,
+  //   },
+  //   {
+  //     label: "Star Wars: Episode V - The Empire Strikes Back",
+  //     year: 1980,
+  //   },
+  // ];
 
   return (
     <Box marginLeft={10} padding={2}>
@@ -83,7 +80,7 @@ const OnlineAccountRequest = () => {
           variant="h5"
           fontWeight="bold"
           paddingBottom={2}
-          sx={{ color: "#043ba0" ,fontFamily:"lato"}}
+          sx={{ color: "#043ba0", fontFamily: "lato" }}
         >
           Online Account Request
         </Typography>
@@ -133,9 +130,13 @@ const OnlineAccountRequest = () => {
             <DemoContainer
               components={["DatePicker"]}
               sx={{
-                bottom: "4px",
-                "& .MuiPickersTextField-root": {
-                  maxWidth: "200px",
+                // bottom: "4px",
+                // "& .MuiPickersTextField-root": {
+                //   maxWidth: "200px",
+                // }
+                "& .MuiOutlinedInput-root ": {
+                  width: "200px",
+                  padding: " 12.5px 0px 12.5px 0px",
                 },
               }}
             >
@@ -143,37 +144,26 @@ const OnlineAccountRequest = () => {
                 label="Basic date picker"
                 sx={{
                   bottom: "4px",
+                  "& .MuiOutlinedInput-root": {
+                    backgroundColor: "#0000000d",
+                  },
+                  " & .MuiPickersOutlinedInput-sectionsContainer": {
+                    width: "200px",
+                    padding: " 12.5px 0px 12.5px 0px",
+                    backgroundColor: "red",
+                  },
                 }}
               />
             </DemoContainer>
           </LocalizationProvider>
 
-          {/* <TextField
-            size="medium"
+          <FormControl
             sx={{
-              "& .MuiOutlinedInput-root": {
-                paddingRight: "0px",
-                maxWidth: "200px",
-              },
-              "& .MuiTextField-root": {
-                minWidth: 0,
-                // minWidth:"0px"
-              },
+              m: 1,
+              width: "200px",
             }}
-            label="Search "
-            placeholder="Type a district name"
-            slotProps={
-              {
-                // endAdornment: (
-                //   <InputAdornment position="start">
-                //     <SearchIcon />
-                //   </InputAdornment>
-                // ),
-              }
-            }
-          /> */}
-
-          <FormControl sx={{ m: 1, width: "25ch" }} variant="outlined">
+            variant="outlined"
+          >
             <InputLabel htmlFor="outlined-adornment-password">
               Search
             </InputLabel>
@@ -187,6 +177,12 @@ const OnlineAccountRequest = () => {
                 </InputAdornment>
               }
               label="Password"
+              sx={{
+                " & .MuiOutlinedInput-input": {
+                  padding: "12.5px 0px 12.5px 0px",
+                  backgroundColor: "#0000000d",
+                },
+              }}
             />
           </FormControl>
           <IconButton color="error">
@@ -198,11 +194,14 @@ const OnlineAccountRequest = () => {
         <Table size="small">
           <TableHead>
             <TableRow>
-              <TableCell className="table-header" sx={{
-                "& .MuiFormControl-root":{
-                  verticalAlign:"inherit",
-                }
-              }}>
+              <TableCell
+                className="table-header"
+                sx={{
+                  "& .MuiFormControl-root": {
+                    verticalAlign: "inherit",
+                  },
+                }}
+              >
                 <FormControl component="fieldset">
                   <FormControlLabel
                     value="end"

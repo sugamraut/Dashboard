@@ -95,6 +95,20 @@ export const updateRole = createAsyncThunk<
   }
 });
 
+export const deletedRole = createAsyncThunk<
+  void,
+  { userId: number },
+  { rejectValue: string }
+>("roles/delete", async ({ userId }, { rejectWithValue }) => {
+  try {
+    await API.delete(`/api/v1/roles/${userId}`);
+  } catch (error: any) {
+    return rejectWithValue(
+      error.response?.data?.message || "Failed to delete role"
+    );
+  }
+});
+
 const rolesSlice = createSlice({
   name: "roles",
   initialState,
@@ -162,6 +176,20 @@ const rolesSlice = createSlice({
       .addCase(updateRole.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || "Failed to update role";
+      })
+      .addCase(deletedRole.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(deletedRole.fulfilled, (state, action: PayloadAction<any>) => {
+        state.loading = false;
+        const id = action.payload;
+        state.list = state.list.filter((role) => role.id !== id);
+        state.fullList = state.fullList.filter((role) => role.id !== id);
+      })
+      .addCase(deletedRole.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || "Failed to delete role";
       });
   },
 });

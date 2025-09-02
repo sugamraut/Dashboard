@@ -128,6 +128,11 @@ const Permissions: React.FC = () => {
               setSearchQuery(e.target.value);
               setPage(0);
             }}
+            sx={{
+              "& .MuiOutlinedInput-input ":{
+                backgroundColor:"#0000000d",
+              }
+            }}
           />
 
           <IconButton

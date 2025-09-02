@@ -8,7 +8,6 @@ import {
   TableRow,
   TableCell,
   TableBody,
-  Paper,
   IconButton,
   Typography,
   TextField,
@@ -127,13 +126,17 @@ export default function CityPage() {
             }}
             isOptionEqualToValue={(option, value) => option.id === value?.id}
             renderInput={(params) => (
-              <TextField {...params} label="Filter by District" />
+              <TextField {...params} label="Filter by District" sx={{ "& .MuiOutlinedInput-root": {
+              backgroundColor: "#0000000d",
+              }}}/>
             )}
           />
 
           <TextField
             size="small"
-            sx={{ minWidth: 250 }}
+            sx={{ minWidth: 250,"& .MuiOutlinedInput-root": {
+              backgroundColor: "#0000000d",
+              } }}
             label="Search by City Name"
             placeholder="Type a city name"
             value={search}
@@ -141,6 +144,7 @@ export default function CityPage() {
             onKeyDown={(e) => {
               if (e.key === "Enter") setPage(0);
             }}
+          
           />
 
           <IconButton
@@ -167,7 +171,7 @@ export default function CityPage() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {cityList.length === 0 ? (
+            {sortedCityList.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={5} align="center">
                   No cities found

@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import {
   Autocomplete,
@@ -24,6 +23,7 @@ import { createUser, updateUser } from "../../store/user/UserSlice";
 import { fetchAllRole } from "../../store/role/RoleSlice";
 import { useAppDispatch, useAppSelector } from "../../store/hook";
 import { userSchema, type UserFormData } from "../../globals/ZodValidation";
+import InputField from "../../components/Input_field";
 
 interface EditUserProps {
   open: boolean;
@@ -36,7 +36,9 @@ const genderOptions = ["Male", "Female", "Other"];
 const EditUser: React.FC<EditUserProps> = ({ open, onClose, userId }) => {
   const dispatch = useAppDispatch();
   const users = useSelector((state: RootState) => state.User.list || []);
-  const Rolelist = useAppSelector((state: RootState) => state.roles?.fullList ?? []);
+  const Rolelist = useAppSelector(
+    (state: RootState) => state.roles?.fullList ?? []
+  );
   const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
@@ -52,6 +54,7 @@ const EditUser: React.FC<EditUserProps> = ({ open, onClose, userId }) => {
   } = useForm<UserFormData>({
     resolver: zodResolver(userSchema),
     defaultValues: {
+      id: undefined,
       name: "",
       mobilenumber: "",
       email: "",
@@ -68,6 +71,7 @@ const EditUser: React.FC<EditUserProps> = ({ open, onClose, userId }) => {
       const user = users.find((u) => u.id === userId);
       if (user) {
         reset({
+          id: user.id || undefined,
           name: user.name || "",
           mobilenumber: user.mobilenumber || "",
           email: user.email || "",
@@ -85,12 +89,12 @@ const EditUser: React.FC<EditUserProps> = ({ open, onClose, userId }) => {
 
   const togglePasswordVisibility = () => setShowPassword((prev) => !prev);
 
-  const onSubmit = async (data: UserFormData) => {
-    const { confirmPassword, ...payload } = data;
+  const onSubmit = async (data: Partial<UserFormData>) => {
+    const { ...payload } = data;
 
     try {
       if (userId !== null) {
-        await dispatch(updateUser({ id: userId, ...payload })).unwrap();
+        await dispatch(updateUser({ userId: userId, data: payload })).unwrap();
       } else {
         await dispatch(createUser(payload)).unwrap();
       }
@@ -134,13 +138,44 @@ const EditUser: React.FC<EditUserProps> = ({ open, onClose, userId }) => {
             helperText={errors.email?.message}
           />
 
-          <TextField
+          <Controller
+          name="email"
+          control={control}
+          render={({field})=>(
+            <InputField
+            label="Email"
+            fullWidth
+            margin="normal"
+            {...field}
+            error={!!errors.email}
+            helperText={errors.email?.message}
+          />   
+          )}  
+          />
+
+          {/* <InputField
             label="Username"
             fullWidth
+            
             margin="normal"
             {...register("username")}
             error={!!errors.username}
             helperText={errors.username?.message}
+          /> */}
+          <Controller
+          name="username"
+          control={control}
+          render={({field})=>(
+            <InputField
+            label="Username"
+            fullWidth
+            margin="normal"
+            {...field}
+            error={!!errors.username}
+            helperText={errors.username?.message}
+          />   
+          )}
+        
           />
 
           <Controller
@@ -202,7 +237,9 @@ const EditUser: React.FC<EditUserProps> = ({ open, onClose, userId }) => {
               label="Password"
               error={!!errors.password}
             />
-            <p style={{ color: "red", margin: 0 }}>{errors.password?.message}</p>
+            <p style={{ color: "red", margin: 0 }}>
+              {errors.password?.message}
+            </p>
           </FormControl>
 
           <FormControl fullWidth variant="outlined" margin="normal">
@@ -231,7 +268,11 @@ const EditUser: React.FC<EditUserProps> = ({ open, onClose, userId }) => {
         <Button onClick={onClose} color="error">
           Cancel
         </Button>
-        <Button onClick={handleSubmit(onSubmit)} variant="contained" color="primary">
+        <Button
+          onClick={handleSubmit(onSubmit)}
+          variant="contained"
+          color="primary"
+        >
           Save
         </Button>
       </DialogActions>

@@ -17,6 +17,8 @@ import { fetchStates } from "../../store/state/StateSlice";
 import { createCity, updatecity } from "../../store/cities/CitiesSlice";
 import { useAppDispatch, useAppSelector } from "../../store/hook";
 import { citySchema } from "../../globals/ZodValidation";
+import type { RootState } from "../../store/store";
+import { toast } from "react-toastify";
 
 type FormData = z.infer<typeof citySchema>;
 
@@ -31,8 +33,11 @@ const AddEditCity: React.FC<EditBranchFormProps> = ({
 }) => {
   const dispatch = useAppDispatch();
 
-  const { fullList } = useAppSelector((state) => state.city);
-  const { statesList = [] } = useAppSelector((state) => state.states || {});
+  const { fullList } = useAppSelector((state: RootState) => state.city);
+  const { statesList = [] } = useAppSelector(
+    (state: RootState) => state.states || {}
+  );
+  // const cityList = useAppSelector((state: RootState) => state.city.list ?? []);
 
   const {
     control,
@@ -80,15 +85,21 @@ const AddEditCity: React.FC<EditBranchFormProps> = ({
     try {
       if (initialData?.id) {
         await dispatch(updatecity({ ...payload })).unwrap();
+        toast.success("City updated successfully");
       } else {
         await dispatch(createCity(payload)).unwrap();
+        toast.success("City created successfully");
       }
 
       onClose?.();
     } catch (error: any) {
-      console.error("Submit error:", error);
+      // console.error("Submit error:", error);
+      toast.error(error?.message || "An error occurred");
     }
   };
+  // console.log("======>", statesList);
+  // console.log("cityList", cityList);
+  // console.log("fullList",fullList)
 
   return (
     <Dialog open={true} onClose={onClose} maxWidth="md" fullWidth>
@@ -135,7 +146,7 @@ const AddEditCity: React.FC<EditBranchFormProps> = ({
                   districts.find((d) => d.id.toString() === field.value) || null
                 }
                 onChange={(_, newValue) =>
-                  field.onChange(newValue ? newValue.id.toString() : "")
+                  field.onChange(newValue ? String(newValue.id) : "")
                 }
                 renderInput={(params) => (
                   <TextField

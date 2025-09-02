@@ -1,4 +1,4 @@
-import  { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Box,
   Typography,
@@ -9,12 +9,11 @@ import {
   TableRow,
   TableCell,
   TableBody,
-  Paper,
   IconButton,
   Stack,
 } from "@mui/material";
 
-import type { RootState} from "../../store/store";
+import type { RootState } from "../../store/store";
 import {
   fetchBranchData,
   updateBranch,
@@ -31,8 +30,9 @@ import { toast } from "react-toastify";
 
 export default function BranchesPage() {
   // const dispatch = useDispatch<AppDispatch>();
-  const dispatch =useAppDispatch();
-  const branches = useAppSelector((state: RootState) => state.branch.list) || [];
+  const dispatch = useAppDispatch();
+  const branches =
+    useAppSelector((state: RootState) => state.branch.list) || [];
   const loading = useAppSelector((state: RootState) => state.branch.loading);
   // const error = useSelector((state: RootState) => state.branch.error);
 
@@ -67,10 +67,10 @@ export default function BranchesPage() {
           data: formData,
         })
       );
-      toast.success("update the branch successfully ")
+      toast.success("update the branch successfully ");
     } else {
       await dispatch(createBranch(formData));
-      toast.success("createt the branch successfully")
+      toast.success("createt the branch successfully");
     }
     dispatch(fetchBranchData());
   }
@@ -88,6 +88,11 @@ export default function BranchesPage() {
             placeholder="Search branch"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                backgroundColor: "#0000000d",
+              },
+            }}
           />
           <IconButton color="error" onClick={() => setSearch("")}>
             <FilterAltOffIcon />
@@ -102,7 +107,7 @@ export default function BranchesPage() {
         </Stack>
       </Box>
 
-      <TableContainer >
+      <TableContainer>
         <Table>
           <TableHead>
             <TableRow>
@@ -125,16 +130,18 @@ export default function BranchesPage() {
               <TableRow key={branch.id}>
                 <TableCell className="table-data">{i + 1}</TableCell>
                 <TableCell className="table-data">{branch.name}</TableCell>
-                <TableCell className="table-data">{branch.code || "--"}</TableCell>
+                <TableCell className="table-data">
+                  {branch.code || "--"}
+                </TableCell>
                 <TableCell className="table-data">{branch.district}</TableCell>
                 <TableCell className="table-data">{branch.state}</TableCell>
                 <TableCell className="table-data">
                   <IconButton onClick={() => openModal(branch)}>
                     <EditIcon />
                   </IconButton>
-                   <IconButton color="error">
-                        <DeleteIcon />
-                      </IconButton>
+                  <IconButton color="error">
+                    <DeleteIcon />
+                  </IconButton>
                 </TableCell>
               </TableRow>
             ))}

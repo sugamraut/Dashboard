@@ -131,7 +131,7 @@ const AddEditPage: React.FC<AddEditPageProps> = ({ initialData, onClose }) => {
               <InputField
                 {...field}
                 value={field.value ?? ""}
-                label="Display Nmae (Nepali)"
+                label="Display Name (Nepali)"
                 fullWidth
                 margin="normal"
                 {...register("displayNameNp", {
@@ -186,7 +186,7 @@ const AddEditPage: React.FC<AddEditPageProps> = ({ initialData, onClose }) => {
                     {...params}
                     label="Action type"
                     margin="normal"
-                    {...register("ActionGroups")}
+                    // {...register("ActionGroups")}
                     error={!!errors.ActionGroups}
                     helperText={errors.ActionGroups?.message as string}
                   />
