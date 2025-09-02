@@ -2,7 +2,7 @@ body {
   font-family: "lato ", Segoe UI !important;
 
   background: #f1f5f8;
-  color: #344563;
+  color: #384a6a;
   border-radius: 30px;
 }
 
@@ -51,7 +51,7 @@ body {
 }
 
 .avatar-icon-style {
-  position: absolute ;
+  position: absolute;
   top: 14px;
   left: 16px;
   width: 32px;
@@ -121,6 +121,7 @@ body {
   height: 30px;
   padding: 8px;
   color: #ffffff !important;
+  margin:2.5px!important;
 }
 
 .sidebar-drawer {
@@ -161,6 +162,14 @@ body {
   background-color: #fff;
 }
 
-/* background: #f1f5f8;
-    color: #344563;
-    border-radius: 30px; */
+.copy-color {
+  background-color: #3f51b5 !important;
+}
+
+.modal-loading-indicator {
+  width: 90px !important;
+  height: 90px !important;
+  position: absolute;
+  left: 151px;
+  bottom: 0px;
+}

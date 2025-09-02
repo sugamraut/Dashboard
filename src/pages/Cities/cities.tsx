@@ -1,4 +1,3 @@
-
 import React, { useEffect, useMemo, useState } from "react";
 import {
   Box,
@@ -18,21 +17,27 @@ import {
 
 import EditIcon from "@mui/icons-material/Edit";
 import FilterAltOffIcon from "@mui/icons-material/FilterAltOff";
-import { useDispatch, useSelector } from "react-redux";
-import type { RootState, AppDispatch } from "../../store/store";
+
+import type { RootState } from "../../store/store";
 import {
   fetchAllCities,
   fetchCityBypaginated,
 } from "../../store/cities/CitiesSlice";
 import AddEditCity from "./edit";
 import type { City } from "../../globals/typeDeclaration";
+import { useAppDispatch, useAppSelector } from "../../store/hook";
 
 export default function CityPage() {
-  const dispatch = useDispatch<AppDispatch>();
+  // const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
 
-  const fulldistrict = useSelector((state: RootState) => state.city.fullList);
-  const cityList = useSelector((state: RootState) => state.city.list ?? []);
-  const totalCount = useSelector((state: RootState) => state.city.totalCount);
+  const fulldistrict = useAppSelector(
+    (state: RootState) => state.city.fullList
+  );
+  const cityList = useAppSelector((state: RootState) => state.city.list ?? []);
+  const totalCount = useAppSelector(
+    (state: RootState) => state.city.totalCount
+  );
 
   const [search, setSearch] = useState("");
   const [selectedDistrict, setSelectedDistrict] = useState<{
@@ -126,17 +131,26 @@ export default function CityPage() {
             }}
             isOptionEqualToValue={(option, value) => option.id === value?.id}
             renderInput={(params) => (
-              <TextField {...params} label="Filter by District" sx={{ "& .MuiOutlinedInput-root": {
-              backgroundColor: "#0000000d",
-              }}}/>
+              <TextField
+                {...params}
+                label="Filter by District"
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    backgroundColor: "#0000000d",
+                  },
+                }}
+              />
             )}
           />
 
           <TextField
             size="small"
-            sx={{ minWidth: 250,"& .MuiOutlinedInput-root": {
-              backgroundColor: "#0000000d",
-              } }}
+            sx={{
+              minWidth: 250,
+              "& .MuiOutlinedInput-root": {
+                backgroundColor: "#0000000d",
+              },
+            }}
             label="Search by City Name"
             placeholder="Type a city name"
             value={search}
@@ -144,7 +158,6 @@ export default function CityPage() {
             onKeyDown={(e) => {
               if (e.key === "Enter") setPage(0);
             }}
-          
           />
 
           <IconButton
@@ -185,7 +198,10 @@ export default function CityPage() {
                   <TableCell>{city.state}</TableCell>
                   <TableCell>{city.district || "N/A"}</TableCell>
                   <TableCell align="center">
-                    <IconButton onClick={() => handleEditClick(city)} className="action-icon-btn">
+                    <IconButton
+                      onClick={() => handleEditClick(city)}
+                      className="action-icon-btn"
+                    >
                       <EditIcon />
                     </IconButton>
                   </TableCell>

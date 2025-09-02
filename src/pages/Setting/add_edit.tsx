@@ -6,14 +6,20 @@ import {
   DialogTitle,
   TextField,
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useAppDispatch } from "../../store/hook";
 import { createSetting, updateSetting } from "../../store/setting/SettingSlice";
-import type { Setting } from "../../globals/typeDeclaration";
 import { toast } from "react-toastify";
+import InputField from "../../components/Input_field";
+import { Controller, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  settingSchema,
+  type SettingFormData,
+} from "../../globals/ZodValidation";
 
 interface AddEditProps {
-  initialData?: Setting | null;
+  initialData?: SettingFormData | null;
   onSuccess: () => void;
   onCancel: () => void;
 }
@@ -21,38 +27,31 @@ interface AddEditProps {
 const ADDEDIT = ({ initialData, onSuccess, onCancel }: AddEditProps) => {
   const dispatch = useAppDispatch();
 
-  const [formData, setFormData] = useState<{
-    name: string;
-    description: string;
-    value: string;
-  }>({
-    name: "",
-    description: "",
-    value: "",
+  const {
+    handleSubmit,
+    reset,
+    control,
+    formState: { errors },
+  } = useForm<SettingFormData>({
+    resolver: zodResolver(settingSchema),
+    defaultValues: {
+      name: "",
+      description: "",
+      value: "",
+    },
   });
 
   useEffect(() => {
     if (initialData) {
-      setFormData({
-        name: initialData.name || "",
-        description: initialData.description || "",
-        value: initialData.value || "",
-      });
+      reset(initialData);
+    } else {
+      reset();
     }
-  }, [initialData]);
+  }, [initialData, reset]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: String(value),
-    }));
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const onSubmit = async (formData: SettingFormData) => {
     try {
-      if (initialData) {
+      if (initialData?.id) {
         await dispatch(
           updateSetting({
             id: String(initialData.id),
@@ -61,7 +60,7 @@ const ADDEDIT = ({ initialData, onSuccess, onCancel }: AddEditProps) => {
         ).unwrap();
         toast.success("Setting updated successfully");
       } else {
-        await dispatch(createSetting(formData as Setting) as any).unwrap();
+        await dispatch(createSetting(formData)).unwrap();
         toast.success("Setting created successfully");
       }
       onSuccess();
@@ -73,7 +72,6 @@ const ADDEDIT = ({ initialData, onSuccess, onCancel }: AddEditProps) => {
   return (
     <Dialog open={true} maxWidth="sm" fullWidth>
       <DialogTitle>
-        {" "}
         {initialData?.id ? "Edit Setting" : "Add Setting"}
       </DialogTitle>
       <DialogContent
@@ -83,42 +81,58 @@ const ADDEDIT = ({ initialData, onSuccess, onCancel }: AddEditProps) => {
           },
         }}
       >
-        <hr/>
-        <form className="main-container" onSubmit={handleSubmit}>
-          <TextField
-            label="Name"
+        <hr />
+        <form className="main-container" onSubmit={handleSubmit(onSubmit)}>
+          <Controller
+            control={control}
             name="name"
-            onChange={handleInputChange}
-            value={formData.name}
-            margin="normal"
-            fullWidth
-            required
+            render={({ field }) => (
+              <InputField
+                label="Name"
+                {...field}
+                error={!!errors.name}
+                helperText={errors.name?.message}
+                fullWidth
+                margin="normal"
+              />
+            )}
           />
 
-          <TextField
-            label="Description"
+          <Controller
+            control={control}
             name="description"
-            onChange={handleInputChange}
-            value={formData.description}
-            margin="normal"
-            fullWidth
-            required
+            render={({ field }) => (
+              <InputField
+                label="Description"
+                {...field}
+                value={field.value ?? ""}
+                error={!!errors.description}
+                helperText={errors.description?.message}
+                fullWidth
+                margin="normal"
+              />
+            )}
           />
 
-          <TextField
-            label="Value"
+          <Controller
+            control={control}
             name="value"
-            placeholder="Enter the value"
-            multiline
-            minRows={4}
-            onChange={handleInputChange}
-            value={formData.value}
-            margin="normal"
-            fullWidth
-            required
+            render={({ field }) => (
+              <TextField
+                label="Value"
+                {...field}
+                error={errors.value ? true : false}
+                helperText={errors.value?.message}
+                fullWidth
+                required
+                margin="normal"
+                multiline
+                minRows={4}
+              />
+            )}
           />
-          <hr/>
 
+          <hr />
           <Box mt={2} display="flex" justifyContent="flex-end" gap={2}>
             <Button variant="outlined" color="error" onClick={onCancel}>
               Cancel

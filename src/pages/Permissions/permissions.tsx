@@ -2,13 +2,12 @@ import AddCircleIcon from "@mui/icons-material/AddCircle";
 import FilterAltOffIcon from "@mui/icons-material/FilterAltOff";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import {
   // fetchAllPermissions,
   fetchPermissions,
 } from "../../store/Permission/PermissionSlice";
-import type { AppDispatch, RootState } from "../../store/store";
+import type {  RootState } from "../../store/store";
 import {
   Box,
   IconButton,
@@ -25,10 +24,11 @@ import {
 } from "@mui/material";
 import AddEditPage from "./add_edit";
 import type { Permission } from "../../globals/typeDeclaration";
+import { useAppDispatch, useAppSelector } from "../../store/hook";
 
 const Permissions: React.FC = () => {
-  const dispatch = useDispatch<AppDispatch>();
-  const { data, metaData, error } = useSelector(
+  const dispatch = useAppDispatch();
+  const { data, metaData, error } = useAppSelector(
     (state: RootState) => state.permissions
   );
 

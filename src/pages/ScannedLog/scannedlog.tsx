@@ -18,14 +18,14 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
 import ClearIcon from "@mui/icons-material/FilterAltOff";
 import RefreshIcon from "@mui/icons-material/Refresh";
-import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
+// import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 
 import { useEffect, useState } from "react";
 import { fetchLogs } from "../../store/scannedlog/ScannedSlice";
 import { useAppDispatch, useAppSelector } from "../../store/hook";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 
-import dayjs, { Dayjs } from "dayjs";
+import  { Dayjs } from "dayjs";
 
 const ScannedLog = () => {
   const dispatch = useAppDispatch();
@@ -35,26 +35,11 @@ const ScannedLog = () => {
   );
   const [selectedDate, setSelectedDate] = useState<Dayjs | null>(null);
 
-  // const [selectedDate, setSelectedDate] = useState(null);
+
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(25);
 
-  // const loadLogs = () => {
-  //   dispatch(
-  //     fetchLogs({
-  //       page: page + 1,
-  //       rowsPerPage,
-  //       sortBy: null,
-  //       sortOrder: "desc",
-  //       query: "",
-  //       // filters: selectedDate
-  //       //   ? {
-  //       //       date: selectedDate.format("YYYY-MM-DD"),
-  //       //     }
-  //       //   : undefined,
-  //     })
-  //   );
-  // };
+
   const loadLogs = () => {
     dispatch(
       fetchLogs({

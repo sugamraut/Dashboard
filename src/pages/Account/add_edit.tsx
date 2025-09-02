@@ -23,6 +23,7 @@ import {
 import { toast } from "react-toastify";
 import Text_editor from "../../components/Text_editor";
 import InputField from "../../components/Input_field";
+import { useAppDispatch } from "../../store/hook";
 
 const VisuallyHiddenInput = styled("input")`
   clip: rect(0 0 0 0);
@@ -59,7 +60,8 @@ const AddEditPage = ({
   onCancel,
   isEdit,
 }: AddEditPageProps) => {
-  const dispatch = useDispatch<AppDispatch>();
+  // const dispatch = useDispatch<AppDispatch>();
+  const dispatch =useAppDispatch();
   const editorRef = useRef<HTMLDivElement>(null);
 
   const [uploadFileName, setUploadFileName] = useState<string | undefined>("");

@@ -66,7 +66,7 @@ const sidebarIcons = [
   },
   { icon: <SettingsIcon />, label: "Setting", path: "/admin/setting" },
   { icon: <AccountCircleIcon />, label: "Profile", path: "/admin/profile" },
-  { icon: <LogoutIcon />, label: "Logout", action: "logout" }, // ← Now uses 'action'
+  { icon: <LogoutIcon />, label: "Logout" },
 ];
 
 export default function Sidebar() {
@@ -132,17 +132,22 @@ export default function Sidebar() {
       <List sx={{ mt: 1 }}>
         {sidebarIcons
           .filter(({ path }) => typeof path === "string")
-          .map(({ icon, label, path, action }, index) => {
+          .map(({ icon, label, path }, index) => {
             const isActive = location.pathname === path;
 
             return (
               <Tooltip title={label} placement="right" arrow key={index}>
                 <ListItem disablePadding sx={{ mt: 1 }}>
-                  {action === "logout" ? (
+                  <Link
+                    to={path as string}
+                    onClick={label === "Logout" ? handleLogout : undefined}
+                  >
                     <IconButton
-                      onClick={handleLogout}
                       sx={{
-                        color: "white",
+                        color: isActive ? "#877d43ff" : "white",
+                        backgroundColor: isActive
+                          ? "rgba(255, 255, 255, 0.15)"
+                          : "transparent",
                         "&:hover": {
                           backgroundColor: "rgba(255, 255, 255, 0.2)",
                         },
@@ -150,23 +155,7 @@ export default function Sidebar() {
                     >
                       {icon}
                     </IconButton>
-                  ) : (
-                    <Link to={path as string}>
-                      <IconButton
-                        sx={{
-                          color: isActive ? "#877d43ff" : "white",
-                          backgroundColor: isActive
-                            ? "rgba(255, 255, 255, 0.15)"
-                            : "transparent",
-                          "&:hover": {
-                            backgroundColor: "rgba(255, 255, 255, 0.2)",
-                          },
-                        }}
-                      >
-                        {icon}
-                      </IconButton>
-                    </Link>
-                  )}
+                  </Link>
                 </ListItem>
               </Tooltip>
             );

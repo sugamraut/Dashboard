@@ -1,5 +1,4 @@
 
-import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
 
@@ -10,12 +9,13 @@ import { Status } from "../globals/status";
 import Sidebar from "../pages/sidebar";
 import LoadingButtons from "../pages/loader";
 import type { RootState } from "../store/store"; 
+import { useAppDispatch, useAppSelector } from "../store/hook";
 
 const RootLayout = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
-  const accessToken = useSelector((state: RootState) => state.auth.accessToken);
-  const status = useSelector((state: RootState) => state.auth.status);
+  const accessToken = useAppSelector((state: RootState) => state.auth.accessToken);
+  const status = useAppSelector((state: RootState) => state.auth.status);
 
   const [loading, setLoading] = useState(true);
 

@@ -16,14 +16,16 @@ import FilterAltOffIcon from "@mui/icons-material/FilterAltOff";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
-import { useDispatch, useSelector } from "react-redux";
-import type { RootState, AppDispatch } from "../../store/store";
+
+import type { RootState } from "../../store/store";
 import { fetchAllUsers } from "../../store/user/UserSlice";
 import EditUser from "./EditUser";
+import { useAppDispatch, useAppSelector } from "../../store/hook";
 
 const User = () => {
-  const dispatch = useDispatch<AppDispatch>();
-  const userList = useSelector((state: RootState) =>
+
+  const dispatch = useAppDispatch();
+  const userList = useAppSelector((state: RootState) =>
     Array.isArray(state.User.list) ? state.User.list : []
   );
 
@@ -39,10 +41,7 @@ const User = () => {
     setEditOpen(true);
   };
 
-  // const handelAddClick =()=>{
-  //   selectedUserId(null)
-  //   setEditOpen(true)
-  // }
+  
   const handleAddClick = () => {
     setSelectedUserId(null);
     setEditOpen(true);
@@ -61,12 +60,14 @@ const User = () => {
         </Typography>
 
         <Stack direction="row" spacing={2}>
-          <TextField label="Search" size="small" 
-          sx={{
-            "& .MuiOutlinedInput-root": {
-              backgroundColor: "#0000000d",
-            }
-          }}
+          <TextField
+            label="Search"
+            size="small"
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                backgroundColor: "#0000000d",
+              },
+            }}
           />
           <IconButton color="error">
             <FilterAltOffIcon />
@@ -77,7 +78,7 @@ const User = () => {
         </Stack>
       </Box>
 
-      <TableContainer >
+      <TableContainer>
         <Table>
           <TableHead>
             <TableRow>
@@ -95,9 +96,7 @@ const User = () => {
                 <TableCell className="table-data">{index + 1}</TableCell>
                 <TableCell className="table-data">{user.name}</TableCell>
                 <TableCell className="table-data">{user.username}</TableCell>
-                <TableCell className="table-data">
-                  {user.mobile}
-                </TableCell>
+                <TableCell className="table-data">{user.mobile}</TableCell>
                 <TableCell className="table-data">{user.email}</TableCell>
                 <TableCell className="table-data">
                   <IconButton

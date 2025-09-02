@@ -8,17 +8,15 @@ import {
   Button,
 } from "@mui/material";
 import { Visibility, VisibilityOff, Lock } from "@mui/icons-material";
-import { useDispatch, useSelector } from "react-redux";
-import type { AppDispatch, RootState } from "../../store/store";
-import {
-  fetchProfile,
-  updateProfile,
-} from "../../store/profile/ProfileSlice";
+
+import type { RootState } from "../../store/store";
+import { fetchProfile, updateProfile } from "../../store/profile/ProfileSlice";
 import { toast } from "react-toastify";
+import { useAppDispatch, useAppSelector } from "../../store/hook";
 
 const Profile = () => {
-  const dispatch = useDispatch<AppDispatch>();
-  const { data, loading } = useSelector((state: RootState) => state.profile);
+  const dispatch = useAppDispatch();
+  const { data, loading } = useAppSelector((state: RootState) => state.profile);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -76,7 +74,6 @@ const Profile = () => {
       })
     );
   };
-
 
   // console.log("==>", data);
   return (

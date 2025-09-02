@@ -157,9 +157,9 @@ export interface ActivityResponse {
 
 
 export interface Setting {
-  id: number;
+  id?: number;
   name: string;
-  description: string;
+  description?: string;
   value: string;
 }
 

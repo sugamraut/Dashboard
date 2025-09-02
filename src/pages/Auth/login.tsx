@@ -1,31 +1,21 @@
 import React, { useState, useEffect } from "react";
 import image from "../../assets/image/company_name.png";
-import { Box, Button, Typography} from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import LoginInput from "../../components/Login";
 import { useForm, type SubmitHandler } from "react-hook-form";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useDispatch, useSelector } from "react-redux";
 import { fetchAuthAsync } from "../../store/auth/LoginSlice";
-import type { RootState, AppDispatch } from "../../store/store";
+import type { RootState } from "../../store/store";
 import { useNavigate } from "react-router-dom";
 import { Status } from "../../globals/status";
 import { toast } from "react-toastify";
-
-const loginSchema = z.object({
-  username: z.string().min(1, "Username is required"),
-  password: z
-    .string()
-    .min(4, "Password must be at least 4 characters")
-    .max(15, "Password is too long"),
-});
-
-type LoginFormInputs = z.infer<typeof loginSchema>;
+import { loginSchema, type LoginFormInputs } from "../../globals/ZodValidation";
+import { useAppDispatch, useAppSelector } from "../../store/hook";
 
 const LoginPage: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const dispatch = useDispatch<AppDispatch>();
-  const { status, error, accessToken } = useSelector(
+  const dispatch = useAppDispatch();
+  const { status, error, accessToken } = useAppSelector(
     (state: RootState) => state.auth
   );
   const navigate = useNavigate();
@@ -45,7 +35,11 @@ const LoginPage: React.FC = () => {
   useEffect(() => {
     if (status === Status.Success && accessToken) {
       localStorage.setItem("jwt", accessToken);
-      navigate("/admin/dashboard");
+      const gettoken = localStorage.getItem("jwt");
+      if (gettoken) {
+        navigate("/admin/dashboard");
+      }
+
       //  sessionStorage.getItem("alreadyNavigated");
       toast.success("Login successful! Redirecting...");
     } else if (status === Status.Error && error) {
@@ -53,6 +47,20 @@ const LoginPage: React.FC = () => {
       localStorage.removeItem("jwt");
     }
   }, [status, accessToken, navigate]);
+  // useEffect(() => {
+  //   if (status === Status.Success && accessToken) {
+  //     localStorage.setItem("jwt", accessToken);
+
+  //     toast.success("Login successful! Redirecting...");
+
+  //     setTimeout(() => {
+  //       navigate("/admin/dashboard");
+  //     }, 300);
+  //   } else if (status === Status.Error && error) {
+  //     toast.error(error);
+  //     localStorage.removeItem("jwt");
+  //   }
+  // }, [status, accessToken, navigate, error]);
 
   return (
     <div className="login-section">
@@ -94,11 +102,6 @@ const LoginPage: React.FC = () => {
               togglePasswordVisibility={() => setShowPassword(!showPassword)}
             />
 
-            {/* {error && (
-              <Alert severity="error" className="mt-2">
-            
-              </Alert>
-            )} */}
             <Button type="submit" variant="contained" fullWidth>
               LOGIN
             </Button>

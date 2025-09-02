@@ -11,13 +11,14 @@ import {
 import StorageIcon from "@mui/icons-material/Storage";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
-import HowToRegIcon from '@mui/icons-material/HowToReg';
+import HowToRegIcon from "@mui/icons-material/HowToReg";
 import CancelIcon from "@mui/icons-material/Cancel";
 import NotInterestedIcon from "@mui/icons-material/NotInterested";
-import { useDispatch, useSelector } from "react-redux";
-import type { AppDispatch, RootState } from "../../store/store";
+
+import type { RootState } from "../../store/store";
 import { useEffect } from "react";
 import { fetchdashboarddata } from "../../store/dashboard/DashboardSlice";
+import { useAppDispatch, useAppSelector } from "../../store/hook";
 
 const cardItems = [
   {
@@ -53,18 +54,12 @@ const cardItems = [
 ];
 
 const StatusCards = () => {
-  const dispatch = useDispatch<AppDispatch>();
+  // const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
 
-  const { list } = useSelector((state: RootState) => state.dashboard);
+  const { list } = useAppSelector((state: RootState) => state.dashboard);
   useEffect(() => {
-    dispatch(
-      fetchdashboarddata({
-        page: 1,
-        rowsPerPage: 20,
-        sortBy: "createdAt",
-        sortOrder: "desc",
-      })
-    );
+    dispatch(fetchdashboarddata());
   }, [dispatch]);
 
   const mergedCards = list.map((apiItem) => {

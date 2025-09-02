@@ -27,7 +27,6 @@ import {
   type AccountType,
 } from "../../store/account/AccountSlice";
 import AddEditPage from "./add_edit";
-import { useSelector } from "react-redux";
 import type { RootState } from "../../store/store";
 import { toast } from "react-toastify";
 
@@ -35,7 +34,7 @@ const AccountPage: React.FC = () => {
   const dispatch = useAppDispatch();
   const { error, loading } = useAppSelector((state) => state.accountTypes);
 
-  const data = useSelector((state: RootState) => state.accountTypes.data) || [];
+  const data = useAppSelector((state: RootState) => state.accountTypes.data) || [];
 
   const [searchQuery, setSearchQuery] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);

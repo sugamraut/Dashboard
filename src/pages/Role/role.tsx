@@ -17,15 +17,14 @@ import FilterAltOffIcon from "@mui/icons-material/FilterAltOff";
 import FileCopyIcon from "@mui/icons-material/FileCopy";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { useSelector } from "react-redux";
 import type { RootState } from "../../store/store";
-import { useAppDispatch } from "../../store/hook";
+import { useAppDispatch, useAppSelector } from "../../store/hook";
 import { deletedRole, fetchRoles } from "../../store/role/RoleSlice";
 import ADDEDIT from "./add_edit";
 
 function RolePage() {
   const dispatch = useAppDispatch();
-  const { list } = useSelector((state: RootState) => state.roles);
+  const { list } = useAppSelector((state: RootState) => state.roles);
 
   const [openDialog, setOpenDialog] = useState(false);
   const [editData, setEditData] = useState(null);

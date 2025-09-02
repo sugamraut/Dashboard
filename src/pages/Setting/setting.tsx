@@ -1,11 +1,8 @@
+import { useEffect, useState } from "react";
 import {
   Box,
   CircularProgress,
-  Dialog,
-  DialogContent,
-  DialogTitle,
   IconButton,
-  Paper,
   Stack,
   Table,
   TableBody,
@@ -19,42 +16,60 @@ import {
 } from "@mui/material";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import FilterAltOffIcon from "@mui/icons-material/FilterAltOff";
-import { useAppDispatch, useAppSelector } from "../../store/hook";
-import { fetchsetting } from "../../store/setting/SettingSlice";
-import { useEffect, useState } from "react";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { useAppDispatch, useAppSelector } from "../../store/hook";
+import { fetchsetting } from "../../store/setting/SettingSlice";
 import ADDEDIT from "./add_edit";
 import type { Setting } from "../../globals/typeDeclaration";
-
 import { toast } from "react-toastify";
+import Loading from "../loader";
 
 const Setting = () => {
   const dispatch = useAppDispatch();
   const { data, metaData, loading, error } = useAppSelector(
     (state) => state.setting ?? null
   );
+
   const [openDialog, setOpenDialog] = useState(false);
   const [editData, setEditData] = useState<Setting | null>(null);
+
+  const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
 
   const [page, setPage] = useState(0);
   const [rowPerPage, setRowsPerPage] = useState(25);
 
-  const loadlogs = () => {
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+      setPage(0);
+    }, 500);
+
+    return () => clearTimeout(handler);
+  }, [searchQuery]);
+
+  useEffect(() => {
     dispatch(
       fetchsetting({
         page: page + 1,
         rowPerPage: rowPerPage,
         sortBy: null,
         sortOrder: "dec",
-        query: "",
+        query: debouncedSearchQuery,
       })
     )
       .unwrap()
       .catch((err) => {
         toast.error(`Failed to load settings: ${err}`);
       });
-  };
+  }, [page, rowPerPage, debouncedSearchQuery, dispatch]);
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error);
+    }
+  }, [error]);
 
   const handleOpenAdd = () => {
     setEditData(null);
@@ -71,16 +86,6 @@ const Setting = () => {
     setEditData(null);
   };
 
-  useEffect(() => {
-    loadlogs();
-  }, [page, rowPerPage]);
-
-  useEffect(() => {
-    if (error) {
-      toast.error(error);
-    }
-  }, [error]);
-
   const handleChangePage = (_event: unknown, newPage: number) => {
     setPage(newPage);
   };
@@ -93,7 +98,9 @@ const Setting = () => {
   };
 
   const handleRefresh = () => {
-    loadlogs();
+    setSearchQuery("");
+    setDebouncedSearchQuery("");
+    setPage(0);
   };
 
   return (
@@ -109,8 +116,15 @@ const Setting = () => {
           Settings
         </Typography>
         <Stack direction="row" spacing={2} alignItems="center">
-          <TextField label="search" size="small" />
-
+          <TextField
+            label="Search"
+            size="small"
+            sx={{
+              "& .MuiOutlinedInput-input": { backgroundColor: "#0000000d" },
+            }}
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
           <IconButton color="error" onClick={handleRefresh}>
             <FilterAltOffIcon />
           </IconButton>
@@ -119,47 +133,35 @@ const Setting = () => {
           </IconButton>
         </Stack>
       </Box>
+
       {loading ? (
         <Box mt={2} display="flex" justifyContent="center">
-          <CircularProgress />
+          <Loading />
         </Box>
-      ) : error ? (
-        <Typography color="error" mt={2}>
-          Error: {error}
-        </Typography>
       ) : (
         <TableContainer>
           <Table size="small">
             <TableHead>
               <TableRow>
-                <TableCell className="table-header">#</TableCell>
-                <TableCell className="table-header">Name</TableCell>
-                <TableCell className="table-header">Description</TableCell>
-                <TableCell className="table-header">Value</TableCell>
-                <TableCell className="table-header">Action</TableCell>
+                <TableCell>#</TableCell>
+                <TableCell>Name</TableCell>
+                <TableCell>Description</TableCell>
+                <TableCell>Value</TableCell>
+                <TableCell>Action</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {data.length > 0 ? (
-                data?.map((log: Setting, index: number) => (
+                data.map((log: Setting, index: number) => (
                   <TableRow
                     key={log.id}
-                    sx={{
-                      "& .MuiTableCell-root": {
-                        padding: "6px",
-                      },
-                    }}
+                    sx={{ "& .MuiTableCell-root": { padding: "6px" } }}
                   >
-                    <TableCell className="table-data">
-                      {page * rowPerPage + index + 1}
-                      {/* {index + 1} */}
-                    </TableCell>
-                    <TableCell className="table-data">{log.name}</TableCell>
-                    <TableCell className="table-data">
-                      {log.description}
-                    </TableCell>
-                    <TableCell className="table-data">{log.value}</TableCell>
-                    <TableCell className="table-data">
+                    <TableCell>{page * rowPerPage + index + 1}</TableCell>
+                    <TableCell>{log.name}</TableCell>
+                    <TableCell>{log.description}</TableCell>
+                    <TableCell>{log.value}</TableCell>
+                    <TableCell>
                       <IconButton
                         className="action-icon-btn"
                         onClick={() => handleOpenEdit(log)}
@@ -167,7 +169,7 @@ const Setting = () => {
                         <EditIcon />
                       </IconButton>
                       <IconButton
-                        className="action-icon-btn-delete m-2 p-6"
+                        className="action-icon-btn-delete m-xxl-2 p-6"
                         disabled
                       >
                         <DeleteIcon />
@@ -201,7 +203,15 @@ const Setting = () => {
           initialData={editData}
           onSuccess={() => {
             handleCloseDialog();
-            loadlogs();
+            dispatch(
+              fetchsetting({
+                page: page + 1,
+                rowPerPage: rowPerPage,
+                sortBy: null,
+                sortOrder: "dec",
+                query: debouncedSearchQuery,
+              })
+            );
             toast.success(
               editData
                 ? "Setting updated successfully"

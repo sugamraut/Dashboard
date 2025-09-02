@@ -21,7 +21,7 @@ import { createRole, updateRole } from "../../store/role/RoleSlice";
 import { toast } from "react-toastify";
 
 import { roleSchema } from "../../globals/ZodValidation";
-import { zodResolver } from "@hookform/resolvers/zod";
+
 import type z from "zod";
 
 type FormData = z.infer<typeof roleSchema>;

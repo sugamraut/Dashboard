@@ -1,13 +1,13 @@
 import React from "react";
 import { Navigate, Outlet } from "react-router-dom";
-import { useSelector } from "react-redux";
 import type { RootState } from "../store/store";
 import { isTokenValid } from "../utils/helper";
 import { Status } from "../globals/status";
 import Loading from "../pages/loader";
+import { useAppSelector } from "../store/hook";
 
 const PrivateRoute: React.FC = () => {
-  const { accessToken, status } = useSelector((state: RootState) => state.auth);
+  const { accessToken, status } = useAppSelector((state: RootState) => state.auth);
 
   if (status === Status.Loading) {
     return (

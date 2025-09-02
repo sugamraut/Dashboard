@@ -17,7 +17,6 @@ import {
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useSelector } from "react-redux";
 import type { RootState } from "../../store/store";
 import { createUser, updateUser } from "../../store/user/UserSlice";
 import { fetchAllRole } from "../../store/role/RoleSlice";
@@ -35,7 +34,7 @@ const genderOptions = ["Male", "Female", "Other"];
 
 const EditUser: React.FC<EditUserProps> = ({ open, onClose, userId }) => {
   const dispatch = useAppDispatch();
-  const users = useSelector((state: RootState) => state.User.list || []);
+  const users = useAppSelector((state: RootState) => state.User.list || []);
   const Rolelist = useAppSelector(
     (state: RootState) => state.roles?.fullList ?? []
   );

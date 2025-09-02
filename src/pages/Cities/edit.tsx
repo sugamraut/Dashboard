@@ -37,7 +37,7 @@ const AddEditCity: React.FC<EditBranchFormProps> = ({
   const { statesList = [] } = useAppSelector(
     (state: RootState) => state.states || {}
   );
-  // const cityList = useAppSelector((state: RootState) => state.city.list ?? []);
+
 
   const {
     control,
@@ -93,13 +93,9 @@ const AddEditCity: React.FC<EditBranchFormProps> = ({
 
       onClose?.();
     } catch (error: any) {
-      // console.error("Submit error:", error);
       toast.error(error?.message || "An error occurred");
     }
   };
-  // console.log("======>", statesList);
-  // console.log("cityList", cityList);
-  // console.log("fullList",fullList)
 
   return (
     <Dialog open={true} onClose={onClose} maxWidth="md" fullWidth>

@@ -16,7 +16,6 @@ const User = React.lazy(() => import("../pages/Users/users"));
 const Account = React.lazy(() => import("../pages/Account/Account"));
 const Permission = React.lazy(() => import("../pages/Permissions/permissions"));
 const Role = React.lazy(() => import("../pages/Role/role"));
-// const Add = React.lazy(() => import("../pages/Permissions/add_edit"));
 const Profile = React.lazy(() => import("../pages/Profile/profile"));
 const ScannedLog = React.lazy(() => import("../pages/ScannedLog/scannedlog"));
 const ActivityLog = React.lazy(
@@ -27,7 +26,6 @@ const Logout = React.lazy(() => import("../pages/Logout/logout"));
 const OnlineAccount = React.lazy(
   () => import("../pages/OnlineAccountRequest/onlinerequest")
 );
-const Loading= React.lazy(() => import("../pages/loader"));
 
 const withSuspense = (
   Component: React.LazyExoticComponent<React.ComponentType<any>>
@@ -64,14 +62,12 @@ const router = createBrowserRouter([
           { path: "Account", element: withSuspense(Account) },
           { path: "permission", element: withSuspense(Permission) },
           { path: "role", element: withSuspense(Role) },
-          // { path: "Add", element: withSuspense(Add) },
           { path: "profile", element: withSuspense(Profile) },
           { path: "scannedlog", element: withSuspense(ScannedLog) },
           { path: "activitylog", element: withSuspense(ActivityLog) },
           { path: "setting", element: withSuspense(Setting) },
           { path: "logout", element: withSuspense(Logout) },
           { path: "onlineaccount", element: withSuspense(OnlineAccount) },
-          {path: "loader", element: withSuspense(Loading) },
         ],
       },
     ],

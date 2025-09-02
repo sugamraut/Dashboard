@@ -12,16 +12,12 @@ import {
   TextField,
   Stack,
   TablePagination,
-  Dialog,
-  DialogTitle,
-  DialogContent,
   Autocomplete,
   CircularProgress,
 } from "@mui/material";
 
 import EditIcon from "@mui/icons-material/Edit";
 import FilterAltOffIcon from "@mui/icons-material/FilterAltOff";
-import { useSelector } from "react-redux";
 import type { RootState } from "../../store/store";
 import {
   fetchAllDistrictsAsync,
@@ -31,19 +27,19 @@ import {
 } from "../../store/districts/DistrictsSlice";
 import AddEditPage from "./add_edit";
 import type { DistrictType } from "../../globals/typeDeclaration";
-import { useAppDispatch } from "../../store/hook";
+import { useAppDispatch, useAppSelector } from "../../store/hook";
 
 export default function DistrictPage() {
   const dispatch = useAppDispatch();
 
-  const fullDistrictList = useSelector(
+  const fullDistrictList = useAppSelector(
     (state: RootState) => state.district.fullList
   );
 
-  const districtList = useSelector(
+  const districtList = useAppSelector(
     (state: RootState) => state.district.list ?? []
   );
-  const totalCount = useSelector(
+  const totalCount = useAppSelector(
     (state: RootState) => state.district.totalCount ?? 0
   );
 
