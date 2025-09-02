@@ -4,7 +4,7 @@ import {
   type PayloadAction,
 } from "@reduxjs/toolkit";
 import { Status, type StatusType } from "../../globals/status";
-import API from "../../http";
+import API, { getAuthHeader } from "../../http";
 import axios from "axios";
 
 interface OnlineAccount {
@@ -24,13 +24,12 @@ interface CreateblacklistStatus {
   nationality: string;
   dob: string;
   citizenshipNumber: string;
-  
 }
 
 interface OnlineAccountStatus {
   data: OnlineAccount[] | null;
   list: OnlineAccount[] | null;
-  item:CreateblacklistStatus[]| null;
+  item: CreateblacklistStatus[] | null;
   loading: boolean;
   error: string | null;
   status: StatusType;
@@ -39,7 +38,7 @@ interface OnlineAccountStatus {
 const initialState: OnlineAccountStatus = {
   data: [],
   list: [],
-  item:[],
+  item: [],
   loading: false,
   error: null,
   status: Status.Loading,
@@ -51,7 +50,11 @@ export const fetchOnlineAccount = createAsyncThunk<
   void
 >("fetch/onlineaccount", async (_, { rejectWithValue }) => {
   try {
-    const response = await API.get(`/api/v1/online-account-requests`);
+    const response = await API.get(`/api/v1/online-account-requests`, {
+      headers: {
+        ...getAuthHeader(),
+      },
+    });
     return response.data.data as OnlineAccount;
   } catch (error: any) {
     return rejectWithValue(
@@ -62,10 +65,20 @@ export const fetchOnlineAccount = createAsyncThunk<
 
 export const CreateOnlineRequest = createAsyncThunk<
   OnlineAccount,
-  { data: Partial<OnlineAccount> }
->("post.blacklist", async (data, { rejectWithValue }) => {
+  // { onlinedata: Partial<OnlineAccount> }
+  OnlineAccount,
+  { rejectValue: string }
+>("post.blacklist", async (onlinedata, { rejectWithValue }) => {
   try {
-    const response = await API.get(`/api/v1/online-account-requests`, data);
+    const response = await API.post(
+      `/api/v1/online-account-requests`,
+      onlinedata,
+      {
+        headers: {
+          ...getAuthHeader(),
+        },
+      }
+    );
     return response.data as OnlineAccount;
   } catch (error: any) {
     return rejectWithValue(error.response?.data?.message || "failed to up");
@@ -126,8 +139,8 @@ const OnlineAccountSlice = createSlice({
         state.loading = false;
         state.list?.push(action.payload);
         state.error = null;
-      })
-      builder
+      });
+    builder
       .addCase(fetchSanctionList.pending, (state) => {
         state.loading = true;
         state.error = null;

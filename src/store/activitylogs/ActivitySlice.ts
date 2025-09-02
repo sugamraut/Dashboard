@@ -5,7 +5,8 @@ import type {
   ActivityUser,
   MetaData,
 } from "../../globals/typeDeclaration";
-import API from "../../http";
+import API, { getAuthHeader } from "../../http";
+import { toast } from "react-toastify";
 
 interface ActivityStatus {
   data: ActivityLog[];
@@ -51,6 +52,10 @@ export const fetchActivityLog = createAsyncThunk<
     },
     { rejectWithValue }
   ) => {
+    const token = getAuthHeader();
+    if(!token){
+      toast.error("No auth token found")
+    }
     try {
       const response = await API.get(`/api/v1/logs`, {
         params: {
@@ -61,6 +66,9 @@ export const fetchActivityLog = createAsyncThunk<
           query,
           filters: JSON.stringify(filters),
         },
+        headers:{
+          ...getAuthHeader()
+        }
       });
 
       return response.data as ActivityResponse;

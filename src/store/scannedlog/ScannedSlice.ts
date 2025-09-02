@@ -5,7 +5,7 @@ import {
 } from "@reduxjs/toolkit";
 
 import type { LogsResponse, MetaData } from "../../globals/typeDeclaration";
-import API from "../../http";
+import API, { getAuthHeader } from "../../http";
 
 interface LogsState {
   data: LogsResponse["data"];
@@ -44,7 +44,9 @@ export const fetchLogs = createAsyncThunk<LogsResponse, FetchLogsParams>(
           sortOrder: params.sortOrder ?? "desc",
           query: params.query ?? "",
           filters: JSON.stringify(params.filters ?? {}),
-        },
+        },headers:{
+          ...getAuthHeader()
+        }
       });
       return response.data;
     } catch (error: any) {

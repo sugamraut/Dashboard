@@ -4,7 +4,7 @@ import {
   type PayloadAction,
 } from "@reduxjs/toolkit";
 
-import API from "../../http";
+import API, { getAuthHeader } from "../../http";
 import type { Role } from "../../globals/typeDeclaration";
 import { Status, type StatusType } from "../../globals/status";
 
@@ -43,6 +43,9 @@ export const fetchRoles = createAsyncThunk<
   try {
     const response = await API.get(`/api/v1/roles`, {
       params: { page, rowsPerPage },
+      headers: {
+        ...getAuthHeader(),
+      },
     });
     return {
       data: response.data.data,
@@ -57,7 +60,11 @@ export const fetchAllRole = createAsyncThunk<Role[]>(
   "fetch/Allrole",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await API.get("/role/all");
+      const response = await API.get("/role/all", {
+        headers: {
+          ...getAuthHeader(),
+        },
+      });
       return response.data.data as Role[];
     } catch (error: any) {
       return rejectWithValue(error.message || "failed to fetch all the data");
@@ -71,7 +78,11 @@ export const createRole = createAsyncThunk<
   { rejectValue: string }
 >("roles/create", async (data, { rejectWithValue }) => {
   try {
-    const response = await API.post("/api/v1/roles", data);
+    const response = await API.post("/api/v1/roles", data, {
+      headers: {
+        ...getAuthHeader(),
+      },
+    });
     return response.data as Role;
   } catch (error: any) {
     return rejectWithValue(
@@ -86,7 +97,11 @@ export const updateRole = createAsyncThunk<
   { rejectValue: string }
 >("roles/update", async ({ userId, data }, { rejectWithValue }) => {
   try {
-    const response = await API.put(`/api/v1/roles/${userId}`, data);
+    const response = await API.put(`/api/v1/roles/${userId}`, data, {
+      headers: {
+        ...getAuthHeader(),
+      },
+    });
     return response.data as Role;
   } catch (error: any) {
     return rejectWithValue(
@@ -101,7 +116,11 @@ export const deletedRole = createAsyncThunk<
   { rejectValue: string }
 >("roles/delete", async ({ userId }, { rejectWithValue }) => {
   try {
-    await API.delete(`/api/v1/roles/${userId}`);
+    await API.delete(`/api/v1/roles/${userId}`, {
+      headers: {
+        ...getAuthHeader(),
+      },
+    });
   } catch (error: any) {
     return rejectWithValue(
       error.response?.data?.message || "Failed to delete role"

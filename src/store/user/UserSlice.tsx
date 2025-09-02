@@ -3,7 +3,7 @@ import axios from "axios";
 import { server_Url } from "../../globals/config";
 import { Status, type StatusType } from "../../globals/status";
 import type { UserProfile } from "../../globals/typeDeclaration";
-import API from "../../http";
+import API, { getAuthHeader } from "../../http";
 
 export interface UserState {
   fullList: UserProfile[] | null;
@@ -67,41 +67,34 @@ export const fetchUserById = createAsyncThunk(
     }
   }
 );
-
-export const updateUser = createAsyncThunk(
-  "users/update",
-  async (
-    { userId, data }: { userId: number; data: Partial<UserProfile> },
-    { rejectWithValue }
-  ) => {
-    try {
-      const token = localStorage.getItem("jwt");
-      const response = await axios.put(
-        `${server_Url}/api/v1/users/${userId}`,
-        data,
-        {
-          headers: {
-            Authorization: token ?? "",
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-        }
-      );
-      return response.data;
-    } catch (error: any) {
-      return rejectWithValue(
-        error?.response?.data?.message || "Failed to update user"
-      );
-    }
+export const updateUser = createAsyncThunk<
+  UserProfile,
+  UserProfile,
+  { rejectValue: string }
+>("users/update", async (Profile, { rejectWithValue }) => {
+  try {
+    const response = await API.put(`/api/v1/users/${Profile.id}`, Profile, {
+      headers: {
+        ...getAuthHeader(),
+      },
+    });
+    return response.data.data;
+  } catch (error: any) {
+    return rejectWithValue(error.message || "failed to create user");
   }
-);
+});
 
 export const deleteUser = createAsyncThunk(
   "users/delete",
   async (userId: number, { rejectWithValue }) => {
     try {
       const response = await axios.delete(
-        `${server_Url}/api/v1/users/${userId}`
+        `${server_Url}/api/v1/users/${userId}`,
+        {
+          headers: {
+            ...getAuthHeader(),
+          },
+        }
       );
       if (response.status === 201) return userId;
       else throw new Error("Failed to delete user");
@@ -116,7 +109,11 @@ export const createUser = createAsyncThunk(
   "auth/createUser",
   async (userData, { rejectWithValue }) => {
     try {
-      const response = await API.post("/auth/create-user", userData);
+      const response = await API.post("/auth/create-user", userData, {
+        headers: {
+          ...getAuthHeader(),
+        },
+      });
       return response.data;
     } catch (err: any) {
       return rejectWithValue(
@@ -221,5 +218,4 @@ const userSlice = createSlice({
   },
 });
 
-// export const { resetUserState } = userSlice.actions;
 export default userSlice.reducer;

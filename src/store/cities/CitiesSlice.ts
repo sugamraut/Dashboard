@@ -7,7 +7,7 @@ import axios from "axios";
 import { server_Url } from "../../globals/config";
 import { Status, type StatusType } from "../../globals/status";
 import type { City } from "../../globals/typeDeclaration";
-import API from "../../http";
+import API, { getAuthHeader } from "../../http";
 
 interface CityState {
   fullList: City[] | null;
@@ -40,7 +40,7 @@ export const fetchAllCities = createAsyncThunk<
   }
 });
 
-export const fetchCityBypaginated= createAsyncThunk<
+export const fetchCityBypaginated = createAsyncThunk<
   { data: City[]; metaData: { total: number } },
   { districtId?: number; page: number; rowsPerPage: number; search?: string },
   { rejectValue: string }
@@ -58,6 +58,9 @@ export const fetchCityBypaginated= createAsyncThunk<
           rowsPerPage,
           filters: JSON.stringify(filters),
         },
+        headers: {
+          ...getAuthHeader(),
+        },
       });
 
       return {
@@ -74,7 +77,11 @@ export const updatecity = createAsyncThunk<City, City, { rejectValue: string }>(
   "city/update",
   async (city, { rejectWithValue }) => {
     try {
-      const response = await API.put(`/api/v1/cities/${city.id}`, city);
+      const response = await API.put(`/api/v1/cities/${city.id}`, city, {
+        headers: {
+          ...getAuthHeader(),
+        },
+      });
       return response.data.data as City;
     } catch (error: any) {
       return rejectWithValue(error.message || "Failed to update city");
@@ -86,7 +93,11 @@ export const createCity = createAsyncThunk<City, City, { rejectValue: string }>(
   "city/create",
   async (city, { rejectWithValue }) => {
     try {
-      const response = await API.post(`/api/v1/cities`, city);
+      const response = await API.post(`/api/v1/cities`, city, {
+        headers: {
+          ...getAuthHeader(),
+        },
+      });
       return response.data.data as City;
     } catch (error: any) {
       return rejectWithValue(error.message || "Failed to create city");

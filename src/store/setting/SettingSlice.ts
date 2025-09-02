@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import type { MetaData, Setting } from "../../globals/typeDeclaration";
-import API from "../../http";
+import API, { getAuthHeader } from "../../http";
 import { Status, type StatusType } from "../../globals/status";
 
 interface settingState {
@@ -47,11 +47,14 @@ export const fetchsetting = createAsyncThunk<
     const response = await API.get("api/v1/settings", {
       params: {
         page: FetchLogsParams.page ?? 1,
-        rowPerPage: FetchLogsParams.rowPerPage ?? 25,
+        rowPerPage: 25,
         sortBy: FetchLogsParams.sortBy ?? null,
         sortOrder: FetchLogsParams.sortOrder ?? "dec",
         query: FetchLogsParams.query ?? "",
         filters: JSON.stringify(FetchLogsParams.filters ?? {}),
+      },
+      headers: {
+        ...getAuthHeader(),
       },
     });
 
@@ -60,20 +63,6 @@ export const fetchsetting = createAsyncThunk<
     return rejectWithValue(error.response?.data?.message || error.message);
   }
 });
-// export const fetchsetting = createAsyncThunk<
-//   FetchSettingResponse,
-//   void,
-//   { rejectValue: string }
-// >("setting/fetch", async (_arg, { rejectWithValue }) => {
-//   try {
-//     const response = await API.get("api/v1/settings"); 
-
-//     return response.data as FetchSettingResponse;
-//   } catch (error: any) {
-//     return rejectWithValue(error.response?.data?.message || error.message);
-//   }
-// });
-
 
 export const fetchSettingById = createAsyncThunk<
   Setting,
@@ -81,7 +70,11 @@ export const fetchSettingById = createAsyncThunk<
   { rejectValue: string }
 >("setting/fetchById", async (id, { rejectWithValue }) => {
   try {
-    const response = await API.get(`api/v1/settings/${id}`);
+    const response = await API.get(`api/v1/settings/${id}`, {
+      headers: {
+        ...getAuthHeader(),
+      },
+    });
     return response.data.data as Setting;
   } catch (error: any) {
     return rejectWithValue(
@@ -96,7 +89,11 @@ export const createSetting = createAsyncThunk<
   { rejectValue: string }
 >("setting/create", async (settingData, { rejectWithValue }) => {
   try {
-    const response = await API.post("api/v1/settings", settingData);
+    const response = await API.post("api/v1/settings", settingData, {
+      headers: {
+        ...getAuthHeader(),
+      },
+    });
     return response.data as Setting;
   } catch (error: any) {
     return rejectWithValue(
@@ -107,19 +104,17 @@ export const createSetting = createAsyncThunk<
   }
 });
 
-
 export const updateSetting = createAsyncThunk<
   Setting,
   { id: string; updatedData: Partial<Setting> },
   { rejectValue: string }
 >("setting/update", async ({ id, updatedData }, { rejectWithValue }) => {
   try {
-    const filteredData = Object.fromEntries(
-      Object.entries(updatedData).filter(([_, v]) => v !== "")
-    );
-
-    const response = await API.put(`api/v1/settings/${id}`, filteredData);
-    console.log("Update response:", response.data);
+    const response = await API.put(`api/v1/settings/${id}`, updatedData,{
+      headers:{
+        ...getAuthHeader()
+      }
+    });
 
     return response.data as Setting;
   } catch (error: any) {
@@ -128,6 +123,7 @@ export const updateSetting = createAsyncThunk<
     );
   }
 });
+
 
 const SettingSlice = createSlice({
   name: "setting",

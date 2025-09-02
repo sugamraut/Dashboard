@@ -4,7 +4,7 @@ import { server_Url } from "../../globals/config";
 import type { DistrictType } from "../../globals/typeDeclaration";
 import { Status, type StatusType } from "../../globals/status";
 import type { AppDispatch } from "../store";
-import API from "../../http";
+import API, { getAuthHeader } from "../../http";
 
 interface DistrictState {
   fullList: DistrictType[];
@@ -78,8 +78,6 @@ export const {
 
 export default districtSlice.reducer;
 
-const getToken = (): string | null => localStorage.getItem("jwt");
-
 export const fetchDistrictAsync = (
   page = 1,
   rowsPerPage = 25,
@@ -90,7 +88,7 @@ export const fetchDistrictAsync = (
   return async (dispatch: AppDispatch) => {
     dispatch(setStatus(Status.Loading));
 
-    const token = getToken();
+    const token = getAuthHeader();
     if (!token) {
       dispatch(setError("No auth token found."));
       dispatch(setStatus(Status.Error));
@@ -106,6 +104,9 @@ export const fetchDistrictAsync = (
           id: id || undefined,
           search: search || undefined,
         },
+        headers:{
+          ...getAuthHeader()
+        }
       });
 
       const sortedData = response.data.data.sort(
@@ -129,40 +130,6 @@ export const fetchDistrictAsync = (
   };
 };
 
-// export const updateDistrictAsync = ({
-//   id,
-//   data,
-// }: {
-//   id: number | string;
-//   data: Partial<DistrictType>;
-// }) => {
-//   return async (dispatch: AppDispatch) => {
-//     dispatch(setStatus(Status.Loading));
-
-//     const token = localStorage.getItem("jwt");
-//     if (!token) {
-//       dispatch(setError("No auth token found."));
-//       return Promise.reject("No token");
-//     }
-
-//     try {
-//       const response = await API.put(`/api/v1/districts/${id}`, data);
-
-//       console.log("Update success:", response.data);
-
-//       dispatch(updateDistrictInStore(response.data));
-//       dispatch(setStatus(Status.Success));
-//       return Promise.resolve(response.data);
-//     } catch (error: any) {
-//       console.error("Update failed:", error.response?.data || error.message);
-//       const message =
-//         error.response?.data?.message || error.message || "Update error";
-//       dispatch(setError(message));
-//       return Promise.reject(message);
-//     }
-//   };
-// };
-
 export const updateDistrictAsync = ({
   id,
   data,
@@ -180,7 +147,11 @@ export const updateDistrictAsync = ({
     }
 
     try {
-      const response = await API.put(`/api/v1/districts/${id}`, data);
+      const response = await API.put(`/api/v1/districts/${id}`, data, {
+        headers: {
+          ...getAuthHeader(),
+        },
+      });
 
       console.log("Update success:", response.data);
 
@@ -197,14 +168,16 @@ export const updateDistrictAsync = ({
   };
 };
 
-
 export const fetchAllDistrictsAsync = () => {
   return async (dispatch: AppDispatch) => {
     dispatch(setStatus(Status.Loading));
 
     try {
-      // const response = await axios.get(`${server_Url}/api/v1/districts/all`);
-      const response = await API.get(`/api/v1/districts/all`);
+      const response = await API.get(`/api/v1/districts/all`, {
+        headers: {
+          ...getAuthHeader(),
+        },
+      });
 
       if (response.status === 200 || response.status === 201) {
         dispatch(setFullList(response.data.data));
@@ -230,7 +203,12 @@ export const fetchDistrictsByStateIdAsync = (
 
     try {
       const response = await API.get(
-        `/api/v1/districts/state/${stateId}?page=${page}&limit=${limit}`
+        `/api/v1/districts/state/${stateId}?page=${page}&limit=${limit}`,
+        {
+          headers: {
+            ...getAuthHeader(),
+          },
+        }
       );
 
       const sortedData = response.data.sort(
@@ -258,7 +236,12 @@ export const fetchDistrictByIdAsync = (districtId: number) => {
 
     try {
       const response = await axios.get<DistrictType>(
-        `${server_Url}/api/v1/districts/${districtId}`
+        `${server_Url}/api/v1/districts/${districtId}`,
+        {
+          headers: {
+            ...getAuthHeader(),
+          },
+        }
       );
       dispatch(setDistrictById(response.data));
       dispatch(setStatus(Status.Success));

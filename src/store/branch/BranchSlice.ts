@@ -4,8 +4,8 @@ import type { Branch, StateType } from "../../globals/typeDeclaration";
 import type { AppDispatch } from "../store";
 import axios from "axios";
 import { server_Url } from "../../globals/config";
-
-
+import { getAuthHeader } from "../../http";
+import { toast } from "react-toastify";
 
 interface BranchState {
   districts: any;
@@ -92,7 +92,9 @@ export function fetchBranchById(branchId: number) {
   return async function fetchBranchByIdThunk(dispatch: AppDispatch) {
     dispatch(setBranchStatus(Status.Loading));
     try {
-      const response = await axios.get(`${server_Url}/api/v1/branches/${branchId}`);
+      const response = await axios.get(
+        `${server_Url}/api/v1/branches/${branchId}`
+      );
       dispatch(setBranch([response.data.data]));
       dispatch(setBranchStatus(Status.Success));
     } catch (error: any) {
@@ -110,28 +112,34 @@ interface UpdateBranchPayload {
 export function updateBranch({ id, data }: UpdateBranchPayload) {
   return async function updateBranchThunk(dispatch: AppDispatch) {
     dispatch(setBranchStatus(Status.Loading));
-    const token = localStorage.getItem("jwt");
+    // const token = localStorage.getItem("jwt");
+    const token = getAuthHeader();
     if (!token) {
-      dispatch(setBranchError("No auth token found."));
-      return Promise.reject("No token");
+      toast.error("No auth token found");
     }
     try {
-      const response = await axios.patch<Branch>(
-        `${server_Url}/api/v1/branches/${id}`,
-        data,
-        {
-          headers: {
-            Authorization: `${token}`,
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-        }
-      );
+      // const response = await axios.patch<Branch>(
+      //   `${server_Url}/api/v1/branches/${id}`,
+      //   data,
+      //   {
+      //     headers: {
+      //       Authorization: `${token}`,
+      //       "Content-Type": "application/json",
+      //       Accept: "application/json",
+      //     },
+      //   }
+      // );
+      const response = await axios.put<Branch>(`/api/v1/branch/${id}`, data, {
+        headers: {
+          ...getAuthHeader(),
+        },
+      });
       dispatch(updateBranchInStore(response.data));
       dispatch(setBranchStatus(Status.Success));
       return Promise.resolve(response.data);
     } catch (error: any) {
-      const message = error.response?.data?.message || error.message || "Update error";
+      const message =
+        error.response?.data?.message || error.message || "Update error";
       dispatch(setBranchError(message));
       return Promise.reject(message);
     }
@@ -141,28 +149,35 @@ export function updateBranch({ id, data }: UpdateBranchPayload) {
 export function createBranch(data: Partial<Branch>) {
   return async function createBranchThunk(dispatch: AppDispatch) {
     dispatch(setBranchStatus(Status.Loading));
-    const token = localStorage.getItem("jwt");
+    // const token = localStorage.getItem("jwt");
+    const token = getAuthHeader();
     if (!token) {
       dispatch(setBranchError("No auth token found."));
       return Promise.reject("No token");
     }
     try {
-      const response = await axios.post(
-        `${server_Url}/api/v1/branches`,
-        data,
-        {
-          headers: {
-            Authorization: `${token}`,
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-        }
-      );
+      // const response = await axios.post(
+      //   `${server_Url}/api/v1/branches`,
+      //   data,
+      //   {
+      //     headers: {
+      //       Authorization: `${token}`,
+      //       "Content-Type": "application/json",
+      //       Accept: "application/json",
+      //     },
+      //   }
+      // );
+      const response = await axios.post(`/api/v1/branch`, data, {
+        headers: {
+          ...getAuthHeader(),
+        },
+      });
       dispatch(setBranchStatus(Status.Success));
       dispatch(fetchBranchData());
       return response.data.data;
     } catch (error: any) {
-      const message = error?.response?.data?.message || error.message || "Create error";
+      const message =
+        error?.response?.data?.message || error.message || "Create error";
       dispatch(setBranchError(message));
       return Promise.reject(message);
     }

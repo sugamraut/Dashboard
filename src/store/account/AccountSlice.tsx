@@ -1,7 +1,8 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { server_Url } from "../../globals/config";
-import API from "../../http";
+import API, { getAuthHeader } from "../../http";
+import { toast } from "react-toastify";
 
 export interface AccountType {
   id: number;
@@ -65,9 +66,16 @@ export const fetchAccountTypes = createAsyncThunk<
 >(
   "accountTypes/fetchAll",
   async ({ page, rowsPerPage, sortBy, sortOrder }, { rejectWithValue }) => {
+    const token =getAuthHeader()
+    if(!token){
+      toast.error("No auth token found")
+    }
     try {
       const resp = await API.get<AccountTypesState>(`/api/v1/account-types`, {
         params: { page, rowsPerPage, sortBy, sortOrder },
+        headers:{
+          ...getAuthHeader()
+        }
       });
       const data = resp.data.data ?? [];
       const total = Number(resp.data.metaData?.total ?? 0);
@@ -111,7 +119,11 @@ export const updateAccountType = createAsyncThunk<
 
     const resp = await API.put(
       `${server_Url}/api/v1/account-types/${accountType.id}`,
-      payload
+      payload,{
+        headers: {
+          ...getAuthHeader(),
+        },
+      }
     );
 
     return resp.data.data as AccountType;
@@ -126,7 +138,11 @@ export const deleteAccountType = createAsyncThunk<
   { rejectValue: string }
 >("accountTypes/delete", async (id, { rejectWithValue }) => {
   try {
-    await axios.delete(`${server_Url}/api/v1/account-types/${id}`);
+    await axios.delete(`${server_Url}/api/v1/account-types/${id}`,{
+        headers: {
+          ...getAuthHeader(),
+        },
+      });
     return id;
   } catch (error: any) {
     return rejectWithValue(error.message || "Failed to delete account type");
@@ -143,7 +159,7 @@ export const uploadFile = createAsyncThunk<
     formData.append("files", file);
 
     const resp = await API.post(`/api/v1/file-upload/ACCOUNT-TYPE`, formData, {
-      headers: { "Content-Type": "multipart/form-data" },
+      headers: { "Content-Type": "multipart/form-data", ...getAuthHeader()},
     });
     return resp.data as UploadedFile;
   } catch (err: any) {
@@ -168,6 +184,10 @@ export const createAccountTypeWithUpload = createAsyncThunk<
       const resp = await API.post(`/api/v1/account-types`, {
         ...accountType,
         imageUrl: String(uploaded.id),
+      },{
+        headers: {
+          ...getAuthHeader(),
+        },
       });
 
       return resp.data.data as AccountType;

@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import API from "../../http";
+import API, { getAuthHeader } from "../../http";
 
 interface dashboardData {
   title: string;
@@ -28,7 +28,8 @@ const initialState: dashboardState = {
 
 export const fetchdashboarddata = createAsyncThunk<
   dashboardData[],
-  FetchParams,
+  // FetchParams,
+  void,
   { rejectValue: string }
 >(
   "fetch/dashboard",
@@ -38,7 +39,11 @@ export const fetchdashboarddata = createAsyncThunk<
     { rejectWithValue }
   ) => {
     try {
-      const response = await API.get(`/api/v1/dashboard-data`);
+      const response = await API.get(`/api/v1/dashboard-data`,{
+        headers: {
+          ...getAuthHeader(),
+        },
+      });
       return response.data.data ?? [];
     } catch (error: any) {
       return rejectWithValue(

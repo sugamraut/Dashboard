@@ -3,7 +3,7 @@ import {
   createAsyncThunk,
   type PayloadAction,
 } from "@reduxjs/toolkit";
-import API from "../../http";
+import API, { getAuthHeader } from "../../http";
 import type { UserProfile } from "../../globals/typeDeclaration";
 
 
@@ -29,7 +29,9 @@ export const fetchProfile = createAsyncThunk<
   { rejectValue: string }
 >("user/fetchProfile", async (_, { rejectWithValue }) => {
   try {
-    const response = await API.get("/api/v1/users/profile");
+    const response = await API.get("/api/v1/users/profile",{headers:{
+      ...getAuthHeader()
+    }});
     return response.data;
   } catch (error: any) {
     return rejectWithValue(
@@ -44,7 +46,9 @@ export const updateProfile = createAsyncThunk<
   { rejectValue: string }
 >("user/updateProfile", async (formData, { rejectWithValue }) => {
   try {
-    const response = await API.put("/api/v1/users/profile", formData);
+    const response = await API.put("/api/v1/users/profile", formData,{headers:{
+      ...getAuthHeader()
+    }});
     return response.data;
   } catch (error: any) {
     return rejectWithValue(
@@ -97,5 +101,4 @@ const userSlice = createSlice({
   },
 });
 
-// export const { clearProfileStatus } = userSlice.actions;
 export default userSlice.reducer;

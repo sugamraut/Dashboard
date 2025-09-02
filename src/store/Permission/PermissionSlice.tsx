@@ -3,7 +3,7 @@ import {
   createAsyncThunk,
   type PayloadAction,
 } from "@reduxjs/toolkit";
-import API from "../../http";
+import API, { getAuthHeader } from "../../http";
 import type { MetaData, Permission } from "../../globals/typeDeclaration";
 
 export interface PermissionsResponse {
@@ -64,6 +64,9 @@ export const fetchPermissions = createAsyncThunk<
         query,
         filters: JSON.stringify(filters),
       },
+      headers: {
+        ...getAuthHeader(),
+      },
     });
 
     const sortedData = response.data.data.sort(
@@ -87,7 +90,11 @@ export const fetchPermissionsByGroup = createAsyncThunk<
   { rejectValue: string }
 >("permissions/fetchByGroup", async (_, { rejectWithValue }) => {
   try {
-    const response = await API.get(`/api/v1/permissions/groups`);
+    const response = await API.get(`/api/v1/permissions/groups`, {
+      headers: {
+        ...getAuthHeader(),
+      },
+    });
     return response.data;
   } catch (error: any) {
     return rejectWithValue(
@@ -104,7 +111,11 @@ export const addPermission = createAsyncThunk<
   { rejectValue: string }
 >("permissions/add", async (newPermission, { rejectWithValue }) => {
   try {
-    const response = await API.post(`/api/v1/permissions`, newPermission);
+    const response = await API.post(`/api/v1/permissions`, newPermission, {
+      headers: {
+        ...getAuthHeader(),
+      },
+    });
     return response.data;
   } catch (error: any) {
     return rejectWithValue(
@@ -121,7 +132,11 @@ export const fetchAllPermissions = createAsyncThunk<
   { rejectValue: string }
 >("permissions/fetchAll", async (_, { rejectWithValue }) => {
   try {
-    const response = await API.get(`/api/v1/permissions/all`);
+    const response = await API.get(`/api/v1/permissions/all`, {
+      headers: {
+        ...getAuthHeader(),
+      },
+    });
     return response.data.data;
   } catch (error: any) {
     return rejectWithValue(
@@ -139,7 +154,12 @@ export const updatePermission = createAsyncThunk<
   try {
     const response = await API.put(
       `/api/v1/permissions/${permissionData.id}`,
-      permissionData
+      permissionData,
+      {
+        headers: {
+          ...getAuthHeader(),
+        },
+      }
     );
     return response.data;
   } catch (error: any) {
@@ -156,7 +176,12 @@ export const DeletePermission = createAsyncThunk<
 >("permission/delete", async (permissionData, { rejectWithValue }) => {
   try {
     const response = await API.delete(
-      `/api/v1/permissions/${permissionData.id}`
+      `/api/v1/permissions/${permissionData.id}`,
+      {
+        headers: {
+          ...getAuthHeader(),
+        },
+      }
     );
 
     return response.data ?? permissionData;

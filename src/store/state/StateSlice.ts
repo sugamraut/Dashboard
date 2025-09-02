@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk, type PayloadAction } from '@reduxjs/toolkit';
 import { type State } from '../../globals/typeDeclaration';
-import API from '../../http';
+import API, { getAuthHeader } from '../../http';
 
 interface StateSliceType {
   statesList: State[];
@@ -19,7 +19,11 @@ export const fetchStates = createAsyncThunk<State[], void, { rejectValue: string
   'states/fetchStates',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await API.get(`/api/v1/states`);
+      const response = await API.get(`/api/v1/states`,{
+        headers:{
+          ...getAuthHeader()
+        }
+      });
       console.log("fetchStates response.data:", response.data);
       return response.data.data as State[];
     } catch (err: any) {
