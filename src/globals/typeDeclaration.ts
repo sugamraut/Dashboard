@@ -83,6 +83,7 @@ export interface UserProfile {
   id: number;
   name: string;
   username: string;
+  mobile?:string;
   mobilenumber?: string;
   email: string;
   gender?: string;

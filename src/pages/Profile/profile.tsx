@@ -36,7 +36,7 @@ const Profile = () => {
       name: "",
       username: "",
       email: "",
-      mobilenumber: "",
+      mobile: "",
       password: "",
       confirmPassword: "",
     },
@@ -54,7 +54,7 @@ const Profile = () => {
         name: data.name || "",
         username: data.username || "",
         email: data.email || "",
-        mobilenumber: data.mobilenumber || "",
+        mobile: data.mobile || "",
         password: "",
         confirmPassword: "",
       });
@@ -73,7 +73,7 @@ const Profile = () => {
         name: formData.name,
         username: formData.username,
         email: formData.email,
-        mobilenumber: formData.mobilenumber,
+        mobilenumber: formData.mobile,
         password: formData.password,
         confirmPassword: formData.confirmPassword,
       })
@@ -143,7 +143,7 @@ const Profile = () => {
         />
 
         <Controller
-          name="mobilenumber"
+          name="mobile"
           control={control}
           rules={{
             required: "Mobile number is required",
@@ -158,8 +158,8 @@ const Profile = () => {
               label="Mobile"
               margin="normal"
               sx={{ width: "48%", marginLeft: "12px" }}
-              error={!!errors.mobilenumber}
-              helperText={errors.mobilenumber?.message}
+              error={!!errors.mobile}
+              helperText={errors.mobile?.message}
             />
           )}
         />

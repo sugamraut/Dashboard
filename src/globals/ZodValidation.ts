@@ -118,7 +118,7 @@ export const  ProfileSchema=z.object({
   name:z.string().min(1,"Name is required"),
   username:z.string().min(1,"UserName is required"),
    email:z.email({pattern:z.regexes.email}),
-   mobilenumber:z.string().optional(),
+   mobile:z.string().optional(),
    password: z
     .string()
     .min(4, "Password must be at least 4 characters")
