@@ -23,6 +23,8 @@ import { fetchAllRole } from "../../store/role/RoleSlice";
 import { useAppDispatch, useAppSelector } from "../../store/hook";
 import { userSchema, type UserFormData } from "../../globals/ZodValidation";
 import InputField from "../../components/Input_field";
+import { toast } from "react-toastify";
+import type { UserProfile } from "../../globals/typeDeclaration";
 
 interface EditUserProps {
   open: boolean;
@@ -70,15 +72,15 @@ const EditUser: React.FC<EditUserProps> = ({ open, onClose, userId }) => {
       const user = users.find((u) => u.id === userId);
       if (user) {
         reset({
-          id: user.id || undefined,
+          id: user.id,
           name: user.name || "",
           mobile: user.mobilenumber || "",
           email: user.email || "",
           username: user.username || "",
           gender: user.gender || "",
           role: user.role || "",
-          password: "",
-          confirmPassword: "",
+          password: user.password || "",
+          confirmPassword: user.confirmPassword || "",
         });
       }
     } else {
@@ -88,20 +90,21 @@ const EditUser: React.FC<EditUserProps> = ({ open, onClose, userId }) => {
 
   const togglePasswordVisibility = () => setShowPassword((prev) => !prev);
 
-  const onSubmit = async (data: Partial<UserFormData>) => {
-    const { ...payload } = data;
-
+  const onSubmit = async (data: UserFormData) => {
     try {
       if (userId !== null) {
-        await dispatch(updateUser({ userId: userId, data: payload })).unwrap();
+        const payload = {
+          ...data,
+          id: userId,
+        } as UserProfile;
+        await dispatch(updateUser(payload)).unwrap();
       } else {
-        await dispatch(createUser(payload)).unwrap();
+        await dispatch(createUser(data)).unwrap();
       }
       onClose();
       reset();
-    } catch (err) {
-      console.error("Save failed:", err);
-      alert("Failed to save user.");
+    } catch (err: any) {
+      toast.error(" save failed ", err);
     }
   };
 
@@ -138,18 +141,18 @@ const EditUser: React.FC<EditUserProps> = ({ open, onClose, userId }) => {
           />
 
           <Controller
-          name="email"
-          control={control}
-          render={({field})=>(
-            <InputField
-            label="Email"
-            fullWidth
-            margin="normal"
-            {...field}
-            error={!!errors.email}
-            helperText={errors.email?.message}
-          />   
-          )}  
+            name="email"
+            control={control}
+            render={({ field }) => (
+              <InputField
+                label="Email"
+                fullWidth
+                margin="normal"
+                {...field}
+                error={!!errors.email}
+                helperText={errors.email?.message}
+              />
+            )}
           />
 
           {/* <InputField
@@ -162,19 +165,18 @@ const EditUser: React.FC<EditUserProps> = ({ open, onClose, userId }) => {
             helperText={errors.username?.message}
           /> */}
           <Controller
-          name="username"
-          control={control}
-          render={({field})=>(
-            <InputField
-            label="Username"
-            fullWidth
-            margin="normal"
-            {...field}
-            error={!!errors.username}
-            helperText={errors.username?.message}
-          />   
-          )}
-        
+            name="username"
+            control={control}
+            render={({ field }) => (
+              <InputField
+                label="Username"
+                fullWidth
+                margin="normal"
+                {...field}
+                error={!!errors.username}
+                helperText={errors.username?.message}
+              />
+            )}
           />
 
           <Controller

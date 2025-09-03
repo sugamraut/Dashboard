@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import {
   Box,
-  CircularProgress,
   IconButton,
   Stack,
   Table,

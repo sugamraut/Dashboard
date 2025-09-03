@@ -15,7 +15,7 @@ import {
 import FilterAltOffIcon from "@mui/icons-material/FilterAltOff";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import AddIcon from "@mui/icons-material/Add";
+import AddCircleIcon from "@mui/icons-material/AddCircle";
 
 import type { RootState } from "../../store/store";
 import { fetchAllUsers } from "../../store/user/UserSlice";
@@ -73,7 +73,7 @@ const User = () => {
             <FilterAltOffIcon />
           </IconButton>
           <IconButton color="primary" onClick={handleAddClick}>
-            <AddIcon />
+            <AddCircleIcon />
           </IconButton>
         </Stack>
       </Box>
@@ -96,7 +96,7 @@ const User = () => {
                 <TableCell className="table-data">{index + 1}</TableCell>
                 <TableCell className="table-data">{user.name}</TableCell>
                 <TableCell className="table-data">{user.username}</TableCell>
-                <TableCell className="table-data">{user.mobile}</TableCell>
+                <TableCell className="table-data">{user.mobilenumber}</TableCell>
                 <TableCell className="table-data">{user.email}</TableCell>
                 <TableCell className="table-data">
                   <IconButton

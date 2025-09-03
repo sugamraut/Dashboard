@@ -1,6 +1,5 @@
 import {
   Box,
-  Grid,
   Card,
   CardContent,
   Typography,
@@ -54,65 +53,75 @@ const cardItems = [
 ];
 
 const StatusCards = () => {
-  // const dispatch = useDispatch<AppDispatch>();
   const dispatch = useAppDispatch();
-
   const { list } = useAppSelector((state: RootState) => state.dashboard);
+
   useEffect(() => {
     dispatch(fetchdashboarddata());
   }, [dispatch]);
 
-  const mergedCards = list.map((apiItem) => {
-    const matchedCard = cardItems.find((c) => c.title === apiItem.title);
-    return {
-      ...apiItem,
-      icon: matchedCard?.icon || <StorageIcon />,
-      trendColor: matchedCard?.trendColor,
-    };
-  });
+  const apiDataMap = Object.fromEntries(list.map((item) => [item.title, item]));
 
   return (
-    <Box sx={{ display: "flex", paddingLeft: "50px" }}>
+    <Box sx={{ display: "flex", paddingLeft: "150px" }}>
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-        <Box sx={{ p: 4 }}>
-          <Grid container spacing={5}>
-            {mergedCards.map((item) => (
-              <Card className="card-design">
-                <CardContent>
-                  <Avatar
-                    sx={{
-                      bgcolor: item.trendColor,
-                    }}
-                    className="avatar-icon-style "
-                  >
-                    {item.icon}
-                  </Avatar>
+        <Box
+          sx={{
 
-                  <Chip
-                    label={item.changeValue}
-                    size="small"
-                    sx={{ backgroundColor: item.trendColor }}
-                    className="chip-icon-style"
-                  />
+            justifyContent: "flex-start",
+          }}
+          className="row gap-5 "
+        >
+          {cardItems.map((card) => {
+            const apiData = apiDataMap[card.title] || {};
+            return (
+              <Box
+                key={card.title}
+                // className="col-3  "
+                sx={{
+                  width:{
+                    sm:"100%",
+                    md:"45%",
+                    xl:"25%",
+                    
+                  }
+                }}
+              >
+                <Card className="card-design">
+                  <CardContent>
+                    <Avatar
+                      sx={{ bgcolor: card.trendColor }}
+                      className="avatar-icon-style"
+                    >
+                      {card.icon}
+                    </Avatar>
 
-                  <Typography
-                    variant="h4"
-                    // sx={{ mt: 4, textAlign: "center", fontWeight: "bold" }}
-                    className="dashboardCardValue"
-                  >
-                    {item.count}
-                  </Typography>
+                    <Chip
+                      label={apiData.changeValue ?? "N/A"}
+                      size="small"
+                      sx={{ backgroundColor: card.trendColor }}
+                      className="chip-icon-style"
+                    />
 
-                  <Typography
-                    variant="subtitle2"
-                    sx={{ textAlign: "center", color: "gray" }}
-                  >
-                    {item.title}
-                  </Typography>
-                </CardContent>
-              </Card>
-            ))}
-          </Grid>
+                    <Typography
+                      className="dashboardCardValue"
+                      variant="h4"
+                      sx={{ mt: 2 }}
+                    >
+                      {apiData.count ?? 0}
+                    </Typography>
+
+                    <Typography
+                      variant="subtitle2"
+                      sx={{ textAlign: "center", color: "gray", mt: 1 }}
+                    >
+                      {card.title}
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </Box>
+            );
+          })}
         </Box>
       </Box>
     </Box>

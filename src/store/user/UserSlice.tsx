@@ -1,9 +1,9 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
-import { server_Url } from "../../globals/config";
+
 import { Status, type StatusType } from "../../globals/status";
 import type { UserProfile } from "../../globals/typeDeclaration";
 import API, { getAuthHeader } from "../../http";
+import type { UserFormData } from "../../globals/ZodValidation";
 
 export interface UserState {
   fullList: UserProfile[] | null;
@@ -104,9 +104,10 @@ export const deleteUser = createAsyncThunk(
     }
   }
 );
+
 export const createUser = createAsyncThunk(
   "auth/createUser",
-  async (userData, { rejectWithValue }) => {
+  async (userData: UserFormData, { rejectWithValue }) => {
     try {
       const response = await API.post("/auth/create-user", userData, {
         headers: {

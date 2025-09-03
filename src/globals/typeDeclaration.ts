@@ -1,21 +1,17 @@
-export type authItem = {
+export interface authItem {
   username: string;
   password: string;
-};
-export type StateType = {
+}
+export interface StateType {
   id: number;
   name: string;
   nameNp: string;
   nameCombined: string;
-};
+}
 
-export type DistrictType = {
-  data: any;
+export interface DistrictType extends StateType {
+  data: string;
   metaData: { total: number };
-  id: number;
-  name: string;
-  nameNp: string;
-  nameCombined: string;
   code: string;
   stateId: number;
   state: {
@@ -24,24 +20,20 @@ export type DistrictType = {
     nameNp: string;
     nameCombined: string;
   };
-};
+}
 
-export interface City {
-  id: number;
-  name: string;
-  nameNp: string;
-  nameCombined: string;
+export interface City extends StateType {
   districtId: number;
   code: string | null;
   district: string;
-  state:string;
+  state: string;
 }
 
 export interface Branch {
   id: number;
   name: string;
   nameNp: string;
-  nameCombined: number;
+  nameCombined: string;
   districtId: number;
   code: string | null;
   district: string;
@@ -87,20 +79,10 @@ export interface State {
   nameCombined: string;
 }
 
-// export interface UserProfile {
-//   name: string;
-//   username: string;
-//   email: string;
-//   password?: string;
-//   confirmPassword?: string;
-//   mobile?: string;
-// }
-
 export interface UserProfile {
   id: number;
   name: string;
   username: string;
-  mobile: string;
   mobilenumber?: string;
   email: string;
   gender?: string;
@@ -114,19 +96,18 @@ export interface Log {
   type: number;
   description: string;
   timestamp: string;
-  createdDate:string
- 
+  createdDate: string;
 }
 
 export interface LogsResponse {
   data: Log[];
-  metaData:MetaData|null
+  metaData: MetaData | null;
   total: number;
 }
 export interface ActivityUser {
   name: string;
   username: string;
-  roles:[]
+  roles: [];
 }
 
 export interface ActivityLog {
@@ -136,7 +117,7 @@ export interface ActivityLog {
   description: string;
   createdDate: string;
   userAgent: string;
-  user?: ActivityUser; 
+  user?: ActivityUser;
 }
 
 export interface MetaData {
@@ -155,12 +136,9 @@ export interface ActivityResponse {
   total: number;
 }
 
-
 export interface Setting {
   id?: number;
   name: string;
   description?: string;
   value: string;
 }
-
-
