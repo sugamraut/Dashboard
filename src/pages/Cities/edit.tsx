@@ -16,14 +16,14 @@ import InputField from "../../components/Input_field";
 import { fetchStates } from "../../store/state/StateSlice";
 import { createCity, updatecity } from "../../store/cities/CitiesSlice";
 import { useAppDispatch, useAppSelector } from "../../store/hook";
-import { citySchema } from "../../globals/ZodValidation";
+import { citySchema, type CityFormData } from "../../globals/ZodValidation";
 import type { RootState } from "../../store/store";
 import { toast } from "react-toastify";
 
-type FormData = z.infer<typeof citySchema>;
+
 
 interface EditBranchFormProps {
-  initialData?: Partial<FormData> & { id?: number };
+  initialData?: Partial<CityFormData> & { id?: number };
   onClose?: () => void;
 }
 
@@ -44,7 +44,7 @@ const AddEditCity: React.FC<EditBranchFormProps> = ({
     handleSubmit,
 
     formState: { errors, isSubmitting },
-  } = useForm<FormData>({
+  } = useForm<CityFormData>({
     resolver: zodResolver(citySchema),
     defaultValues: {
       name: initialData?.name || "",
@@ -69,7 +69,7 @@ const AddEditCity: React.FC<EditBranchFormProps> = ({
     return Array.from(map.values());
   }, [fullList]);
 
-  const onSubmit = async (data: FormData) => {
+  const onSubmit = async (data: CityFormData) => {
     const payload = {
       id: initialData?.id ?? 0,
       name: data.name,

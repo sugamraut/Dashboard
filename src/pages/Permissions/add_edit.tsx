@@ -19,7 +19,7 @@ import {
 import type { Permission } from "../../globals/typeDeclaration";
 import { useAppDispatch, useAppSelector } from "../../store/hook";
 import { toast } from "react-toastify";
-import { permissionSchema } from "../../globals/ZodValidation";
+import { permissionSchema, type PermissionFormData } from "../../globals/ZodValidation";
 import type z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import InputField from "../../components/Input_field";
@@ -29,7 +29,7 @@ interface AddEditPageProps {
   initialData?: Partial<FormData> & { id?: number };
   onClose?: () => void;
 }
-type FormValues = z.infer<typeof permissionSchema>;
+
 
 const AddEditPage: React.FC<AddEditPageProps> = ({ initialData, onClose }) => {
   const dispatch = useAppDispatch<AppDispatch>();
@@ -44,7 +44,7 @@ const AddEditPage: React.FC<AddEditPageProps> = ({ initialData, onClose }) => {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormValues>({
+  } = useForm<PermissionFormData>({
     resolver: zodResolver(permissionSchema),
     defaultValues: {
       id: initialData?.id || 0,
@@ -61,7 +61,7 @@ const AddEditPage: React.FC<AddEditPageProps> = ({ initialData, onClose }) => {
     dispatch(fetchAllPermissions());
   }, [dispatch]);
 
-  const onSubmit = async (data: FormValues) => {
+  const onSubmit = async (data: PermissionFormData) => {
     if (!data.displayName) {
       toast.error("Display Name is required");
       return;

@@ -41,6 +41,8 @@ export const BranchSchema = z.object({
   state: z.string().min(1, "State is required"),
   district: z.string().min(1, "District is required"),
 });
+export type BranchDataState = z.infer<typeof BranchSchema>;
+
 
 
  export const citySchema = z.object({
@@ -49,6 +51,7 @@ export const BranchSchema = z.object({
   state: z.string().min(1, "State is required"),
   district: z.string().min(1, "District is required"),
 });
+export type CityFormData = z.infer<typeof citySchema>;
 
 export const permissionSchema = z.object({
   id: z.number().optional(),
@@ -65,6 +68,7 @@ export const permissionSchema = z.object({
     )
     .min(1, "At least one action group must be selected"),
 });
+export type PermissionFormData = z.infer<typeof permissionSchema>;
 
 export const roleSchema = z.object({
   id: z.number().optional(),
@@ -74,6 +78,7 @@ export const roleSchema = z.object({
     .array(z.string())
     .min(1, "At least one permission must be selected"),
 });
+
 
 export const districtSchema = z.object({
   name: z.string().min(1, "District name is required"),
@@ -123,7 +128,7 @@ export const  ProfileSchema=z.object({
     .string()
     .min(4, "Password must be at least 4 characters")
     .max(15, "Password is too long"),
-  confirmPassword:z.string().min(1,"confirm password must be provided")
+  confirmPassword:z.string().min(1,"confirm password must be provided").max(15,"password is too long")
 });
 
 export type ProfileFormData = z.infer<typeof ProfileSchema>

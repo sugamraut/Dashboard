@@ -11,19 +11,17 @@ import {
   MenuItem,
 } from "@mui/material";
 import { useForm, Controller } from "react-hook-form";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { BranchSchema } from "../../globals/ZodValidation";
-
-
-
-type FormDataState = z.infer<typeof BranchSchema>;
+import {
+  BranchSchema,
+  type BranchDataState,
+} from "../../globals/ZodValidation";
 
 interface BranchFormModalProps {
   open: boolean;
   onClose: () => void;
-  initialData?: FormDataState | null;
-  onSubmit: (data: FormDataState) => Promise<void>;
+  initialData?: BranchDataState | null;
+  onSubmit: (data: BranchDataState) => Promise<void>;
   states: string[];
   districts: string[];
 }
@@ -41,7 +39,7 @@ const BranchFormModal: React.FC<BranchFormModalProps> = ({
     handleSubmit,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm<FormDataState>({
+  } = useForm<BranchDataState>({
     resolver: zodResolver(BranchSchema),
     defaultValues: {
       branchName: "",
@@ -64,7 +62,7 @@ const BranchFormModal: React.FC<BranchFormModalProps> = ({
     }
   }, [initialData, open, reset]);
 
-  const onFormSubmit = async (data: FormDataState) => {
+  const onFormSubmit = async (data: BranchDataState) => {
     try {
       await onSubmit(data);
       onClose();

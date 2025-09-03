@@ -77,7 +77,8 @@ const StatusCards = () => {
             return (
               <Box
                 key={card.title}
-                // className="col-3  "
+                // 
+                
                 sx={{
                   width:{
                     sm:"100%",
