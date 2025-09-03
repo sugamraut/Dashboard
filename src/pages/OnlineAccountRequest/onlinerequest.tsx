@@ -1,5 +1,4 @@
 import {
-
   Box,
   Checkbox,
   FormControl,
@@ -54,9 +53,11 @@ const OnlineAccountRequest = () => {
       >
         <Typography
           variant="h5"
-          fontWeight="bold"
           paddingBottom={2}
-          sx={{ color: "#043ba0", fontFamily: "lato" }}
+          fontWeight="bold"
+          color="#043BA0"
+          fontSize={24}
+          fontFamily="lato"
         >
           Online Account Request
         </Typography>

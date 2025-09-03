@@ -86,7 +86,13 @@ const Profile = () => {
 
   return (
     <Box marginLeft={9} padding={2}>
-      <Typography variant="h5" fontWeight="bold" color="#043BA0" fontSize={24}>
+      <Typography
+        variant="h5"
+        fontWeight="bold"
+        color="#043BA0"
+        fontSize={24}
+        fontFamily="lato"
+      >
         Profile
       </Typography>
       <hr />

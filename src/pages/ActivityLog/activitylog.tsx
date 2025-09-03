@@ -145,6 +145,7 @@ const ActivityLog = () => {
           fontWeight="bold"
           color="#043BA0"
           fontSize={24}
+          fontFamily="lato"
         >
           Activity Log
         </Typography>

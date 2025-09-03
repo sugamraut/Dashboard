@@ -23,7 +23,6 @@ import EditUser from "./EditUser";
 import { useAppDispatch, useAppSelector } from "../../store/hook";
 
 const User = () => {
-
   const dispatch = useAppDispatch();
   const userList = useAppSelector((state: RootState) =>
     Array.isArray(state.User.list) ? state.User.list : []
@@ -41,7 +40,6 @@ const User = () => {
     setEditOpen(true);
   };
 
-  
   const handleAddClick = () => {
     setSelectedUserId(null);
     setEditOpen(true);
@@ -55,7 +53,14 @@ const User = () => {
   return (
     <Box marginLeft={10} padding={2}>
       <Box className="header">
-        <Typography variant="h5" gutterBottom>
+        <Typography
+          variant="h5"
+          gutterBottom
+          fontWeight="bold"
+          color="#043BA0"
+          fontSize={24}
+          fontFamily="lato"
+        >
           Users
         </Typography>
 
@@ -96,7 +101,9 @@ const User = () => {
                 <TableCell className="table-data">{index + 1}</TableCell>
                 <TableCell className="table-data">{user.name}</TableCell>
                 <TableCell className="table-data">{user.username}</TableCell>
-                <TableCell className="table-data">{user.mobilenumber}</TableCell>
+                <TableCell className="table-data">
+                  {user.mobilenumber}
+                </TableCell>
                 <TableCell className="table-data">{user.email}</TableCell>
                 <TableCell className="table-data">
                   <IconButton

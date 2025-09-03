@@ -78,7 +78,10 @@ export default function BranchesPage() {
   return (
     <Box marginLeft={10} padding={2}>
       <Box className="header">
-        <Typography variant="h5" fontWeight="bold" marginBottom={2}>
+        <Typography variant="h5" fontWeight="bold" marginBottom={2}
+          color="#043BA0"
+          fontSize={24}
+          fontFamily="lato">
           Branches
         </Typography>
 

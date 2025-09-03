@@ -114,7 +114,10 @@ export default function CityPage() {
   return (
     <Box marginLeft={10} padding={2}>
       <Box className="header">
-        <Typography variant="h5" fontWeight="bold" paddingBottom={2}>
+        <Typography variant="h5" fontWeight="bold"
+          color="#043BA0"
+          fontSize={24}
+          fontFamily="lato" paddingBottom={2}>
           Cities
         </Typography>
 

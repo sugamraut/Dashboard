@@ -139,8 +139,9 @@ export default function DistrictPage() {
         <Typography
           variant="h5"
           fontWeight="bold"
-          paddingBottom={2}
-          sx={{ color: "#043ba0" }}
+          color="#043BA0"
+          fontSize={24}
+          fontFamily="lato"
         >
           Districts
         </Typography>

@@ -25,7 +25,7 @@ import { fetchLogs } from "../../store/scannedlog/ScannedSlice";
 import { useAppDispatch, useAppSelector } from "../../store/hook";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 
-import  { Dayjs } from "dayjs";
+import { Dayjs } from "dayjs";
 import { toast } from "react-toastify";
 
 const ScannedLog = () => {
@@ -36,10 +36,8 @@ const ScannedLog = () => {
   );
   const [selectedDate, setSelectedDate] = useState<Dayjs | null>(null);
 
-
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(25);
-
 
   const loadLogs = () => {
     dispatch(
@@ -85,7 +83,13 @@ const ScannedLog = () => {
   return (
     <Box marginLeft={9} padding={2} mb={2}>
       <Box display="flex" justifyContent="space-between" alignItems="center">
-        <Typography variant="h5" fontWeight="bold" sx={{ color: "#043ba0" }}>
+        <Typography
+          variant="h5"
+          fontWeight="bold"
+          color="#043BA0"
+          fontSize={24}
+          fontFamily="lato"
+        >
           Scanned Logs
         </Typography>
 
@@ -102,7 +106,7 @@ const ScannedLog = () => {
                   width: "200px",
                   padding: " 12.5px 0px 12.5px 0px",
                 },
-               
+
                 // "MuiPickersOutlinedInput-sectionsContainer"
               }}
             >
@@ -110,9 +114,11 @@ const ScannedLog = () => {
                 label="By Date"
                 value={selectedDate}
                 onChange={(newValue) => setSelectedDate(newValue)}
-                sx={{ " &.MuiPickersTextField-root": {
-                  backgroundColor: "#0000000d",
-                },}}
+                sx={{
+                  " &.MuiPickersTextField-root": {
+                    backgroundColor: "#0000000d",
+                  },
+                }}
               />
             </DemoContainer>
           </LocalizationProvider>

@@ -7,7 +7,7 @@ import {
   // fetchAllPermissions,
   fetchPermissions,
 } from "../../store/Permission/PermissionSlice";
-import type {  RootState } from "../../store/store";
+import type { RootState } from "../../store/store";
 import {
   Box,
   IconButton,
@@ -115,6 +115,7 @@ const Permissions: React.FC = () => {
           fontWeight="bold"
           color="#043BA0"
           fontSize={24}
+          fontFamily="lato"
         >
           Permissions
         </Typography>
@@ -129,9 +130,9 @@ const Permissions: React.FC = () => {
               setPage(0);
             }}
             sx={{
-              "& .MuiOutlinedInput-input ":{
-                backgroundColor:"#0000000d",
-              }
+              "& .MuiOutlinedInput-input ": {
+                backgroundColor: "#0000000d",
+              },
             }}
           />
 
@@ -192,7 +193,7 @@ const Permissions: React.FC = () => {
                     >
                       <EditIcon />
                     </IconButton>
-                    <IconButton className="action-icon-btn-delete m-2 p-6" >
+                    <IconButton className="action-icon-btn-delete m-2 p-6">
                       <DeleteIcon />
                     </IconButton>
                   </TableCell>
