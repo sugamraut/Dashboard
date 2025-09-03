@@ -6,14 +6,17 @@ import {
   Divider,
   Stack,
   Button,
+  DialogActions,
+  Dialog,
+  DialogTitle,
+  DialogContent,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 import { styled } from "@mui/material/styles";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import { useForm } from "react-hook-form";
-import { useDispatch } from "react-redux";
-import type { AppDispatch } from "../../store/store";
+import { Controller, useForm } from "react-hook-form";
+
 import {
   uploadFile,
   createAccountTypeWithUpload,
@@ -24,6 +27,8 @@ import { toast } from "react-toastify";
 import Text_editor from "../../components/Text_editor";
 import InputField from "../../components/Input_field";
 import { useAppDispatch } from "../../store/hook";
+import { AccountSchema } from "../../globals/ZodValidation";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 const VisuallyHiddenInput = styled("input")`
   clip: rect(0 0 0 0);
@@ -45,43 +50,55 @@ interface AddEditPageProps {
     interest?: string;
     description?: string;
     minimumblance?: string;
-    // insurance?: string;
     imageUrl?: string;
+    originalName?: string;
   };
-  // onSave: () => void;
-  onSave: () => void;
+  // onSave: (data: {
+  //   id: number;
+  //   title: string;
+  //   code: string;
+  //   interest: string;
+  //   description: string;
+  //   minBalance: string;
+  //   imageUrl: string;
+  //   originalName?: string;
+  // }) => void;
   onCancel: () => void;
   isEdit?: boolean;
 }
 
 const AddEditPage = ({
   initialData,
-  onSave,
+  // onSave,
   onCancel,
   isEdit,
 }: AddEditPageProps) => {
-  // const dispatch = useDispatch<AppDispatch>();
-  const dispatch =useAppDispatch();
+  const dispatch = useAppDispatch();
   const editorRef = useRef<HTMLDivElement>(null);
 
   const [uploadFileName, setUploadFileName] = useState<string | undefined>("");
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
+  const [editorContent, setEditorContent] = useState(
+    initialData?.description || ""
+  );
+
   const {
-    register,
     handleSubmit,
     reset,
     getValues,
+    control,
     formState: { errors },
   } = useForm({
+    resolver: zodResolver(AccountSchema),
     defaultValues: {
       title: "",
       code: "",
       interest: "",
       minimumblance: "",
-      interestPayment: "",
       imageUrl: "",
+      originalName: "",
     },
   });
 
@@ -92,6 +109,7 @@ const AddEditPage = ({
         code: initialData.code || "",
         interest: initialData.interest || "",
         minimumblance: initialData.minimumblance || "",
+        originalName: initialData.originalName || "",
         // interestPayment: initialData.insurance || "",
       });
       if (editorRef.current) {
@@ -138,13 +156,17 @@ const AddEditPage = ({
       }
 
       const payload: AccountType & { file?: File } = {
-        id: initialData?.id!,
-        title: getValues("title") || "",
-        code: getValues("code") || "",
-        interest: getValues("interest") || "",
-        minBalance: getValues("minimumblance") || "",
+        id: initialData?.id || 0,
+        title: getValues("title"),
+        code: getValues("code"),
+        interest: getValues("interest"),
+        minBalance: getValues("minimumblance"),
+        originalName: getValues("originalName"),
+        description: editorRef.current?.innerHTML || "",
         file: selectedFile || undefined,
       };
+
+      let responsePayload;
 
       if (isEdit && initialData?.id) {
         const updateResult = await dispatch(updateAccountType(payload));
@@ -152,6 +174,7 @@ const AddEditPage = ({
           toast.error(updateResult.payload || "Failed to update account type.");
           return;
         }
+        responsePayload = updateResult.payload;
         toast.success("Account type updated successfully.");
       } else {
         const createResult = await dispatch(
@@ -161,116 +184,150 @@ const AddEditPage = ({
           toast.error(createResult.payload || "Failed to create account type.");
           return;
         }
+        responsePayload = createResult.payload;
         toast.success("Account type created successfully.");
       }
 
-      onSave();
+      // onSave({
+      //   id: responsePayload.id,
+      //   title: payload.title,
+      //   code: payload.code || "",
+      //   interest: payload.interest || "",
+      //   description: payload.description || "",
+      //   minBalance: payload.minBalance || "",
+      //   imageUrl: responsePayload.imageUrl || "",
+      //   originalName: responsePayload.originalName || uploadFileName || "",
+      // });
     } catch (err) {
-      console.error(err);
+      console.error("Submit error:", err);
       toast.error("An unexpected error occurred.");
     }
   };
 
   return (
-    <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate>
-      <InputField
-        label="Title"
-        fullWidth
-        required
-        value={getValues("title")}
-        margin="normal"
-        {...register("title", { required: "Title is required" })}
-        error={!!errors.title}
-        helperText={errors.title?.message}
-      />
-      <InputField
-        label="Code"
-        fullWidth
-        value={getValues("code")}
-        required
-        margin="normal"
-        {...register("code", { required: "Code is required" })}
-        error={!!errors.code}
-        helperText={errors.code?.message}
-      />
-      <InputField
-        label="Interest"
-        fullWidth
-        required
-        value={getValues("interest")}
-        margin="normal"
-        {...register("interest", { required: "Interest is required" })}
-        error={!!errors.interest}
-        helperText={errors.interest?.message}
-      />
-
-      <Divider sx={{ my: 3 }} />
-
-      <Typography fontWeight={600} gutterBottom>
-        Details
-      </Typography>
-
-      <Text_editor />
-
-      <InputField
-        label="Minimum Balance"
-        fullWidth
-        required
-        value={getValues("minimumblance")}
-        margin="normal"
-        {...register("minimumblance", {
-          required: "Minimum Balance is required",
-        })}
-        error={!!errors.minimumblance}
-        helperText={errors.minimumblance?.message}
-      />
-
-      <Divider sx={{ my: 3 }} />
-
-      <Stack direction="row" spacing={2} alignItems="center">
-        <label htmlFor="file-upload">
-          <VisuallyHiddenInput
-            id="file-upload"
-            type="file"
-            onChange={handleFileUpload}
-            accept="image/*"
+    <Dialog open={true} onClose={onCancel} maxWidth="md" fullWidth>
+      <DialogTitle>
+        {initialData?.id ? "Edit Account" : "Add District"}
+      </DialogTitle>
+      <DialogContent dividers>
+        <form onSubmit={handleSubmit(onSubmit)} noValidate>
+          <Controller
+            control={control}
+            name="title"
+            render={({ field }) => (
+              <InputField
+                {...field}
+                fullWidth
+                label="Title"
+                margin="normal"
+                error={!errors.title}
+                helperText={errors.title?.message}
+              />
+            )}
           />
-          <Button
-            variant="outlined"
-            component="span"
-            startIcon={<CloudUploadIcon />}
-          >
-            upload file
-          </Button>
-        </label>
-        {uploadFileName && (
-          <Stack direction="row" spacing={1} alignItems="center">
-            <Typography>{uploadFileName}</Typography>
-            <IconButton onClick={handleDeleteFile} color="error">
-              <DeleteIcon />
-            </IconButton>
+          <Controller
+            control={control}
+            name="code"
+            render={({ field }) => (
+              <InputField
+                fullWidth
+                label="Code"
+                margin="normal"
+                {...field}
+                error={!errors.code}
+                helperText={errors.code?.message}
+              />
+            )}
+          />
+          <Controller
+            control={control}
+            name="interest"
+            render={({ field }) => (
+              <InputField
+                fullWidth
+                margin="normal"
+                {...field}
+                label="Interest"
+                error={!errors.interest}
+                helperText={errors.interest?.message}
+              />
+            )}
+          />
+
+          <Divider sx={{ my: 3 }} />
+
+          <Typography fontWeight={600} gutterBottom>
+            Details
+          </Typography>
+
+          <Text_editor
+            value={editorContent}
+            onChange={(html) => setEditorContent(html)}
+          />
+
+          <Controller
+            control={control}
+            name="minimumblance"
+            render={({ field }) => (
+              <InputField
+                label="minimumbalance"
+                fullWidth
+                margin="normal"
+                {...field}
+                error={!errors.minimumblance}
+                helperText={errors.minimumblance?.message}
+              />
+            )}
+          />
+
+          <Divider sx={{ my: 3 }} />
+
+          <Stack direction="row" spacing={2} alignItems="center">
+            <label htmlFor="file-upload">
+              <VisuallyHiddenInput
+                id="file-upload"
+                type="file"
+                onChange={handleFileUpload}
+                accept="image/*"
+              />
+              <Button
+                variant="outlined"
+                component="span"
+                startIcon={<CloudUploadIcon />}
+              >
+                upload file
+              </Button>
+            </label>
+            {uploadFileName && (
+              <Stack direction="row" spacing={1} alignItems="center">
+                <Typography>{uploadFileName}</Typography>
+                <IconButton onClick={handleDeleteFile} color="error">
+                  <DeleteIcon />
+                </IconButton>
+              </Stack>
+            )}
           </Stack>
-        )}
-      </Stack>
-      {imagePreviewUrl && (
-        <Box mt={2}>
-          <img
-            src={imagePreviewUrl}
-            alt="Preview"
-            style={{ maxWidth: "200px", maxHeight: "150px" }}
-          />
-        </Box>
-      )}
+          {imagePreviewUrl && (
+            <Box mt={2}>
+              <img
+                src={imagePreviewUrl}
+                alt="Preview"
+                style={{ maxWidth: "200px", maxHeight: "150px" }}
+              />
+            </Box>
+          )}
 
-      <Box textAlign="right" mt={4} m={2}>
-        <Button onClick={onCancel} color="error" className="me-1">
-          Cancel
-        </Button>
-        <Button type="submit" variant="contained" color="primary">
-          {isEdit ? "Update" : "Create"}
-        </Button>
-      </Box>
-    </Box>
+          <DialogActions sx={{ mt: 2 }}>
+            <Button onClick={onCancel} color="error">
+              Cancel
+            </Button>
+            <Button type="submit" variant="contained">
+              {initialData?.id ? "Update" : "Submit"}
+            </Button>
+          </DialogActions>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 };
 
@@ -311,3 +368,51 @@ export default AddEditPage;
 // 💿 Hey developer 👋
 
 // You can provide a way better UX than this when your app throws errors by providing your own ErrorBoundary or errorElement prop on your route.
+// const onSubmit = async () => {
+//   try {
+//     if (!selectedFile && !initialData?.imageUrl) {
+//       toast.error("Please upload a file before submitting.");
+//       return;
+//     }
+
+//     const payload: AccountType & { file?: File } = {
+//       id: initialData?.id!,
+//       title: getValues("title") || "",
+//       code: getValues("code") || "",
+//       interest: getValues("interest") || "",
+//       minBalance: getValues("minimumblance") || "",
+//       file: selectedFile || undefined,
+//     };
+
+//     if (isEdit && initialData?.id) {
+//       const updateResult = await dispatch(updateAccountType(payload));
+//       if (updateAccountType.rejected.match(updateResult)) {
+//         toast.error(updateResult.payload || "Failed to update account type.");
+//         return;
+//       }
+//       toast.success("Account type updated successfully.");
+//     } else {
+//       const createResult = await dispatch(
+//         createAccountTypeWithUpload(payload)
+//       );
+//       if (createAccountTypeWithUpload.rejected.match(createResult)) {
+//         toast.error(createResult.payload || "Failed to create account type.");
+//         return;
+//       }
+//       toast.success("Account type created successfully.");
+//     }
+
+//    onSave({
+//     id: payload.id,
+//     title: payload.title||"",
+//     code: payload.code||"",
+//     interest: payload.interest||"",
+//     description: editorRef.current?.innerHTML || "",
+//     minBalance: payload.minBalance||"",
+//     imageUrl: uploadFileName || "",
+//   });
+//   } catch (err) {
+//     console.error(err);
+//     toast.error("An unexpected error occurred.");
+//   }
+// };

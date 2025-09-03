@@ -22,16 +22,15 @@ import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-// import SearchIcon from "@mui/icons-material/Search";
+
 import FilterAltOffIcon from "@mui/icons-material/FilterAltOff";
 import { useAppDispatch, useAppSelector } from "../../store/hook";
 import type { RootState } from "../../store/store";
-import { useEffect, useMemo } from "react";
+import { useEffect } from "react";
 import { fetchOnlineAccount } from "../../store/onlineaccount/OnlineAccountSlice";
 import EditIcon from "@mui/icons-material/Edit";
 
 import SearchIcon from "@mui/icons-material/Search";
-// import dayjs from "dayjs";
 
 const OnlineAccountRequest = () => {
   const dispatch = useAppDispatch();
@@ -42,7 +41,9 @@ const OnlineAccountRequest = () => {
   useEffect(() => {
     dispatch(fetchOnlineAccount());
   });
-  
+const permission =[
+  {}
+]
   return (
     <Box marginLeft={10} padding={2}>
       <Box
@@ -94,43 +95,26 @@ const OnlineAccountRequest = () => {
               />
             )}
           /> */}
-       
 
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DemoContainer
               components={["DatePicker"]}
               sx={{
-                // bottom: "4px",
-                // "& .MuiPickersTextField-root": {
-                //   maxWidth: "200px",
-                // }
-                "& .MuiOutlinedInput-root ": {
-                  width: "200px",
-                  padding: " 12.5px 0px 12.5px 0px",
+                "& .MuiPickersOutlinedInput-root": {
+                  backgroundColor: "#0000000d",
                 },
               }}
             >
-              <DatePicker
-                label="Basic date picker"
-                sx={{
-                  bottom: "4px",
-                  "& .MuiOutlinedInput-root": {
-                    backgroundColor: "#0000000d",
-                  },
-                  " & .MuiPickersOutlinedInput-sectionsContainer": {
-                    width: "200px",
-                    padding: " 12.5px 0px 12.5px 0px",
-                    backgroundColor: "red",
-                  },
-                }}
-              />
+              <DatePicker label="Basic date picker" />
             </DemoContainer>
           </LocalizationProvider>
 
           <FormControl
             sx={{
-              m: 1,
               width: "200px",
+              "& .MuiOutlinedInput-root": {
+                backgroundColor: "#0000000d",
+              },
             }}
             variant="outlined"
           >
@@ -147,12 +131,11 @@ const OnlineAccountRequest = () => {
                 </InputAdornment>
               }
               label="Password"
-              sx={{
-                " & .MuiOutlinedInput-input": {
-                  padding: "12.5px 0px 12.5px 0px",
-                  backgroundColor: "#0000000d",
-                },
-              }}
+              // sx={{
+              //   " & .MuiOutlinedInput-input": {
+              //     // padding: "12.5px 0px 12.5px 0px",
+              //   },
+              // }}
             />
           </FormControl>
           <IconButton color="error">

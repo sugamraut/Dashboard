@@ -1,6 +1,6 @@
 
 import { z } from "zod";
-import { id } from "zod/v4/locales";
+
 
 export const loginSchema = z.object({
   username: z.string().min(1, "Username is required"),
@@ -97,3 +97,16 @@ export const settingSchema = z.object({
 });
 
 export type SettingFormData = z.infer<typeof settingSchema>;
+
+export const AccountSchema = z.object({
+  id: z.number().optional(),
+  title: z.string().min(1, "title is required"),
+  code: z.string().min(1, "code is required"),
+  interest: z.string().min(1, "interest is required"),
+  description: z.string().min(1, "description is required"),
+  minimumblance: z.string().min(1,"minimumbalance is required"),
+  imageUrl: z.string().optional(),
+  originalName:z.string().min(1,"orginalname is required"),
+});
+
+export type Account = z.infer<typeof AccountSchema>;

@@ -38,7 +38,7 @@ const Setting = () => {
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
 
   const [page, setPage] = useState(0);
-  const [rowPerPage, setRowsPerPage] = useState(25);
+  const [rowPerPage, setRowsPerPage] = useState(10);
 
   useEffect(() => {
     const handler = setTimeout(() => {

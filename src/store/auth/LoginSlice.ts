@@ -3,6 +3,8 @@ import { Status, type StatusType } from "../../globals/status";
 import type { authItem } from "../../globals/typeDeclaration";
 import type { AppDispatch } from "../store";
 import API from "../../http";
+import { server_Url } from "../../globals/config";
+import axios from "axios";
 
 interface authState {
   data: authItem | null;
@@ -61,7 +63,7 @@ export function fetchAuthAsync(data: { username: string; password: string }) {
   return async function fetchAuthThunk(dispatch: AppDispatch) {
     dispatch(setStatus(Status.Loading));
     try {
-      const response =await API.post(`auth/login`,data)
+      const response =await axios.post(`${server_Url}/api/v1/auth/login`,data)
 
       if (response.status === 200 || response.status === 201) {
         dispatch(setToken(response.data.accessToken));

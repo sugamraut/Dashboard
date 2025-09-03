@@ -131,7 +131,7 @@ export default function Sidebar() {
 
       <List sx={{ mt: 1 }}>
         {sidebarIcons
-          .filter(({ path }) => typeof path === "string")
+          .filter(({ label }) => typeof label === "string")
           .map(({ icon, label, path }, index) => {
             const isActive = location.pathname === path;
 

@@ -5,6 +5,7 @@ import API, { getAuthHeader } from "../../http";
 import { toast } from "react-toastify";
 
 export interface AccountType {
+  originalName: string | undefined;
   id: number;
   title: string;
   // Details?: string;
@@ -138,11 +139,6 @@ export const deleteAccountType = createAsyncThunk<
   { rejectValue: string }
 >("accountTypes/delete", async (id, { rejectWithValue }) => {
   try {
-    // await axios.delete(`/account-types/${id}`,{
-    //     headers: {
-    //       ...getAuthHeader(),
-    //     },
-    //   });
     const response =await axios.delete(`/account-types/${id}`,{
       headers:{
         ...getAuthHeader()

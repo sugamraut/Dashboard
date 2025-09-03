@@ -11,9 +11,6 @@ import {
   TableBody,
   TextField,
   Typography,
-  Dialog,
-  DialogTitle,
-  DialogContent,
   TablePagination,
 } from "@mui/material";
 
@@ -23,26 +20,43 @@ import DeleteIcon from "@mui/icons-material/Delete";
 
 import { useAppDispatch, useAppSelector } from "../../store/hook";
 import {
+  deleteAccountType,
   fetchAccountTypes,
   type AccountType,
 } from "../../store/account/AccountSlice";
 import AddEditPage from "./add_edit";
 import type { RootState } from "../../store/store";
 import { toast } from "react-toastify";
+import Loading from "../loader";
 
 const AccountPage: React.FC = () => {
   const dispatch = useAppDispatch();
   const { error, loading } = useAppSelector((state) => state.accountTypes);
 
-  const data = useAppSelector((state: RootState) => state.accountTypes.data) || [];
+  // const data = useAppSelector((state: RootState) => state.accountTypes.data) || [];
+  const data =
+    useAppSelector((state: RootState) => state.accountTypes.data) || [];
+  const totalCount = useAppSelector(
+    (state: RootState) => state.accountTypes.total
+  );
 
   const [searchQuery, setSearchQuery] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingAccount, setEditingAccount] = useState<AccountType | null>(
     null
   );
+  // const [selectedState, setSelectedState] = useState<null | {
+  //   id?: number;
+  //   title?: string;
+  //   code?: string;
+  //   interest?: string;
+  //   description?: string;
+  //   minimumblance?: string;
+  //   imageUrl?: string;
+  //   originalName?: string;
+  // }>(null);
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(4);
+  const [rowsPerPage, setRowsPerPage] = useState(25);
 
   useEffect(() => {
     dispatch(
@@ -53,16 +67,8 @@ const AccountPage: React.FC = () => {
         sortOrder: "asc",
       })
     );
+    toast.error(error);
   }, [dispatch]);
-
-  const filtered = data.filter((a) =>
-    (a.title ?? "").toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  const paginated = filtered.slice(
-    page * rowsPerPage,
-    page * rowsPerPage + rowsPerPage
-  );
 
   const handleAdd = () => {
     setEditingAccount(null);
@@ -79,28 +85,28 @@ const AccountPage: React.FC = () => {
     setEditingAccount(null);
   };
 
-  const handleSave = (data: {
-    id: number;
-    title: string;
-    code: string;
-    interest: string;
-    description: string;
-    minBalance: string;
-    // insurance: string;
-    imageUrl: string;
-  }) => {
-    console.log(editingAccount ? "Update" : "Add new", {
-      id: data.id,
-      name: data.title,
-      code: data.code,
-      interest: data.interest,
-      description: data.description,
-      minBalance: data.minBalance,
-      // insurance: data.insurance,
-      imageUrl: data.imageUrl,
-    });
-    handleClose();
-  };
+  // const handleSave = (data: {
+  //   id: number;
+  //   title: string;
+  //   code: string;
+  //   interest: string;
+  //   description: string;
+  //   minBalance: string;
+  //   // insurance: string;
+  //   imageUrl: string;
+  // }) => {
+  //   console.log(editingAccount ? "Update" : "Add new", {
+  //     id: data.id,
+  //     name: data.title,
+  //     code: data.code,
+  //     interest: data.interest,
+  //     description: data.description,
+  //     minBalance: data.minBalance,
+  //     // insurance: data.insurance,
+  //     imageUrl: data.imageUrl,
+  //   });
+  //   handleClose();
+  // };
 
   const handleChangePage = (_: unknown, newPage: number) => {
     setPage(newPage);
@@ -112,10 +118,31 @@ const AccountPage: React.FC = () => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
+
+  const handleDelete = async (id: number) => {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this account type?"
+    );
+    if (!confirmed) return;
+
+    const result = await dispatch(deleteAccountType(id));
+
+    if (deleteAccountType.rejected.match(result)) {
+      toast.error(result.payload || "Failed to delete account type.");
+    } else {
+      toast.success("Account type deleted successfully.");
+    }
+  };
+
   return (
     <Box marginLeft={10} padding={2}>
       <Box className="header">
-        <Typography variant="h5" fontWeight="bold" marginBottom={2} sx={{ color: "#043ba0",fontFamily:"lato" }}>
+        <Typography
+          variant="h5"
+          fontWeight="bold"
+          marginBottom={2}
+          sx={{ color: "#043ba0", fontFamily: "lato" }}
+        >
           Account Types
         </Typography>
         <Stack direction="row" spacing={2} alignItems="center" marginBottom={2}>
@@ -127,9 +154,11 @@ const AccountPage: React.FC = () => {
               setSearchQuery(e.target.value);
               setPage(0);
             }}
-            sx={{"& .MuiOutlinedInput-root": {
-              backgroundColor: "#0000000d",
-            }}}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                backgroundColor: "#0000000d",
+              },
+            }}
           />
           <IconButton color="primary" onClick={handleAdd}>
             <AddCircleIcon />
@@ -137,7 +166,7 @@ const AccountPage: React.FC = () => {
         </Stack>
       </Box>
 
-      <TableContainer >
+      <TableContainer>
         <Table>
           <TableHead>
             <TableRow>
@@ -151,27 +180,17 @@ const AccountPage: React.FC = () => {
             {loading ? (
               <TableRow>
                 <TableCell colSpan={4} align="center">
-                  Loading...
+                  <Loading />
                 </TableCell>
               </TableRow>
-            ) : error ? (
-              <TableRow>
-                <TableCell colSpan={4} align="center">
-                  <Typography color="error">
-                    {/* {error} */}
-                    {toast.error(error)}
-                  </Typography>
-                  {/* toast.error(error) */}
-                </TableCell>
-              </TableRow>
-            ) : paginated.length === 0 ? (
+            ) : data.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={4} align="center">
                   No data found
                 </TableCell>
               </TableRow>
             ) : (
-              paginated.map((account: AccountType, index: number) => (
+              data.map((account: AccountType, index: number) => (
                 <TableRow key={account.id}>
                   <TableCell className="table-data">
                     {page * rowsPerPage + index + 1}
@@ -189,7 +208,10 @@ const AccountPage: React.FC = () => {
                     >
                       <EditIcon />
                     </IconButton>
-                    <IconButton className="action-icon-btn-delete ms-2">
+                    <IconButton
+                      className="action-icon-btn-delete ms-2"
+                      onClick={() => handleDelete(account.id)}
+                    >
                       <DeleteIcon />
                     </IconButton>
                   </TableCell>
@@ -203,33 +225,28 @@ const AccountPage: React.FC = () => {
       <TablePagination
         rowsPerPageOptions={[5, 10, 25, 50]}
         component="div"
-        count={filtered.length}
+        count={totalCount}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
 
-      <Dialog open={dialogOpen} fullWidth maxWidth="md" onClose={handleClose}>
-        <DialogTitle>
-          {editingAccount ? "Edit Account" : "Add Account"}
-        </DialogTitle>
-        <DialogContent dividers>
-          <AddEditPage
-            initialData={{
-              title: editingAccount?.title || "",
-              code: editingAccount?.code || "",
-              interest: editingAccount?.interest || "",
-              description: editingAccount?.description || "",
-              minimumblance: editingAccount?.minBalance || "",
-              // insurance: editingAccount?.insurance || "",
-              imageUrl: editingAccount?.imageUrl || "",
-            }}
-            onSave={handleSave}
-            onCancel={handleClose}
-          />
-        </DialogContent>
-      </Dialog>
+      {dialogOpen && (
+        <AddEditPage
+          initialData={{
+            title: editingAccount?.title || "",
+            code: editingAccount?.code || "",
+            interest: editingAccount?.interest || "",
+            description: editingAccount?.description || "",
+            minimumblance: editingAccount?.minBalance || "",
+            // insurance: editingAccount?.insurance || "",
+            imageUrl: editingAccount?.imageUrl || "",
+          }}
+          // onSave={handleSave}
+          onCancel={handleClose}
+        />
+      )}
     </Box>
   );
 };
