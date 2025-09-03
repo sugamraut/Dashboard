@@ -166,7 +166,7 @@ const AddEditPage = ({
         file: selectedFile || undefined,
       };
 
-      let responsePayload;
+      //  let  responsePayload;
 
       if (isEdit && initialData?.id) {
         const updateResult = await dispatch(updateAccountType(payload));
@@ -174,7 +174,7 @@ const AddEditPage = ({
           toast.error(updateResult.payload || "Failed to update account type.");
           return;
         }
-        responsePayload = updateResult.payload;
+        // responsePayload = updateResult.payload;
         toast.success("Account type updated successfully.");
       } else {
         const createResult = await dispatch(
@@ -184,7 +184,7 @@ const AddEditPage = ({
           toast.error(createResult.payload || "Failed to create account type.");
           return;
         }
-        responsePayload = createResult.payload;
+        // responsePayload = createResult.payload;
         toast.success("Account type created successfully.");
       }
 

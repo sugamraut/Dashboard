@@ -3,8 +3,6 @@ import {
   createAsyncThunk,
   type PayloadAction,
 } from "@reduxjs/toolkit";
-import axios from "axios";
-import { server_Url } from "../../globals/config";
 import { Status, type StatusType } from "../../globals/status";
 import type { City } from "../../globals/typeDeclaration";
 import API, { getAuthHeader } from "../../http";
