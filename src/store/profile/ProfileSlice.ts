@@ -6,7 +6,6 @@ import {
 import API, { getAuthHeader } from "../../http";
 import type { UserProfile } from "../../globals/typeDeclaration";
 
-
 interface UserState {
   loading: boolean;
   error: string | null;
@@ -29,9 +28,11 @@ export const fetchProfile = createAsyncThunk<
   { rejectValue: string }
 >("user/fetchProfile", async (_, { rejectWithValue }) => {
   try {
-    const response = await API.get("/users/profile",{headers:{
-      ...getAuthHeader()
-    }});
+    const response = await API.get("/users/profile", {
+      headers: {
+        ...getAuthHeader(),
+      },
+    });
     return response.data;
   } catch (error: any) {
     return rejectWithValue(
@@ -46,9 +47,11 @@ export const updateProfile = createAsyncThunk<
   { rejectValue: string }
 >("user/updateProfile", async (formData, { rejectWithValue }) => {
   try {
-    const response = await API.put("/users/profile", formData,{headers:{
-      ...getAuthHeader()
-    }});
+    const response = await API.put("/users/profile", formData, {
+      headers: {
+        ...getAuthHeader(),
+      },
+    });
     return response.data;
   } catch (error: any) {
     return rejectWithValue(
@@ -60,8 +63,7 @@ export const updateProfile = createAsyncThunk<
 const userSlice = createSlice({
   name: "profile",
   initialState,
-  reducers: {
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(fetchProfile.pending, (state) => {
@@ -70,9 +72,9 @@ const userSlice = createSlice({
       })
       .addCase(
         fetchProfile.fulfilled,
-        (state, action: PayloadAction<UserProfile >) => {
+        (state, action: PayloadAction<UserProfile>) => {
           state.loading = false;
-          state.list= [action.payload];
+          state.list = [action.payload];
           state.data = action.payload;
         }
       )

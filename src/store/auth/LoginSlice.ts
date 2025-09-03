@@ -2,7 +2,6 @@ import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { Status, type StatusType } from "../../globals/status";
 import type { authItem } from "../../globals/typeDeclaration";
 import type { AppDispatch } from "../store";
-import API from "../../http";
 import { server_Url } from "../../globals/config";
 import axios from "axios";
 

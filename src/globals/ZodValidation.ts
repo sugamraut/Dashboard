@@ -1,4 +1,5 @@
 
+
 import { z } from "zod";
 
 
@@ -111,3 +112,18 @@ export const AccountSchema = z.object({
 });
 
 export type Account = z.infer<typeof AccountSchema>;
+
+export const  ProfileSchema=z.object({
+  id:z.number().optional(),
+  name:z.string().min(1,"Name is required"),
+  username:z.string().min(1,"UserName is required"),
+   email:z.email({pattern:z.regexes.email}),
+   mobilenumber:z.string().optional(),
+   password: z
+    .string()
+    .min(4, "Password must be at least 4 characters")
+    .max(15, "Password is too long"),
+  confirmPassword:z.string().min(1,"confirm password must be provided")
+});
+
+export type ProfileFormData = z.infer<typeof ProfileSchema>

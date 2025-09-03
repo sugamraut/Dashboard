@@ -26,6 +26,7 @@ import { useAppDispatch, useAppSelector } from "../../store/hook";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 
 import  { Dayjs } from "dayjs";
+import { toast } from "react-toastify";
 
 const ScannedLog = () => {
   const dispatch = useAppDispatch();
@@ -132,7 +133,7 @@ const ScannedLog = () => {
         </Box>
       ) : error ? (
         <Typography color="error" mt={2}>
-          Error: {error}
+          Error: {toast.error(error)}
         </Typography>
       ) : (
         <TableContainer sx={{ mt: 2 }}>

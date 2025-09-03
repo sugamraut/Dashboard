@@ -1,6 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
-import { server_Url } from "../../globals/config";
 import API, { getAuthHeader } from "../../http";
 import { toast } from "react-toastify";
 

@@ -25,12 +25,12 @@ import {
   Autorenew as AutorenewIcon,
   Settings as SettingsIcon,
 } from "@mui/icons-material";
-import { useDispatch } from "react-redux";
 import { resetAuth } from "../store/auth/LoginSlice";
 import { toast } from "react-toastify";
 
 import companyLogo from "../assets/image/company_name.png";
 import React from "react";
+import { useAppDispatch } from "../store/hook";
 
 const sidebarIcons = [
   { icon: <HomeIcon />, label: "Dashboard", path: "/admin/dashboard" },
@@ -72,7 +72,7 @@ const sidebarIcons = [
 export default function Sidebar() {
   const location = useLocation();
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
