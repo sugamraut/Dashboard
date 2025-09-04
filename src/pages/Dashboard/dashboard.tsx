@@ -54,7 +54,8 @@ const cardItems = [
 
 const StatusCards = () => {
   const dispatch = useAppDispatch();
-  const { list } = useAppSelector((state: RootState) => state.dashboard);
+  // const { list } = useAppSelector((state: RootState) => state.dashboard);
+  const {list}=useAppSelector((state:RootState)=>state.dashboard)
 
   useEffect(() => {
     dispatch(fetchdashboarddata());

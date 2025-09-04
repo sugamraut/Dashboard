@@ -2,29 +2,19 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import API, { getAuthHeader } from "../../http";
 import { toast } from "react-toastify";
+import type { AccountType } from "../../globals/typeDeclaration";
+import { AccountService } from "../../globals/Api Service/service";
+import type { PaginatedResponse, FetchParams, MetaData } from "../../globals/Api Service/API_Services";
 
-export interface AccountType {
-  originalName: string | undefined;
-  id: number;
-  title: string;
-  // Details?: string;
-  code?: string;
-  description?: string;
-  // details?: string;
-  interest?: string;
-  minBalance?: string;
-  // insurance?: string;
-  imageUrl?: string;
-}
-
-interface FetchParams {
-  page: number;
-  rowsPerPage: number;
-  sortBy: string;
-  sortOrder: "asc" | "desc";
-}
+// interface FetchParams {
+//   page: number;
+//   rowsPerPage: number;
+//   sortBy: string;
+//   sortOrder: "asc" | "desc";
+// }
 
 export interface UploadedFile {
+  imageUrl: string;
   fileKey: string;
   originalName: string;
   id: number;
@@ -34,13 +24,9 @@ export interface UploadedFile {
   filePath: string;
 }
 
-interface AccountTypeResponse {
-  data: AccountType[];
-  total: number;
-}
 
 interface AccountTypesState {
-  metaData: any;
+  metaData: MetaData|null;
   data: AccountType[];
   total: number;
   loading: boolean;
@@ -56,35 +42,32 @@ const initialState: AccountTypesState = {
   error: null,
   selected: null,
   uploadedFiles: [],
-  metaData: [],
+  metaData: null
 };
 
 export const fetchAccountTypes = createAsyncThunk<
-  AccountTypeResponse,
+  // AccountTypeResponse,
+  PaginatedResponse <AccountType>,
   FetchParams,
   { rejectValue: string }
->(
-  "accountTypes/fetchAll",
-  async ({ page, rowsPerPage, sortBy, sortOrder }, { rejectWithValue }) => {
-    const token =getAuthHeader()
-    if(!token){
-      toast.error("No auth token found")
-    }
-    try {
-      const resp = await API.get<AccountTypesState>(`/account-types`, {
-        params: { page, rowsPerPage, sortBy, sortOrder },
-        headers:{
-          ...getAuthHeader()
-        }
-      });
-      const data = resp.data.data ?? [];
-      const total = Number(resp.data.metaData?.total ?? 0);
-      return { data, total };
-    } catch (error: any) {
-      return rejectWithValue(error.message || "Failed to fetch account types");
-    }
+>("accountTypes/fetchAll", async (params, thunkAPI) => {
+  const token = getAuthHeader();
+  if (!token) {
+    toast.error("No auth token found");
   }
-);
+  try {
+    const response = await AccountService.fetchPaginated(params);
+  
+    return {
+      data:response.data,
+      metaData:response.metaData
+    }
+  } catch (error: any) {
+    return thunkAPI.rejectWithValue(
+      error.response?.data?.message || error.message || "Something went wrong"
+    );
+  }
+});
 
 export const fetchAccountTypeById = createAsyncThunk<
   AccountType,
@@ -117,14 +100,11 @@ export const updateAccountType = createAsyncThunk<
       imageUrl: imageFileId,
     };
 
-    const resp = await API.put(
-      `/account-types/${accountType.id}`,
-      payload,{
-        headers: {
-          ...getAuthHeader(),
-        },
-      }
-    );
+    const resp = await API.put(`/account-types/${accountType.id}`, payload, {
+      headers: {
+        ...getAuthHeader(),
+      },
+    });
 
     return resp.data.data as AccountType;
   } catch (error: any) {
@@ -138,13 +118,12 @@ export const deleteAccountType = createAsyncThunk<
   { rejectValue: string }
 >("accountTypes/delete", async (id, { rejectWithValue }) => {
   try {
-    const response =await axios.delete(`/account-types/${id}`,{
-      headers:{
-        ...getAuthHeader()
-      }
-    })
-    return response.data.data
-  
+    const response = await axios.delete(`/account-types/${id}`, {
+      headers: {
+        ...getAuthHeader(),
+      },
+    });
+    return response.data.data;
   } catch (error: any) {
     return rejectWithValue(error.message || "Failed to delete account type");
   }
@@ -160,7 +139,7 @@ export const uploadFile = createAsyncThunk<
     formData.append("files", file);
 
     const resp = await API.post(`/file-upload/ACCOUNT-TYPE`, formData, {
-      headers: { "Content-Type": "multipart/form-data", ...getAuthHeader()},
+      headers: { "Content-Type": "multipart/form-data", ...getAuthHeader() },
     });
     return resp.data as UploadedFile;
   } catch (err: any) {
@@ -182,18 +161,26 @@ export const createAccountTypeWithUpload = createAsyncThunk<
 
       const uploaded = await dispatch(uploadFile(accountType.file)).unwrap();
 
-      const resp = await API.post(`/account-types`, {
-        ...accountType,
-        imageUrl: String(uploaded.id),
-      },{
-        headers: {
-          ...getAuthHeader(),
+      const resp = await API.post(
+        `/account-types`,
+        {
+          ...accountType,
+          imageUrl: String(uploaded.id),
         },
-      });
+        {
+          headers: {
+            ...getAuthHeader(),
+          },
+        }
+      );
 
       return resp.data.data as AccountType;
     } catch (err: any) {
-      return rejectWithValue(err.response?.data || err.message);
+      return rejectWithValue(
+        err.response?.data?.message ||
+          err.message ||
+          "Failed to create account type"
+      );
     }
   }
 );
@@ -211,8 +198,8 @@ const accountTypesSlice = createSlice({
       })
       .addCase(fetchAccountTypes.fulfilled, (state, action) => {
         state.loading = false;
-        state.data = action.payload.data;
-        state.total = action.payload.total;
+         state.data = action.payload.data;
+        state.metaData = action.payload.metaData;
       })
 
       .addCase(fetchAccountTypes.rejected, (state, action) => {

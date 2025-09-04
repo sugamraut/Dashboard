@@ -1,26 +1,14 @@
-import {
-  createSlice,
-  createAsyncThunk,
-  type PayloadAction,
-} from "@reduxjs/toolkit";
-import API, { getAuthHeader } from "../../http";
-import type { MetaData, Permission } from "../../globals/typeDeclaration";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import type { Permission } from "../../globals/typeDeclaration";
 
-export interface PermissionsResponse {
-  data: Permission[];
-  metaData: MetaData;
-}
+import type {
+  FetchParams,
+  MetaData,
+  PaginatedResponse,
+} from "../../globals/Api Service/API_Services";
+import { PermissionService } from "../../globals/Api Service/service";
 
-interface FetchPermissionParams {
-  page?: number;
-  rowsPerPage?: number;
-  sortBy?: string | null;
-  sortOrder?: string;
-  query?: string;
-  filters?: Record<string, any>;
-}
-
-interface PermissionsState {
+export interface PermissionsState {
   data: Permission[];
   fulllist: Permission[] | null;
   metaData: MetaData | null;
@@ -41,41 +29,20 @@ const initialState: PermissionsState = {
 };
 
 export const fetchPermissions = createAsyncThunk<
-  PermissionsResponse,
-  FetchPermissionParams,
+  PaginatedResponse<Permission>,
+  FetchParams,
   { rejectValue: string }
 >("permissions/fetchPermissions", async (params, thunkAPI) => {
   try {
-    const {
-      page = 1,
-      rowsPerPage = 25,
-      sortBy = null,
-      sortOrder = "desc",
-      query = "",
-      filters = {},
-    } = params;
+    const response = await PermissionService.fetchPaginated(params);
 
-    const response = await API.get(`/permissions`, {
-      params: {
-        page,
-        rowsPerPage,
-        sortBy,
-        sortOrder,
-        query,
-        filters: JSON.stringify(filters),
-      },
-      headers: {
-        ...getAuthHeader(),
-      },
-    });
-
-    const sortedData = response.data.data.sort(
+    const sortedData = response.data.sort(
       (a: { id: number }, b: { id: number }) => a.id - b.id
     );
 
     return {
       data: sortedData,
-      metaData: response.data.metaData,
+      metaData: response.metaData,
     };
   } catch (error: any) {
     return thunkAPI.rejectWithValue(
@@ -84,23 +51,30 @@ export const fetchPermissions = createAsyncThunk<
   }
 });
 
+export const fetchAllPermissions = createAsyncThunk<
+  Permission[],
+  void,
+  { rejectValue: string }
+>("permissions/fetchAll", async (_, thunkAPI) => {
+  try {
+    return await PermissionService.fetchAll();
+  } catch (error: any) {
+    return thunkAPI.rejectWithValue(
+      error.message || "Failed to fetch all permissions"
+    );
+  }
+});
+
 export const fetchPermissionsByGroup = createAsyncThunk<
   Permission[],
   void,
   { rejectValue: string }
->("permissions/fetchByGroup", async (_, { rejectWithValue }) => {
+>("permissions/fetchByGroup", async (_, thunkAPI) => {
   try {
-    const response = await API.get(`/permissions/groups`, {
-      headers: {
-        ...getAuthHeader(),
-      },
-    });
-    return response.data;
+    return await PermissionService.fetchGrouped();
   } catch (error: any) {
-    return rejectWithValue(
-      error.response?.data?.message ||
-        error.message ||
-        "Failed to fetch grouped permissions"
+    return thunkAPI.rejectWithValue(
+      error.message || "Failed to fetch grouped permissions"
     );
   }
 });
@@ -109,86 +83,44 @@ export const addPermission = createAsyncThunk<
   Permission,
   Permission,
   { rejectValue: string }
->("permissions/add", async (newPermission, { rejectWithValue }) => {
+>("permissions/add", async (newPermission, thunkAPI) => {
   try {
-    const response = await API.post(`/permissions`, newPermission, {
-      headers: {
-        ...getAuthHeader(),
-      },
-    });
-    return response.data;
+    return await PermissionService.create(newPermission);
   } catch (error: any) {
-    return rejectWithValue(
-      error.response?.data?.message ||
-        error.message ||
-        "Failed to add permission"
+    return thunkAPI.rejectWithValue(
+      error.message || "Failed to add permission"
     );
   }
 });
 
-export const fetchAllPermissions = createAsyncThunk<
-  Permission[],
-  void,
-  { rejectValue: string }
->("permissions/fetchAll", async (_, { rejectWithValue }) => {
-  try {
-    const response = await API.get(`/permissions/all`, {
-      headers: {
-        ...getAuthHeader(),
-      },
-    });
-    return response.data.data;
-  } catch (error: any) {
-    return rejectWithValue(
-      error.response?.data?.message ||
-        error.message ||
-        "Failed to fetch all permissions"
-    );
-  }
-});
 export const updatePermission = createAsyncThunk<
   Permission,
   Permission,
   { rejectValue: string }
->("permissions/update", async (permissionData, { rejectWithValue }) => {
+>("permissions/update", async (updatedPermission, thunkAPI) => {
   try {
-    const response = await API.put(
-      `/permissions/${permissionData.id}`,
-      permissionData,
-      {
-        headers: {
-          ...getAuthHeader(),
-        },
-      }
-    );
-    return response.data;
+    return await PermissionService.update(updatedPermission);
   } catch (error: any) {
-    return rejectWithValue(
-      error.response?.data?.message || error.message || "Update failed"
+    return thunkAPI.rejectWithValue(
+      error.message || "Failed to update permission"
     );
   }
 });
 
-export const DeletePermission = createAsyncThunk<
+export const deletePermission = createAsyncThunk<
   Permission,
   Permission,
   { rejectValue: string }
->("permission/delete", async (permissionData, { rejectWithValue }) => {
+>("permissions/delete", async (permissionToDelete, thunkAPI) => {
   try {
-    const response = await API.delete(
-      `//permissions/${permissionData.id}`,
-      {
-        headers: {
-          ...getAuthHeader(),
-        },
-      }
-    );
-
-    return response.data ?? permissionData;
+    return await PermissionService.remove(permissionToDelete);
   } catch (error: any) {
-    return rejectWithValue(error.response?.data?.message || "delete failed");
+    return thunkAPI.rejectWithValue(
+      error.message || "Failed to delete permission"
+    );
   }
 });
+
 const permissionsSlice = createSlice({
   name: "permissions",
   initialState,
@@ -200,17 +132,40 @@ const permissionsSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(
-        fetchPermissions.fulfilled,
-        (state, action: PayloadAction<PermissionsResponse>) => {
-          state.loading = false;
-          state.data = action.payload.data;
-          state.metaData = action.payload.metaData;
-        }
-      )
+      .addCase(fetchPermissions.fulfilled, (state, action) => {
+        state.loading = false;
+        state.data = action.payload.data;
+        state.metaData = action.payload.metaData;
+      })
       .addCase(fetchPermissions.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload ?? "Failed to fetch permissions";
+      })
+
+      .addCase(fetchPermissionsByGroup.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchPermissionsByGroup.fulfilled, (state, action) => {
+        state.loading = false;
+        state.groupedPermissions = action.payload;
+      })
+      .addCase(fetchPermissionsByGroup.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload ?? "Failed to fetch grouped permissions";
+      })
+
+      .addCase(addPermission.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(addPermission.fulfilled, (state, action) => {
+        state.loading = false;
+        state.data.push(action.payload);
+      })
+      .addCase(addPermission.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload ?? "Failed to add permission";
       })
 
       .addCase(updatePermission.fulfilled, (state, action) => {
@@ -223,34 +178,16 @@ const permissionsSlice = createSlice({
         state.error = action.payload ?? "Failed to update permission";
       })
 
-      .addCase(fetchPermissionsByGroup.pending, (state) => {
-        state.loading = true;
-        state.error = null;
+      .addCase(deletePermission.fulfilled, (state, action) => {
+        state.data = state.data.filter((p) => p.id !== action.payload.id);
       })
-      .addCase(
-        fetchPermissionsByGroup.fulfilled,
-        (state, action: PayloadAction<Permission[]>) => {
-          state.loading = false;
-          state.groupedPermissions = action.payload;
-        }
-      )
-      .addCase(fetchPermissionsByGroup.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload ?? "Failed to fetch by group";
+      .addCase(deletePermission.rejected, (state, action) => {
+        state.error = action.payload ?? "Failed to delete permission";
       })
 
-      .addCase(addPermission.fulfilled, (state, action) => {
-        state.loading = false;
-        state.data.push(action.payload);
-      })
-
-      .addCase(addPermission.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload ?? "Failed to add permission";
-      })
       .addCase(fetchAllPermissions.fulfilled, (state, action) => {
-        state.ActionData = action.payload;
         state.fulllist = action.payload;
+        state.ActionData = action.payload;
       });
   },
 });

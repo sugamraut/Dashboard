@@ -1,7 +1,13 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import type { MetaData, Setting } from "../../globals/typeDeclaration";
+import type { Setting } from "../../globals/typeDeclaration";
 import API, { getAuthHeader } from "../../http";
 import { Status, type StatusType } from "../../globals/status";
+import type {
+  FetchParams,
+  MetaData,
+  PaginatedResponse,
+} from "../../globals/Api Service/API_Services";
+import { SettingService } from "../../globals/Api Service/service";
 
 interface settingState {
   data: Setting[];
@@ -23,65 +29,34 @@ const initialState: settingState = {
   status: Status.Loading,
 };
 
-interface FetchLogsParams {
-  page?: number;
-  rowPerPage?: number;
-  sortBy?: string | null;
-  sortOrder?: "asc" | "dec";
-  query?: string;
-  filters?: Record<string, any>;
-}
-
-interface FetchSettingResponse {
-  data: Setting[];
-  metaData: MetaData;
-  total: number;
-}
-
 export const fetchsetting = createAsyncThunk<
-  FetchSettingResponse,
-  FetchLogsParams,
+  PaginatedResponse<Setting>,
+  FetchParams,
   { rejectValue: string }
->("setting/fetch", async (FetchLogsParams, { rejectWithValue }) => {
+>("setting/fetch", async (params, { rejectWithValue }) => {
   try {
-    const response = await API.get("/settings", {
-      params: {
-        page: FetchLogsParams.page ?? 1,
-        rowPerPage: 25,
-        sortBy: FetchLogsParams.sortBy ?? null,
-        sortOrder: FetchLogsParams.sortOrder ?? "dec",
-        query: FetchLogsParams.query ?? "",
-        filters: JSON.stringify(FetchLogsParams.filters ?? {}),
-      },
-      headers: {
-        ...getAuthHeader(),
-      },
-    });
-
-    return response.data as FetchSettingResponse;
+    const response = await SettingService.fetchPaginated(params);
+    return {
+      data: response.data,
+      metaData: response.metaData,
+    };
   } catch (error: any) {
     return rejectWithValue(error.response?.data?.message || error.message);
   }
 });
 
-export const fetchSettingById = createAsyncThunk<
-  Setting,
-  string,
-  { rejectValue: string }
->("setting/fetchById", async (id, { rejectWithValue }) => {
-  try {
-    const response = await API.get(`/settings/${id}`, {
-      headers: {
-        ...getAuthHeader(),
-      },
-    });
-    return response.data.data as Setting;
-  } catch (error: any) {
-    return rejectWithValue(
-      error.response?.data?.message || error.message || "Fetch failed"
-    );
+export const fetchSettingById = createAsyncThunk(
+  "setting/fetchById",
+  async (settingId: number, { rejectWithValue }) => {
+    try {
+      return await SettingService.getById(settingId);
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.message || error.message || "Fetch failed"
+      );
+    }
   }
-});
+);
 
 export const createSetting = createAsyncThunk<
   Setting,
@@ -110,10 +85,10 @@ export const updateSetting = createAsyncThunk<
   { rejectValue: string }
 >("setting/update", async ({ id, updatedData }, { rejectWithValue }) => {
   try {
-    const response = await API.put(`/settings/${id}`, updatedData,{
-      headers:{
-        ...getAuthHeader()
-      }
+    const response = await API.put(`/settings/${id}`, updatedData, {
+      headers: {
+        ...getAuthHeader(),
+      },
     });
 
     return response.data as Setting;
@@ -123,7 +98,6 @@ export const updateSetting = createAsyncThunk<
     );
   }
 });
-
 
 const SettingSlice = createSlice({
   name: "setting",
@@ -140,7 +114,6 @@ const SettingSlice = createSlice({
         state.loading = false;
         state.data = action.payload.data;
         state.metaData = action.payload.metaData;
-        state.total = action.payload.total;
         state.error = null;
       })
       .addCase(fetchsetting.rejected, (state, action) => {
@@ -159,7 +132,7 @@ const SettingSlice = createSlice({
       })
       .addCase(fetchSettingById.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload || "Failed to fetch setting by ID";
+        state.error = action.payload as string;
       })
 
       .addCase(createSetting.pending, (state) => {

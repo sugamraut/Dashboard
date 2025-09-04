@@ -9,7 +9,7 @@ import {
   TextField,
 } from "@mui/material";
 import { useForm, Controller } from "react-hook-form";
-import { z } from "zod";
+
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import InputField from "../../components/Input_field";
@@ -19,8 +19,6 @@ import { useAppDispatch, useAppSelector } from "../../store/hook";
 import { citySchema, type CityFormData } from "../../globals/ZodValidation";
 import type { RootState } from "../../store/store";
 import { toast } from "react-toastify";
-
-
 
 interface EditBranchFormProps {
   initialData?: Partial<CityFormData> & { id?: number };
@@ -37,7 +35,6 @@ const AddEditCity: React.FC<EditBranchFormProps> = ({
   const { statesList = [] } = useAppSelector(
     (state: RootState) => state.states || {}
   );
-
 
   const {
     control,
@@ -58,14 +55,37 @@ const AddEditCity: React.FC<EditBranchFormProps> = ({
     dispatch(fetchStates());
   }, [dispatch]);
 
+  // const districts = useMemo(() => {
+  //   const map = new Map<string, { id: number; district: string }>();
+  //   for (const item of fullList || []) {
+  //     const key = item.district.trim().toLowerCase();
+  //     if (!map.has(key)) {
+  //       map.set(key, { id: item.districtId, district: item.district });
+  //     }
+  //   }
+  //   return Array.from(map.values());
+  // }, [fullList]);
   const districts = useMemo(() => {
     const map = new Map<string, { id: number; district: string }>();
     for (const item of fullList || []) {
-      const key = item.district.trim().toLowerCase();
-      if (!map.has(key)) {
-        map.set(key, { id: item.districtId, district: item.district });
+      const districtName =
+        typeof item.district === "string"
+          ? item.district.trim().toLowerCase()
+          : "";
+
+      if (!districtName) continue;
+
+      if (!map.has(districtName)) {
+        map.set(districtName, {
+          id: item.districtId,
+          district:
+            typeof item.district === "string"
+              ? item.district
+              : String(item.district),
+        });
       }
     }
+
     return Array.from(map.values());
   }, [fullList]);
 

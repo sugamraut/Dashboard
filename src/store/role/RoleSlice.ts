@@ -4,16 +4,14 @@ import {
   type PayloadAction,
 } from "@reduxjs/toolkit";
 
-import API, { getAuthHeader } from "../../http";
 import type { Role } from "../../globals/typeDeclaration";
 import { Status, type StatusType } from "../../globals/status";
+import type {
+  FetchParams,
+  PaginatedResponse,
+} from "../../globals/Api Service/API_Services";
+import { RoleService } from "../../globals/Api Service/service";
 
-// interface FetchRolesParams {
-//   page?: number;
-//   rowsPerPage?: number;
-//   sortBy: string;
-//   sortOrder: "asc" | "dec";
-// }
 
 export interface RolesState {
   length: number;
@@ -36,20 +34,15 @@ const initialState: RolesState = {
 };
 
 export const fetchRoles = createAsyncThunk<
-  { data: Role[]; metaData: { total: number } },
-  { page?: number; rowsPerPage?: number },
+  PaginatedResponse<Role>,
+  FetchParams,
   { rejectValue: string }
->("role/fetch", async ({ page, rowsPerPage } = {}, { rejectWithValue }) => {
+>("role/fetch", async (params, { rejectWithValue }) => {
   try {
-    const response = await API.get(`/roles`, {
-      params: { page, rowsPerPage },
-      headers: {
-        ...getAuthHeader(),
-      },
-    });
+    const response = await RoleService.fetchPaginated(params);
     return {
-      data: response.data.data,
-      metaData: response.data.metaData,
+      data: response.data,
+      metaData: response.metaData,
     };
   } catch (error: any) {
     return rejectWithValue(error.message || "failed to fetch roles");
@@ -60,12 +53,7 @@ export const fetchAllRole = createAsyncThunk<Role[]>(
   "fetch/Allrole",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await API.get("/role/all", {
-        headers: {
-          ...getAuthHeader(),
-        },
-      });
-      return response.data.data as Role[];
+      return await RoleService.fetchAll();
     } catch (error: any) {
       return rejectWithValue(error.message || "failed to fetch all the data");
     }
@@ -74,16 +62,12 @@ export const fetchAllRole = createAsyncThunk<Role[]>(
 
 export const createRole = createAsyncThunk<
   Role,
-  { name: string; displayName: string; permissions: string[] },
+  // { name: string; displayName: string; permissions: string[] },
+  Role,
   { rejectValue: string }
->("roles/create", async (data, { rejectWithValue }) => {
+>("roles/create", async (newRole, { rejectWithValue }) => {
   try {
-    const response = await API.post("/roles", data, {
-      headers: {
-        ...getAuthHeader(),
-      },
-    });
-    return response.data as Role;
+    return await RoleService.create(newRole);
   } catch (error: any) {
     return rejectWithValue(
       error.response?.data?.message || "Failed to create role"
@@ -91,36 +75,26 @@ export const createRole = createAsyncThunk<
   }
 });
 
-export const updateRole = createAsyncThunk<
-  Role,
-  { userId: number; data: Partial<Role> },
-  { rejectValue: string }
->("roles/update", async ({ userId, data }, { rejectWithValue }) => {
-  try {
-    const response = await API.put(`/roles/${userId}`, data, {
-      headers: {
-        ...getAuthHeader(),
-      },
-    });
-    return response.data as Role;
-  } catch (error: any) {
-    return rejectWithValue(
-      error.response?.data?.message || "Failed to update role"
-    );
+export const updateRole = createAsyncThunk<Role, Role, { rejectValue: string }>(
+  "roles/update",
+  async (UpdateRoleData, { rejectWithValue }) => {
+    try {
+      return await RoleService.update(UpdateRoleData);
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to update role"
+      );
+    }
   }
-});
+);
 
 export const deletedRole = createAsyncThunk<
-  void,
-  { userId: number },
+  Role,
+  Role,
   { rejectValue: string }
->("roles/delete", async ({ userId }, { rejectWithValue }) => {
+>("roles/delete", async (RoleDelete, { rejectWithValue }) => {
   try {
-    await API.delete(`/roles/${userId}`, {
-      headers: {
-        ...getAuthHeader(),
-      },
-    });
+    return await RoleService.remove(RoleDelete);
   } catch (error: any) {
     return rejectWithValue(
       error.response?.data?.message || "Failed to delete role"

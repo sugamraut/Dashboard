@@ -22,23 +22,21 @@ import { useAppDispatch, useAppSelector } from "../../store/hook";
 import {
   deleteAccountType,
   fetchAccountTypes,
-  type AccountType,
 } from "../../store/account/AccountSlice";
 import AddEditPage from "./add_edit";
 import type { RootState } from "../../store/store";
 import { toast } from "react-toastify";
 import Loading from "../loader";
+import type { AccountType } from "../../globals/typeDeclaration";
 
 const AccountPage: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { error, loading } = useAppSelector((state) => state.accountTypes);
+  const { error, loading,metaData,data } = useAppSelector((state:RootState) => state.accountTypes);
 
   // const data = useAppSelector((state: RootState) => state.accountTypes.data) || [];
-  const data =
-    useAppSelector((state: RootState) => state.accountTypes.data) || [];
-  const totalCount = useAppSelector(
-    (state: RootState) => state.accountTypes.total
-  );
+  // const data =
+  //   useAppSelector((state: RootState) => state.accountTypes.data) || [];
+  
 
   const [searchQuery, setSearchQuery] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -225,7 +223,7 @@ const AccountPage: React.FC = () => {
       <TablePagination
         rowsPerPageOptions={[5, 10, 25, 50]}
         component="div"
-        count={totalCount}
+        count={metaData?.total||0}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}

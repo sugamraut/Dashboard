@@ -8,11 +8,11 @@ interface InputFieldProps {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   required?: boolean;
   fullWidth?: boolean;
-  type?:string;
-  className?:string;
+  type?: string;
+  className?: string;
   margin?: "none" | "dense" | "normal";
-  error?: boolean;
-  helperText?: string;
+  error?: boolean;          
+  helperText?: string;      
 }
 
 const InputField: React.FC<InputFieldProps> = ({
@@ -25,6 +25,8 @@ const InputField: React.FC<InputFieldProps> = ({
   fullWidth = false,
   margin = "none",
   className,
+  error,           
+  helperText,      
 }) => {
   return (
     <TextField
@@ -37,7 +39,8 @@ const InputField: React.FC<InputFieldProps> = ({
       fullWidth={fullWidth}
       margin={margin}
       className={className}
-      
+      error={error}          
+      helperText={helperText} 
     />
   );
 };

@@ -4,18 +4,14 @@ import {
   type PayloadAction,
 } from "@reduxjs/toolkit";
 import { Status, type StatusType } from "../../globals/status";
-import API, { getAuthHeader } from "../../http";
-import axios from "axios";
 
-interface OnlineAccount {
-  firstname: string;
-  middleName: string;
-  lastName: string;
-  gender: string;
-  id: number;
-  status: string;
-  createdate: string;
-}
+import axios from "axios";
+import type {
+  FetchParams,
+  PaginatedResponse,
+} from "../../globals/Api Service/API_Services";
+import type { OnlineAccount } from "../../globals/typeDeclaration";
+import { OnlineAccountService } from "../../globals/Api Service/service";
 
 interface CreateblacklistStatus {
   firstname: string;
@@ -45,41 +41,27 @@ const initialState: OnlineAccountStatus = {
 };
 
 export const fetchOnlineAccount = createAsyncThunk<
-  OnlineAccount,
-  // { rejectValue: string }
-  void
->("fetch/onlineaccount", async (_, { rejectWithValue }) => {
+  PaginatedResponse<OnlineAccount>,
+  Partial<FetchParams> | undefined,
+  { rejectValue: string }
+>("fetch/onlineaccount", async (params = {}, { rejectWithValue }) => {
   try {
-    const response = await API.get(`/online-account-requests`, {
-      headers: {
-        ...getAuthHeader(),
-      },
-    });
-    return response.data.data as OnlineAccount;
+    const response = await OnlineAccountService.fetchPaginated(params);
+    return response;
   } catch (error: any) {
     return rejectWithValue(
-      error.message || "failed to fetch the OnlineAccount"
+      error.message || "Failed to fetch the OnlineAccount"
     );
   }
 });
 
 export const CreateOnlineRequest = createAsyncThunk<
   OnlineAccount,
-  // { onlinedata: Partial<OnlineAccount> }
   OnlineAccount,
   { rejectValue: string }
->("post.blacklist", async (onlinedata, { rejectWithValue }) => {
+>("post.blacklist", async (newonlinedata, { rejectWithValue }) => {
   try {
-    const response = await API.post(
-      `//online-account-requests`,
-      onlinedata,
-      {
-        headers: {
-          ...getAuthHeader(),
-        },
-      }
-    );
-    return response.data as OnlineAccount;
+    return await OnlineAccountService.create(newonlinedata);
   } catch (error: any) {
     return rejectWithValue(error.response?.data?.message || "failed to up");
   }
@@ -123,10 +105,11 @@ const OnlineAccountSlice = createSlice({
         state.error = null;
       })
       .addCase(fetchOnlineAccount.fulfilled, (state, action) => {
-        state.list = [action.payload];
-        state.data = [action.payload];
+        state.list = action.payload.data;
+        state.data = action.payload.data;
         state.loading = false;
       })
+
       .addCase(CreateOnlineRequest.pending, (state) => {
         state.loading = true;
         state.error = null;

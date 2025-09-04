@@ -29,28 +29,28 @@ export interface City extends StateType {
   state: string;
 }
 
-export interface Branch {
+export interface Branch extends City {
   id: number;
   name: string;
   nameNp: string;
   nameCombined: string;
-  districtId: number;
-  code: string | null;
-  district: string;
-  state: string;
+  // districtId: number;
+  // code: string | null;
+  // district: string;
+  // state: string;
   data?: any;
 }
 
-export interface Permission {
-  code?: any;
+export interface Permission extends Branch {
+  // code?: any;
   permissions?: any;
-  label: string | undefined;
-  id: number;
-  name: string;
-  guardName: string;
+  // label: string | undefined;
+  // id: number;
+  // name: string;
+  // guardName: string;
   group: string;
   displayName: string;
-  displayNameNp: string;
+  // displayNameNp: string;
 }
 
 export interface MetaData {
@@ -142,4 +142,33 @@ export interface Setting {
   name: string;
   description?: string;
   value: string;
+}
+export interface AccountType {
+  originalName: string | undefined;
+  id: number;
+  title: string;
+  // Details?: string;
+  code?: string;
+  description?: string;
+  // details?: string;
+  interest?: string;
+  minBalance?: string;
+  // insurance?: string;
+  imageUrl?: string;
+}
+
+export interface dashboardData {
+  title: string;
+  count: number;
+  changeValue: number;
+  color: any;
+}
+export interface OnlineAccount {
+  firstname: string;
+  middleName: string;
+  lastName: string;
+  gender: string;
+  id: number;
+  status: string;
+  createdate: string;
 }

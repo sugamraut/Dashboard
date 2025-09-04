@@ -1,12 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import API, { getAuthHeader } from "../../http";
-
-interface dashboardData {
-  title: string;
-  count: number;
-  changeValue: number;
-  color: any;
-}
+import type { dashboardData } from "../../globals/typeDeclaration";
+import { dashboardService } from "../../globals/Api Service/service";
+import type { FetchParams } from "../../globals/Api Service/API_Services";
 
 interface dashboardState {
   list: dashboardData[];
@@ -14,12 +9,6 @@ interface dashboardState {
   error: string | null;
 }
 
-// interface FetchParams {
-//   page: number;
-//   rowsPerPage: number;
-//   sortBy: string;
-//   sortOrder: "asc" | "desc";
-// }
 const initialState: dashboardState = {
   list: [],
   loading: false,
@@ -28,30 +17,18 @@ const initialState: dashboardState = {
 
 export const fetchdashboarddata = createAsyncThunk<
   dashboardData[],
-  // FetchParams,
-  void,
+  Partial<FetchParams> | undefined,
   { rejectValue: string }
->(
-  "fetch/dashboard",
-  async (
-    // { page, rowsPerPage, sortBy, sortOrder }: FetchParams,
-    _,
-    { rejectWithValue }
-  ) => {
-    try {
-      const response = await API.get(`/dashboard-data`,{
-        headers: {
-          ...getAuthHeader(),
-        },
-      });
-      return response.data.data ?? [];
-    } catch (error: any) {
-      return rejectWithValue(
-        error.message || "failed to fetch the dashoard data"
-      );
-    }
+>("fetch/dashboard", async (params = {}, { rejectWithValue }) => {
+  try {
+    const response = await dashboardService.fetchPaginated(params);
+    return response.data ?? [];
+  } catch (error: any) {
+    return rejectWithValue(
+      error.message || "failed to fetch the dashboard data"
+    );
   }
-);
+});
 
 const dashboardSlice = createSlice({
   name: "dashboard",

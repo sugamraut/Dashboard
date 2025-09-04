@@ -2,8 +2,8 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 import { Status, type StatusType } from "../../globals/status";
 import type { UserProfile } from "../../globals/typeDeclaration";
-import API, { getAuthHeader } from "../../http";
-import type { UserFormData } from "../../globals/ZodValidation";
+
+import { UserService } from "../../globals/Api Service/service";
 
 export interface UserState {
   fullList: UserProfile[] | null;
@@ -29,14 +29,8 @@ export const fetchAllUsers = createAsyncThunk(
   "users/fetchAll",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await API.get(`/users`, {
-        headers: {
-          ...getAuthHeader(),
-        },
-      });
-
-      const rawData = response.data.data;
-      const total = response.data.metaData?.total || rawData.length;
+      const rawData = await UserService.fetch();
+      const total = rawData.length;
 
       const formattedData: UserProfile[] = rawData.map((u: any) => ({
         id: u.id,
@@ -59,8 +53,9 @@ export const fetchUserById = createAsyncThunk(
   "users/fetchById",
   async (userId: number, { rejectWithValue }) => {
     try {
-      const response = await API.get(`/users/${userId}`);
-      return response.data.data;
+      // const response = await API.get(`/users/${userId}`);
+      return await UserService.getById(userId);
+      // return response.data.data;
     } catch (error: any) {
       return rejectWithValue(error?.message || "Failed to fetch user");
     }
@@ -72,31 +67,17 @@ export const updateUser = createAsyncThunk<
   { rejectValue: string }
 >("users/update", async (Profile, { rejectWithValue }) => {
   try {
-    const response = await API.put(`/users/${Profile.id}`, Profile, {
-      headers: {
-        ...getAuthHeader(),
-      },
-    });
-    return response.data.data;
+    return await UserService.update(Profile);
   } catch (error: any) {
     return rejectWithValue(error.message || "failed to create user");
   }
 });
 
-export const deleteUser = createAsyncThunk(
+export const deleteUser = createAsyncThunk<UserProfile, UserProfile>(
   "users/delete",
-  async (userId: number, { rejectWithValue }) => {
+  async (UserDelete, { rejectWithValue }) => {
     try {
-      const response = await API.delete(
-        `/users/${userId}`,
-        {
-          headers: {
-            ...getAuthHeader(),
-          },
-        }
-      );
-      if (response.status === 201) return userId;
-      else throw new Error("Failed to delete user");
+      return await UserService.remove(UserDelete);
     } catch (error: any) {
       return rejectWithValue(
         error?.response?.data?.message || "Failed to delete user"
@@ -104,24 +85,19 @@ export const deleteUser = createAsyncThunk(
     }
   }
 );
-
-export const createUser = createAsyncThunk(
-  "auth/createUser",
-  async (userData: UserFormData, { rejectWithValue }) => {
-    try {
-      const response = await API.post("/auth/create-user", userData, {
-        headers: {
-          ...getAuthHeader(),
-        },
-      });
-      return response.data;
-    } catch (err: any) {
-      return rejectWithValue(
-        err.response?.data?.message || "Failed to create user"
-      );
-    }
+export const createUser = createAsyncThunk<
+  UserProfile,
+  UserProfile,
+  { rejectValue: string }
+>("auth/createUser", async (newUser, { rejectWithValue }) => {
+  try {
+    return await UserService.create(newUser);
+  } catch (err: any) {
+    return rejectWithValue(
+      err.response?.data?.message || "Failed to create user"
+    );
   }
-);
+});
 
 const userSlice = createSlice({
   name: "users",
@@ -154,8 +130,13 @@ const userSlice = createSlice({
       })
       .addCase(createUser.fulfilled, (state, action) => {
         state.loading = false;
-        state.list = action.payload;
+        if (state.list) {
+          state.list.push(action.payload);
+        } else {
+          state.list = [action.payload];
+        }
       })
+
       .addCase(createUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
@@ -207,7 +188,7 @@ const userSlice = createSlice({
         state.deletedstatus = true;
         state.list =
           state.list?.filter(
-            (user: { id: number }) => user.id !== action.payload
+            (user: { id: number }) => user.id !== action.payload.id
           ) || null;
       })
       .addCase(deleteUser.rejected, (state, action) => {

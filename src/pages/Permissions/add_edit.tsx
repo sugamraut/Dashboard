@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect} from "react";
 import {
   Autocomplete,
   Button,
@@ -33,7 +33,7 @@ interface AddEditPageProps {
 
 const AddEditPage: React.FC<AddEditPageProps> = ({ initialData, onClose }) => {
   const dispatch = useAppDispatch<AppDispatch>();
-  const [_, setLocalError] = useState<string | null>(null);
+  // const [_, setLocalError] = useState<string | null>(null);
 
   const { groupedPermissions, ActionData } = useAppSelector(
     (state: RootState) => state.permissions
@@ -94,8 +94,8 @@ const AddEditPage: React.FC<AddEditPageProps> = ({ initialData, onClose }) => {
       }
 
       onClose?.();
-    } catch (error) {
-      setLocalError(String(error));
+    } catch (error:any) {
+      toast.error(error||"failed to update and add data")
     }
   };
 

@@ -59,14 +59,23 @@ export default function DistrictPage() {
   useEffect(() => {
     dispatch(fetchAllDistrictsAsync());
   }, [dispatch]);
-
   useEffect(() => {
     if (selectedState) {
       dispatch(
-        fetchDistrictsByStateIdAsync(selectedState.id, page + 1, rowsPerPage)
+        fetchDistrictsByStateIdAsync({
+          stateId: selectedState.id,
+          page: page + 1,
+          limit: rowsPerPage,
+        })
       );
     } else {
-      dispatch(fetchDistrictAsync(page + 1, rowsPerPage, "", search.trim()));
+      dispatch(
+        fetchDistrictAsync({
+          page: page + 1,
+          rowsPerPage,
+          query: search.trim(),
+        })
+      );
     }
   }, [dispatch, selectedState, page, rowsPerPage, search]);
 
@@ -105,10 +114,20 @@ export default function DistrictPage() {
 
     if (selectedState) {
       dispatch(
-        fetchDistrictsByStateIdAsync(selectedState.id, page + 1, rowsPerPage)
+        fetchDistrictsByStateIdAsync({
+          stateId: selectedState.id,
+          page: page + 1,
+          limit: rowsPerPage,
+        })
       );
     } else {
-      dispatch(fetchDistrictAsync(page + 1, rowsPerPage, "", search.trim()));
+      dispatch(
+        fetchDistrictAsync({
+          page: page + 1,
+          rowsPerPage,
+          query: search.trim(),
+        })
+      );
     }
   };
 
@@ -125,7 +144,9 @@ export default function DistrictPage() {
     setSelectedState(null);
     setSearch("");
     setPage(0);
-    dispatch(fetchDistrictAsync(1, rowsPerPage, "", ""));
+    dispatch(
+      fetchDistrictAsync({ page: page + 1, rowsPerPage, query: search.trim() })
+    );
   };
 
   const handleStateFilterChange = (_: any, newValue: any) => {
@@ -172,9 +193,12 @@ export default function DistrictPage() {
 
           <TextField
             size="small"
-            sx={{ minWidth: 250,"& .MuiOutlinedInput-root": {
-                          backgroundColor: "#0000000d",
-                          } }}
+            sx={{
+              minWidth: 250,
+              "& .MuiOutlinedInput-root": {
+                backgroundColor: "#0000000d",
+              },
+            }}
             label="Search by District Name"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -187,7 +211,13 @@ export default function DistrictPage() {
                   dispatch(fetchDistrictByIdAsync(district.id));
                   setSelectedState(null);
                 } else {
-                  dispatch(fetchDistrictAsync(1, rowsPerPage, "", ""));
+                  dispatch(
+                    fetchDistrictAsync({
+                      page: page + 1,
+                      rowsPerPage,
+                      query: search.trim(),
+                    })
+                  );
                 }
               }
             }}

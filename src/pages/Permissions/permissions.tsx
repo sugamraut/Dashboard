@@ -88,10 +88,7 @@ const Permissions: React.FC = () => {
     setOpenDialog(true);
   };
 
-  // const handleCloseDialog = () => {
-  //   setOpenDialog(false);
-  //   setEditingPermission(null);
-  // };
+
   const handleCloseDialog = () => {
     setOpenDialog(false);
     setEditingPermission(null);

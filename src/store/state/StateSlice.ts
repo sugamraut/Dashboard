@@ -1,6 +1,10 @@
-import { createSlice, createAsyncThunk, type PayloadAction } from '@reduxjs/toolkit';
-import { type State } from '../../globals/typeDeclaration';
-import API, { getAuthHeader } from '../../http';
+import {
+  createSlice,
+  createAsyncThunk,
+  type PayloadAction,
+} from "@reduxjs/toolkit";
+import { type State } from "../../globals/typeDeclaration";
+import { StateService } from "../../globals/Api Service/service";
 
 interface StateSliceType {
   statesList: State[];
@@ -14,27 +18,21 @@ const initialState: StateSliceType = {
   error: null,
 };
 
-
-export const fetchStates = createAsyncThunk<State[], void, { rejectValue: string }>(
-  'states/fetchStates',
-  async (_, { rejectWithValue }) => {
-    try {
-      const response = await API.get(`/states`,{
-        headers:{
-          ...getAuthHeader()
-        }
-      });
-      console.log("fetchStates response.data:", response.data);
-      return response.data.data as State[];
-    } catch (err: any) {
-      console.error("fetchStates error:", err);
-      return rejectWithValue(err.response?.data?.message || err.message);
-    }
+export const fetchStates = createAsyncThunk<
+  State[],
+  void,
+  { rejectValue: string }
+>("states/fetchStates", async (_, { rejectWithValue }) => {
+  try {
+    return await StateService.fetch();
+  } catch (err: any) {
+    console.error("fetchStates error:", err);
+    return rejectWithValue(err.response?.data?.message || err.message);
   }
-);
+});
 
 const stateSlice = createSlice({
-  name: 'states',
+  name: "states",
   initialState,
   reducers: {},
   extraReducers: (builder) => {
@@ -43,13 +41,18 @@ const stateSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(fetchStates.fulfilled, (state, action: PayloadAction<State[]>) => {
-        state.loading = false;
-        state.statesList = Array.isArray(action.payload) ? action.payload : [];
-      })
+      .addCase(
+        fetchStates.fulfilled,
+        (state, action: PayloadAction<State[]>) => {
+          state.loading = false;
+          state.statesList = Array.isArray(action.payload)
+            ? action.payload
+            : [];
+        }
+      )
       .addCase(fetchStates.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload || 'Failed to fetch states';
+        state.error = action.payload || "Failed to fetch states";
       });
   },
 });

@@ -96,7 +96,7 @@ const AddEditPage = ({
       title: "",
       code: "",
       interest: "",
-      minimumblance: "",
+      minBalance: "",
       imageUrl: "",
       originalName: "",
     },
@@ -108,7 +108,7 @@ const AddEditPage = ({
         title: initialData.title || "",
         code: initialData.code || "",
         interest: initialData.interest || "",
-        minimumblance: initialData.minimumblance || "",
+        minBalance: initialData.minimumblance || "",
         originalName: initialData.originalName || "",
         // interestPayment: initialData.insurance || "",
       });
@@ -160,7 +160,7 @@ const AddEditPage = ({
         title: getValues("title"),
         code: getValues("code"),
         interest: getValues("interest"),
-        minBalance: getValues("minimumblance"),
+        minBalance: getValues("minBalance"),
         originalName: getValues("originalName"),
         description: editorRef.current?.innerHTML || "",
         file: selectedFile || undefined,
@@ -212,16 +212,16 @@ const AddEditPage = ({
       <DialogContent dividers>
         <form onSubmit={handleSubmit(onSubmit)} noValidate>
           <Controller
-            control={control}
             name="title"
+            control={control}
             render={({ field }) => (
               <InputField
                 {...field}
                 fullWidth
                 label="Title"
                 margin="normal"
-                error={!errors.title}
-                helperText={errors.title?.message}
+                error={!!errors.title}
+                helperText={errors?.title?.message}
               />
             )}
           />
@@ -234,8 +234,8 @@ const AddEditPage = ({
                 label="Code"
                 margin="normal"
                 {...field}
-                error={!errors.code}
-                helperText={errors.code?.message}
+                error={!!errors.code}
+                helperText={errors?.code?.message}
               />
             )}
           />
@@ -248,8 +248,8 @@ const AddEditPage = ({
                 margin="normal"
                 {...field}
                 label="Interest"
-                error={!errors.interest}
-                helperText={errors.interest?.message}
+                error={!!errors.interest}
+                helperText={errors?.interest?.message}
               />
             )}
           />
@@ -267,15 +267,15 @@ const AddEditPage = ({
 
           <Controller
             control={control}
-            name="minimumblance"
+            name="minBalance"
             render={({ field }) => (
               <InputField
                 label="minimumbalance"
                 fullWidth
                 margin="normal"
                 {...field}
-                error={!errors.minimumblance}
-                helperText={errors.minimumblance?.message}
+                error={!!errors.minBalance}
+                helperText={errors.minBalance?.message}
               />
             )}
           />
@@ -332,87 +332,3 @@ const AddEditPage = ({
 };
 
 export default AddEditPage;
-
-//network response
-// createdDate
-// :
-// "2025-08-26T14:35:25.764Z"
-// fileKey
-// :
-// "1756198225757"
-// id
-// :
-// 11
-// isDeleted
-// :
-// 0
-// originalName
-// :
-// "jpeg.jpg"
-// updatedDate
-// :
-// "2025-08-26T14:35:25.764Z"
-// Unexpected Application Error!
-// Cannot read properties of undefined (reading 'title')
-// TypeError: Cannot read properties of undefined (reading 'title')
-//     at http://localhost:5173/src/pages/Account/Account.tsx?t=1756199455046:69:15
-//     at Array.filter (<anonymous>)
-//     at AccountPage (http://localhost:5173/src/pages/Account/Account.tsx?t=1756199455046:68:25)
-//     at react-stack-bottom-frame (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=95470abb:17424:20)
-//     at renderWithHooks (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=95470abb:4206:24)
-//     at updateFunctionComponent (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=95470abb:6619:21)
-//     at beginWork (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=95470abb:7654:20)
-//     at runWithFiberInDEV (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=95470abb:1485:72)
-//     at performUnitOfWork (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=95470abb:10868:98)
-//     at workLoopSync (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=95470abb:10728:43)
-// 💿 Hey developer 👋
-
-// You can provide a way better UX than this when your app throws errors by providing your own ErrorBoundary or errorElement prop on your route.
-// const onSubmit = async () => {
-//   try {
-//     if (!selectedFile && !initialData?.imageUrl) {
-//       toast.error("Please upload a file before submitting.");
-//       return;
-//     }
-
-//     const payload: AccountType & { file?: File } = {
-//       id: initialData?.id!,
-//       title: getValues("title") || "",
-//       code: getValues("code") || "",
-//       interest: getValues("interest") || "",
-//       minBalance: getValues("minimumblance") || "",
-//       file: selectedFile || undefined,
-//     };
-
-//     if (isEdit && initialData?.id) {
-//       const updateResult = await dispatch(updateAccountType(payload));
-//       if (updateAccountType.rejected.match(updateResult)) {
-//         toast.error(updateResult.payload || "Failed to update account type.");
-//         return;
-//       }
-//       toast.success("Account type updated successfully.");
-//     } else {
-//       const createResult = await dispatch(
-//         createAccountTypeWithUpload(payload)
-//       );
-//       if (createAccountTypeWithUpload.rejected.match(createResult)) {
-//         toast.error(createResult.payload || "Failed to create account type.");
-//         return;
-//       }
-//       toast.success("Account type created successfully.");
-//     }
-
-//    onSave({
-//     id: payload.id,
-//     title: payload.title||"",
-//     code: payload.code||"",
-//     interest: payload.interest||"",
-//     description: editorRef.current?.innerHTML || "",
-//     minBalance: payload.minBalance||"",
-//     imageUrl: uploadFileName || "",
-//   });
-//   } catch (err) {
-//     console.error(err);
-//     toast.error("An unexpected error occurred.");
-//   }
-// };

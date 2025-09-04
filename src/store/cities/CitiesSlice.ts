@@ -5,7 +5,8 @@ import {
 } from "@reduxjs/toolkit";
 import { Status, type StatusType } from "../../globals/status";
 import type { City } from "../../globals/typeDeclaration";
-import API, { getAuthHeader } from "../../http";
+
+import { CityService } from "../../globals/Api Service/service";
 
 interface CityState {
   fullList: City[] | null;
@@ -29,12 +30,13 @@ export const fetchAllCities = createAsyncThunk<
   City[],
   void,
   { rejectValue: string }
->("city/fetchAll", async (_, { rejectWithValue }) => {
+>("city/fetchAll", async (_, thunkAPI) => {
   try {
-    const response = await API.get(`/cities/all`);
-    return response.data.data;
+    return await CityService.fetchAll();
   } catch (error: any) {
-    return rejectWithValue(error.message || "Failed to fetch all cities");
+    return thunkAPI.rejectWithValue(
+      error.message || "failed to fetch all city"
+    );
   }
 });
 
@@ -43,27 +45,22 @@ export const fetchCityBypaginated = createAsyncThunk<
   { districtId?: number; page: number; rowsPerPage: number; search?: string },
   { rejectValue: string }
 >(
-  "city/fetchcitybypaginated",
+  "city/fetchCityByPaginated",
   async ({ districtId, page, rowsPerPage, search }, { rejectWithValue }) => {
     try {
       const filters: Record<string, any> = {};
       if (districtId) filters.districtId = districtId;
       if (search) filters.name = search;
 
-      const response = await API.get(`/cities`, {
-        params: {
-          page,
-          rowsPerPage,
-          filters: JSON.stringify(filters),
-        },
-        headers: {
-          ...getAuthHeader(),
-        },
+      const response = await CityService.fetchPaginated({
+        page,
+        rowsPerPage,
+        filters,
       });
 
       return {
-        data: response.data.data as City[],
-        metaData: response.data.metaData,
+        data: response.data,
+        metaData: response.metaData,
       };
     } catch (error: any) {
       return rejectWithValue(error.message || "Failed to fetch cities");
@@ -73,14 +70,9 @@ export const fetchCityBypaginated = createAsyncThunk<
 
 export const updatecity = createAsyncThunk<City, City, { rejectValue: string }>(
   "city/update",
-  async (city, { rejectWithValue }) => {
+  async (Updatecity, { rejectWithValue }) => {
     try {
-      const response = await API.put(`/cities/${city.id}`, city, {
-        headers: {
-          ...getAuthHeader(),
-        },
-      });
-      return response.data.data as City;
+      return await CityService.update(Updatecity);
     } catch (error: any) {
       return rejectWithValue(error.message || "Failed to update city");
     }
@@ -89,14 +81,9 @@ export const updatecity = createAsyncThunk<City, City, { rejectValue: string }>(
 
 export const createCity = createAsyncThunk<City, City, { rejectValue: string }>(
   "city/create",
-  async (city, { rejectWithValue }) => {
+  async (newcity, { rejectWithValue }) => {
     try {
-      const response = await API.post(`/cities`, city, {
-        headers: {
-          ...getAuthHeader(),
-        },
-      });
-      return response.data.data as City;
+      return await CityService.create(newcity);
     } catch (error: any) {
       return rejectWithValue(error.message || "Failed to create city");
     }

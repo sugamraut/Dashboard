@@ -65,14 +65,39 @@ export default function CityPage() {
     );
   }, [dispatch, selectedDistrict, page, rowsPerPage, search]);
 
+  // const districts = useMemo(() => {
+  //   if (!fulldistrict) return [];
+
+  //   const uniqueMap = new Map<string, { id: number; district: string }>();
+  //   for (const item of fulldistrict) {
+  //     const key = item.district.trim().toLowerCase();
+  //     if (!uniqueMap.has(key)) {
+  //       uniqueMap.set(key, { id: item.districtId, district: item.district });
+  //     }
+  //   }
+
+  //   return Array.from(uniqueMap.values());
+  // }, [fulldistrict]);
   const districts = useMemo(() => {
     if (!fulldistrict) return [];
 
     const uniqueMap = new Map<string, { id: number; district: string }>();
     for (const item of fulldistrict) {
-      const key = item.district.trim().toLowerCase();
-      if (!uniqueMap.has(key)) {
-        uniqueMap.set(key, { id: item.districtId, district: item.district });
+      const districtName =
+        typeof item.district === "string"
+          ? item.district.trim().toLowerCase()
+          : "";
+
+      if (!districtName) continue;
+
+      if (!uniqueMap.has(districtName)) {
+        uniqueMap.set(districtName, {
+          id: item.districtId,
+          district:
+            typeof item.district === "string"
+              ? item.district
+              : String(item.district),
+        });
       }
     }
 
@@ -114,10 +139,14 @@ export default function CityPage() {
   return (
     <Box marginLeft={10} padding={2}>
       <Box className="header">
-        <Typography variant="h5" fontWeight="bold"
+        <Typography
+          variant="h5"
+          fontWeight="bold"
           color="#043BA0"
           fontSize={24}
-          fontFamily="lato" paddingBottom={2}>
+          fontFamily="lato"
+          paddingBottom={2}
+        >
           Cities
         </Typography>
 
