@@ -21,7 +21,6 @@ import {
   uploadFile,
   createAccountTypeWithUpload,
   updateAccountType,
-  type AccountType,
 } from "../../store/account/AccountSlice";
 import { toast } from "react-toastify";
 import Text_editor from "../../components/Text_editor";
@@ -29,6 +28,7 @@ import InputField from "../../components/Input_field";
 import { useAppDispatch } from "../../store/hook";
 import { AccountSchema } from "../../globals/ZodValidation";
 import { zodResolver } from "@hookform/resolvers/zod";
+import type { AccountType } from "../../globals/typeDeclaration";
 
 const VisuallyHiddenInput = styled("input")`
   clip: rect(0 0 0 0);
@@ -53,23 +53,14 @@ interface AddEditPageProps {
     imageUrl?: string;
     originalName?: string;
   };
-  // onSave: (data: {
-  //   id: number;
-  //   title: string;
-  //   code: string;
-  //   interest: string;
-  //   description: string;
-  //   minBalance: string;
-  //   imageUrl: string;
-  //   originalName?: string;
-  // }) => void;
+
   onCancel: () => void;
   isEdit?: boolean;
 }
 
 const AddEditPage = ({
   initialData,
-  // onSave,
+
   onCancel,
   isEdit,
 }: AddEditPageProps) => {
@@ -110,7 +101,6 @@ const AddEditPage = ({
         interest: initialData.interest || "",
         minBalance: initialData.minimumblance || "",
         originalName: initialData.originalName || "",
-        // interestPayment: initialData.insurance || "",
       });
       if (editorRef.current) {
         editorRef.current.innerHTML = initialData.description || "";
@@ -166,15 +156,13 @@ const AddEditPage = ({
         file: selectedFile || undefined,
       };
 
-      //  let  responsePayload;
-
       if (isEdit && initialData?.id) {
         const updateResult = await dispatch(updateAccountType(payload));
         if (updateAccountType.rejected.match(updateResult)) {
           toast.error(updateResult.payload || "Failed to update account type.");
           return;
         }
-        // responsePayload = updateResult.payload;
+
         toast.success("Account type updated successfully.");
       } else {
         const createResult = await dispatch(
@@ -184,20 +172,9 @@ const AddEditPage = ({
           toast.error(createResult.payload || "Failed to create account type.");
           return;
         }
-        // responsePayload = createResult.payload;
+
         toast.success("Account type created successfully.");
       }
-
-      // onSave({
-      //   id: responsePayload.id,
-      //   title: payload.title,
-      //   code: payload.code || "",
-      //   interest: payload.interest || "",
-      //   description: payload.description || "",
-      //   minBalance: payload.minBalance || "",
-      //   imageUrl: responsePayload.imageUrl || "",
-      //   originalName: responsePayload.originalName || uploadFileName || "",
-      // });
     } catch (err) {
       console.error("Submit error:", err);
       toast.error("An unexpected error occurred.");

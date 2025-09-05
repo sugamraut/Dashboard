@@ -97,9 +97,9 @@ export const roleSchema = z.object({
   id: z.number().optional(),
   name: z.string().min(1, "Role name is required"),
   displayName: z.string().min(1, "Display name is required"),
-  Permissions: z
-    .array(z.string().min(1, "Permission cannot be empty"))
-    .min(1, "At least one permission must be selected"),
+  // Permissions: z
+  //   .array(z.string().min(1, "Permission cannot be empty"))
+  //   .min(1, "At least one permission must be selected"),
 });
 
 export type RoleFormData = z.infer<typeof roleSchema>;

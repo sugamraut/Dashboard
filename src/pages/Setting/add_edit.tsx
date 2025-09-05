@@ -32,7 +32,7 @@ const ADDEDIT = ({ initialData, onSuccess, onCancel }: AddEditProps) => {
     reset,
     control,
     formState: { errors },
-  } = useForm<SettingFormData>({
+  } = useForm({
     resolver: zodResolver(settingSchema),
     defaultValues: {
       name: "",
@@ -91,7 +91,7 @@ const ADDEDIT = ({ initialData, onSuccess, onCancel }: AddEditProps) => {
                 label="Name"
                 {...field}
                 error={!!errors.name}
-                helperText={errors.name?.message}
+                helperText={errors?.name?.message}
                 fullWidth
                 margin="normal"
               />
@@ -107,7 +107,7 @@ const ADDEDIT = ({ initialData, onSuccess, onCancel }: AddEditProps) => {
                 {...field}
                 value={field.value ?? ""}
                 error={!!errors.description}
-                helperText={errors.description?.message}
+                helperText={errors?.description?.message}
                 fullWidth
                 margin="normal"
               />
@@ -121,8 +121,8 @@ const ADDEDIT = ({ initialData, onSuccess, onCancel }: AddEditProps) => {
               <TextField
                 label="Value"
                 {...field}
-                error={errors.value ? true : false}
-                helperText={errors.value?.message}
+               error={!!errors.value}
+               helperText={errors?.value?.message}
                 fullWidth
                 required
                 margin="normal"

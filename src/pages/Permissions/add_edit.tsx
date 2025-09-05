@@ -1,4 +1,4 @@
-import React, { useEffect} from "react";
+import React, { useEffect } from "react";
 import {
   Autocomplete,
   Button,
@@ -19,7 +19,10 @@ import {
 import type { Permission } from "../../globals/typeDeclaration";
 import { useAppDispatch, useAppSelector } from "../../store/hook";
 import { toast } from "react-toastify";
-import { permissionSchema, type PermissionFormData } from "../../globals/ZodValidation";
+import {
+  permissionSchema,
+  type PermissionFormData,
+} from "../../globals/ZodValidation";
 import type z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import InputField from "../../components/Input_field";
@@ -29,7 +32,6 @@ interface AddEditPageProps {
   initialData?: Partial<FormData> & { id?: number };
   onClose?: () => void;
 }
-
 
 const AddEditPage: React.FC<AddEditPageProps> = ({ initialData, onClose }) => {
   const dispatch = useAppDispatch<AppDispatch>();
@@ -61,6 +63,7 @@ const AddEditPage: React.FC<AddEditPageProps> = ({ initialData, onClose }) => {
     dispatch(fetchAllPermissions());
   }, [dispatch]);
 
+ 
   const onSubmit = async (data: PermissionFormData) => {
     if (!data.displayName) {
       toast.error("Display Name is required");
@@ -75,7 +78,7 @@ const AddEditPage: React.FC<AddEditPageProps> = ({ initialData, onClose }) => {
         group: data.group ?? "",
         guardName: "",
         label: data.displayName,
-        name: (data.ActionGroups.map((g) => g.name) || []).join(","),
+        name: (data.ActionGroups?.map((g) => g.name) || []).join(","),
       };
 
       if (initialData?.id) {
@@ -83,19 +86,20 @@ const AddEditPage: React.FC<AddEditPageProps> = ({ initialData, onClose }) => {
           updatePermission({
             ...payload,
             id: initialData.id,
-            code: undefined,
-            permissions: undefined,
+            code: null,
           })
         ).unwrap();
+
         toast.success("Permission updated successfully");
       } else {
         await dispatch(addPermission(payload)).unwrap();
-        toast.success("Permission added successfully");
+
+        toast.success("Permission created successfully");
       }
 
       onClose?.();
-    } catch (error:any) {
-      toast.error(error||"failed to update and add data")
+    } catch (error: any) {
+      toast.error(error?.message || "Failed to save permission");
     }
   };
 
@@ -115,11 +119,11 @@ const AddEditPage: React.FC<AddEditPageProps> = ({ initialData, onClose }) => {
                 label="Display Name"
                 fullWidth
                 margin="normal"
-                {...register("displayNameNp", {
-                  required: "Display name in Nepali is required",
-                })}
+                // {...register("displayNameNp", {
+                //   required: "Display name in Nepali is required",
+                // })}
                 error={!!errors.displayNameNp}
-                helperText={errors.displayNameNp?.message}
+                helperText={errors?.displayNameNp?.message}
               />
             )}
           />
@@ -138,7 +142,7 @@ const AddEditPage: React.FC<AddEditPageProps> = ({ initialData, onClose }) => {
                   required: "Display name in Nepali is required",
                 })}
                 error={!!errors.displayNameNp}
-                helperText={errors.displayNameNp?.message}
+                helperText={errors?.displayNameNp?.message}
               />
             )}
           />
@@ -163,7 +167,7 @@ const AddEditPage: React.FC<AddEditPageProps> = ({ initialData, onClose }) => {
                     margin="normal"
                     {...register("group")}
                     error={!!errors.group}
-                    helperText={errors.group?.message as string}
+                    helperText={errors?.group?.message as string}
                   />
                 )}
               />
@@ -188,7 +192,7 @@ const AddEditPage: React.FC<AddEditPageProps> = ({ initialData, onClose }) => {
                     margin="normal"
                     // {...register("ActionGroups")}
                     error={!!errors.ActionGroups}
-                    helperText={errors.ActionGroups?.message as string}
+                    helperText={errors?.ActionGroups?.message as string}
                   />
                 )}
               />

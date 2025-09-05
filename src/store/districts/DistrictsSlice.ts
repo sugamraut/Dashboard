@@ -101,6 +101,20 @@ export const updateDistrictAsync = createAsyncThunk<
   }
 });
 
+export const createDistrictAsync = createAsyncThunk<
+  DistrictType,
+ DistrictType,
+  { rejectValue: string }
+>("district/create", async (newDistrict, { rejectWithValue }) => {
+  try {
+    return await DistrictService.create(newDistrict);
+  } catch (error: any) {
+    return rejectWithValue(
+      error.response?.data?.message || error.message || "Create error"
+    );
+  }
+});
+
 interface DistrictState {
   fullList: DistrictType[];
   list: DistrictType[];
@@ -208,6 +222,21 @@ const districtSlice = createSlice({
         state.loading = false;
       })
       .addCase(updateDistrictAsync.rejected, (state, action) => {
+        state.status = Status.Error;
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(createDistrictAsync.pending, (state) => {
+        state.status = Status.Loading;
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(createDistrictAsync.fulfilled, (state, action) => {
+        state.list.push(action.payload);
+        state.status = Status.Success;
+        state.loading = false;
+      })
+      .addCase(createDistrictAsync.rejected, (state, action) => {
         state.status = Status.Error;
         state.loading = false;
         state.error = action.payload as string;

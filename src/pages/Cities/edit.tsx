@@ -55,16 +55,7 @@ const AddEditCity: React.FC<EditBranchFormProps> = ({
     dispatch(fetchStates());
   }, [dispatch]);
 
-  // const districts = useMemo(() => {
-  //   const map = new Map<string, { id: number; district: string }>();
-  //   for (const item of fullList || []) {
-  //     const key = item.district.trim().toLowerCase();
-  //     if (!map.has(key)) {
-  //       map.set(key, { id: item.districtId, district: item.district });
-  //     }
-  //   }
-  //   return Array.from(map.values());
-  // }, [fullList]);
+ 
   const districts = useMemo(() => {
     const map = new Map<string, { id: number; district: string }>();
     for (const item of fullList || []) {
@@ -170,7 +161,7 @@ const AddEditCity: React.FC<EditBranchFormProps> = ({
                     label="District"
                     margin="normal"
                     error={!!errors.district}
-                    helperText={errors.district?.message}
+                    helperText={errors?.district?.message}
                   />
                 )}
               />
@@ -187,7 +178,7 @@ const AddEditCity: React.FC<EditBranchFormProps> = ({
                 margin="normal"
                 required
                 error={!!errors.name}
-                helperText={errors.name?.message}
+                helperText={errors?.name?.message}
                 fullWidth
               />
             )}
@@ -203,7 +194,7 @@ const AddEditCity: React.FC<EditBranchFormProps> = ({
                 margin="normal"
                 required
                 error={!!errors.nameNp}
-                helperText={errors.nameNp?.message}
+                helperText={errors?.nameNp?.message}
                 fullWidth
               />
             )}

@@ -16,6 +16,7 @@ import {
   BranchSchema,
   type BranchDataState,
 } from "../../globals/ZodValidation";
+import InputField from "../../components/Input_field";
 
 interface BranchFormModalProps {
   open: boolean;
@@ -93,14 +94,13 @@ const BranchFormModal: React.FC<BranchFormModalProps> = ({
             name="branchName"
             control={control}
             render={({ field }) => (
-              <TextField
+              <InputField
                 {...field}
                 label="Branch Name"
                 fullWidth
                 margin="normal"
                 error={!!errors.branchName}
-                helperText={errors.branchName?.message}
-                disabled={isSubmitting}
+                helperText={errors?.branchName?.message}
               />
             )}
           />
@@ -109,14 +109,13 @@ const BranchFormModal: React.FC<BranchFormModalProps> = ({
             name="code"
             control={control}
             render={({ field }) => (
-              <TextField
+              <InputField
                 {...field}
                 label="Code"
                 fullWidth
                 margin="normal"
                 error={!!errors.code}
-                helperText={errors.code?.message}
-                disabled={isSubmitting}
+                helperText={errors?.code?.message}
               />
             )}
           />
@@ -182,15 +181,10 @@ const BranchFormModal: React.FC<BranchFormModalProps> = ({
           />
 
           <Box mt={3} textAlign="right">
-            <Button
-              onClick={onClose}
-              sx={{ mr: 2 }}
-              color="error"
-              disabled={isSubmitting}
-            >
+            <Button onClick={onClose} sx={{ mr: 2 }} color="error">
               Cancel
             </Button>
-            <Button type="submit" variant="contained" disabled={isSubmitting}>
+            <Button type="submit" variant="contained">
               {initialData ? "Submit" : "Save"}
             </Button>
           </Box>

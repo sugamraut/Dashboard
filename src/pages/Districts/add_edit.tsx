@@ -56,7 +56,7 @@ const EditDistrictForm: React.FC<EditDistrictFormProps> = ({
 
   useEffect(() => {
     if (!districts || districts.length === 0) {
-      dispatch(fetchDistrictAsync());
+      dispatch(fetchDistrictAsync({ page: 1, rowsPerPage: 100 }));
     }
   }, [dispatch, districts]);
 
@@ -78,10 +78,15 @@ const EditDistrictForm: React.FC<EditDistrictFormProps> = ({
       await dispatch(
         updateDistrictAsync({
           id: initialData.id,
-          data: {
-            name: data.name,
-            nameNp: data.nameNp,
-            stateId: parseInt(data.state),
+          name: data.name,
+          nameNp: data.nameNp ?? "",
+          nameCombined: data.state ?? "",
+          stateId: parseInt(data.state, 10),
+          state: {
+            id: parseInt(data.state, 10),
+            name: "",
+            nameNp: "",
+            nameCombined: "",
           },
         })
       );
@@ -126,7 +131,7 @@ const EditDistrictForm: React.FC<EditDistrictFormProps> = ({
                   margin="normal"
                   required
                   error={!!errors.state}
-                  helperText={errors.state?.message}
+                  helperText={errors?.state?.message}
                 />
               )}
             />
@@ -144,7 +149,7 @@ const EditDistrictForm: React.FC<EditDistrictFormProps> = ({
               fullWidth
               margin="normal"
               error={!!errors.name}
-              helperText={errors.name?.message}
+              helperText={errors?.name?.message}
             />
           )}
         />
@@ -160,7 +165,7 @@ const EditDistrictForm: React.FC<EditDistrictFormProps> = ({
               fullWidth
               margin="normal"
               error={!!errors.nameNp}
-              helperText={errors.nameNp?.message}
+              helperText={errors?.nameNp?.message}
             />
           )}
         />

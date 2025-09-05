@@ -75,18 +75,32 @@ export const createRole = createAsyncThunk<
   }
 });
 
-export const updateRole = createAsyncThunk<Role, Role, { rejectValue: string }>(
-  "roles/update",
-  async (UpdateRoleData, { rejectWithValue }) => {
-    try {
-      return await RoleService.update(UpdateRoleData);
-    } catch (error: any) {
-      return rejectWithValue(
-        error.response?.data?.message || "Failed to update role"
-      );
-    }
+// export const updateRole = createAsyncThunk<Role, Role, { rejectValue: string }>(
+//   "roles/update",
+//   async (UpdateRoleData, { rejectWithValue }) => {
+//     try {
+//       return await RoleService.update(UpdateRoleData);
+//     } catch (error: any) {
+//       return rejectWithValue(
+//         error.response?.data?.message || "Failed to update role"
+//       );
+//     }
+//   }
+// );
+export const updateRole = createAsyncThunk<
+  Role,
+  Role, 
+  { rejectValue: string }
+>("roles/update", async (role, { rejectWithValue }) => {
+  try {
+    return await RoleService.update(role);
+  } catch (error: any) {
+    return rejectWithValue(
+      error.response?.data?.message || "Failed to update role"
+    );
   }
-);
+});
+
 
 export const deletedRole = createAsyncThunk<
   Role,

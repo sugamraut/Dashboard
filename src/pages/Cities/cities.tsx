@@ -65,19 +65,6 @@ export default function CityPage() {
     );
   }, [dispatch, selectedDistrict, page, rowsPerPage, search]);
 
-  // const districts = useMemo(() => {
-  //   if (!fulldistrict) return [];
-
-  //   const uniqueMap = new Map<string, { id: number; district: string }>();
-  //   for (const item of fulldistrict) {
-  //     const key = item.district.trim().toLowerCase();
-  //     if (!uniqueMap.has(key)) {
-  //       uniqueMap.set(key, { id: item.districtId, district: item.district });
-  //     }
-  //   }
-
-  //   return Array.from(uniqueMap.values());
-  // }, [fulldistrict]);
   const districts = useMemo(() => {
     if (!fulldistrict) return [];
 

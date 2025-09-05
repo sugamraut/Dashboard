@@ -47,20 +47,6 @@ const LoginPage: React.FC = () => {
       localStorage.removeItem("jwt");
     }
   }, [status, accessToken, navigate]);
-  // useEffect(() => {
-  //   if (status === Status.Success && accessToken) {
-  //     localStorage.setItem("jwt", accessToken);
-
-  //     toast.success("Login successful! Redirecting...");
-
-  //     setTimeout(() => {
-  //       navigate("/admin/dashboard");
-  //     }, 300);
-  //   } else if (status === Status.Error && error) {
-  //     toast.error(error);
-  //     localStorage.removeItem("jwt");
-  //   }
-  // }, [status, accessToken, navigate, error]);
 
   return (
     <div className="login-section">

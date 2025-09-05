@@ -54,8 +54,8 @@ const cardItems = [
 
 const StatusCards = () => {
   const dispatch = useAppDispatch();
-  // const { list } = useAppSelector((state: RootState) => state.dashboard);
-  const {list}=useAppSelector((state:RootState)=>state.dashboard)
+
+  const { list } = useAppSelector((state: RootState) => state.dashboard);
 
   useEffect(() => {
     dispatch(fetchdashboarddata());
@@ -68,25 +68,22 @@ const StatusCards = () => {
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <Box
           sx={{
-
             justifyContent: "flex-start",
           }}
-          className="row gap-5 "
+          className="row  "
         >
           {cardItems.map((card) => {
             const apiData = apiDataMap[card.title] || {};
             return (
               <Box
                 key={card.title}
-                // 
-                
+                className="m-3"
                 sx={{
-                  width:{
-                    sm:"100%",
-                    md:"45%",
-                    xl:"25%",
-                    
-                  }
+                  width: {
+                    sm: "100%",
+                    md: "45%",
+                    xl: "30%",
+                  },
                 }}
               >
                 <Card className="card-design">

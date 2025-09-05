@@ -23,11 +23,12 @@ import { toast } from "react-toastify";
 import { roleSchema } from "../../globals/ZodValidation";
 
 import type z from "zod";
+import type { Role } from "../../globals/typeDeclaration";
 
 type FormData = z.infer<typeof roleSchema>;
 
 interface AddEditProps {
-  initialData?: Partial<FormData> & { id?: number };
+  initialData?: Partial<FormData> & { id?: number; Permissions?: string[] };
   roleId?: number | null;
   onCancel?: () => void;
 }
@@ -76,7 +77,7 @@ const ADDEDIT: React.FC<AddEditProps> = ({ initialData, roleId, onCancel }) => {
     });
 
     const checkedMap: Record<string, boolean> = {};
-    initialData.Permissions?.forEach((code) => {
+    (initialData.Permissions ?? []).forEach((code: any) => {
       const permission = permissions.find((p) => p.code === code);
       const group = permission?.group;
       if (group) checkedMap[`${group}-${code}`] = true;
@@ -104,15 +105,21 @@ const ADDEDIT: React.FC<AddEditProps> = ({ initialData, roleId, onCancel }) => {
       .filter(([_, checked]) => checked)
       .map(([key]) => key.split("-")[1]);
 
-    const payload = {
+    const payload: Role = {
+      id: initialData?.id!,
       name: data.name,
       displayName: data.displayName,
-      permissions: selectedPermissions,
+      permission: selectedPermissions,
+      isBranchUser: false,
+      guardName: "",
     };
 
     try {
       if (initialData?.id) {
-        await dispatch(updateRole({ userId: roleId!, data: payload })).unwrap();
+        await dispatch(
+          updateRole({ ...payload, id: initialData.id! })
+        ).unwrap();
+
         toast.success("Role updated successfully");
       } else {
         await dispatch(createRole(payload)).unwrap();
@@ -140,7 +147,7 @@ const ADDEDIT: React.FC<AddEditProps> = ({ initialData, roleId, onCancel }) => {
       displayName: initialData?.displayName || "",
       permissions: (() => {
         const perms: Record<string, boolean> = {};
-        initialData?.Permissions?.forEach((code) => {
+        initialData?.Permissions?.forEach((code: any) => {
           const perm = permissions.find((p) => p.code === code);
           if (perm?.group) perms[`${perm.group}-${code}`] = true;
         });
@@ -193,10 +200,8 @@ const ADDEDIT: React.FC<AddEditProps> = ({ initialData, roleId, onCancel }) => {
                   <InputField
                     label="name"
                     {...field}
-                    // error={!!fieldState.error}
-                    // helperText={fieldState.error?.message}
                     error={!!errors.name}
-                    helperText={errors.name?.message}
+                    helperText={errors?.name?.message}
                     fullWidth
                     margin="normal"
                   />
@@ -207,14 +212,12 @@ const ADDEDIT: React.FC<AddEditProps> = ({ initialData, roleId, onCancel }) => {
                 name="displayName"
                 control={control}
                 rules={{ required: "Name is required" }}
-                // register={register("displayName", { required: true })}
-                render={({ field, fieldState }) => (
+                render={({ field }) => (
                   <InputField
                     label="Display Name"
                     {...field}
-                    // {...register("displayName", { required: true })}
-                    error={!!fieldState.error}
-                    helperText={fieldState.error?.message}
+                    error={!!errors.displayName}
+                    helperText={errors?.displayName?.message}
                     fullWidth
                     margin="normal"
                   />

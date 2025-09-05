@@ -1,3 +1,5 @@
+
+
 export interface authItem {
   username: string;
   password: string;
@@ -10,16 +12,8 @@ export interface StateType {
 }
 
 export interface DistrictType extends StateType {
-  data: string;
-  metaData: { total: number };
-  code: string;
   stateId: number;
-  state: {
-    id: number;
-    name: string;
-    nameNp: string;
-    nameCombined: string;
-  };
+  state: StateType;
 }
 
 export interface City extends StateType {
@@ -41,24 +35,16 @@ export interface Branch extends City {
   data?: any;
 }
 
-export interface Permission extends Branch {
-  // code?: any;
+export interface Permission {
+  code?: any;
   permissions?: any;
-  // label: string | undefined;
-  // id: number;
-  // name: string;
-  // guardName: string;
+  label: string | undefined;
+  id: number;
+  name: string;
+  guardName: string;
   group: string;
   displayName: string;
-  // displayNameNp: string;
-}
-
-export interface MetaData {
-  page: number;
-  rowsPerPage: number;
-  sortBy: number;
-  sortOrder: string;
-  total: number;
+  displayNameNp: string;
 }
 
 export interface Role {
@@ -66,24 +52,20 @@ export interface Role {
   name: string;
   guardName: string;
   displayName: string;
-  isBranchUser: number;
-  permission: Permission[];
+  isBranchUser: boolean;
+  permission: string[];
 }
 
-export interface State {
-  id: number;
-  name: string;
-  nameNp: string;
+export interface State extends StateType {
   image: string | null;
   code: string;
-  nameCombined: string;
 }
 
 export interface UserProfile {
   id: number;
   name: string;
   username: string;
-  mobile?:string;
+  mobile?: string;
   mobilenumber?: string;
   email: string;
   gender?: string;
