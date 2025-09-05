@@ -159,7 +159,7 @@ export const AccountSchema = z.object({
     .min(1, "Interest rate is required")
     .regex(
       /^\d+(\.\d{1,2})?$/,
-      "Interest rate must be a valid number (e.g., 5 or 5.25)"
+      "Interest rate must be a valid number "
     ),
   description: z.string().min(1, "Description is required"),
   minBalance: z
@@ -167,7 +167,7 @@ export const AccountSchema = z.object({
     .min(1, "Minimum balance is required")
     .regex(
       /^\d+(\.\d{1,2})?$/,
-      "Minimum balance must be a valid number (e.g., 100 or 100.50)"
+      "Minimum balance must be a valid number "
     ),
   imageUrl: z.string().url("Invalid URL").optional(),
   originalName: z.string().min(1, "Original name is required"),
