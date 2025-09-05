@@ -118,7 +118,7 @@ export const deleteAccountType = createAsyncThunk<
   { rejectValue: string }
 >("accountTypes/delete", async (id, { rejectWithValue }) => {
   try {
-    const response = await axios.delete(`/account-types/${id}`, {
+    const response = await API.delete(`/account-types/${id}`, {
       headers: {
         ...getAuthHeader(),
       },

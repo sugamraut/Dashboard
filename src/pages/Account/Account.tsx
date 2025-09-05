@@ -31,28 +31,16 @@ import type { AccountType } from "../../globals/typeDeclaration";
 
 const AccountPage: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { error, loading,metaData,data } = useAppSelector((state:RootState) => state.accountTypes);
-
-  // const data = useAppSelector((state: RootState) => state.accountTypes.data) || [];
-  // const data =
-  //   useAppSelector((state: RootState) => state.accountTypes.data) || [];
-  
+  const { error, loading, metaData, data } = useAppSelector(
+    (state: RootState) => state.accountTypes
+  );
 
   const [searchQuery, setSearchQuery] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingAccount, setEditingAccount] = useState<AccountType | null>(
     null
   );
-  // const [selectedState, setSelectedState] = useState<null | {
-  //   id?: number;
-  //   title?: string;
-  //   code?: string;
-  //   interest?: string;
-  //   description?: string;
-  //   minimumblance?: string;
-  //   imageUrl?: string;
-  //   originalName?: string;
-  // }>(null);
+
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(25);
 
@@ -82,29 +70,6 @@ const AccountPage: React.FC = () => {
     setDialogOpen(false);
     setEditingAccount(null);
   };
-
-  // const handleSave = (data: {
-  //   id: number;
-  //   title: string;
-  //   code: string;
-  //   interest: string;
-  //   description: string;
-  //   minBalance: string;
-  //   // insurance: string;
-  //   imageUrl: string;
-  // }) => {
-  //   console.log(editingAccount ? "Update" : "Add new", {
-  //     id: data.id,
-  //     name: data.title,
-  //     code: data.code,
-  //     interest: data.interest,
-  //     description: data.description,
-  //     minBalance: data.minBalance,
-  //     // insurance: data.insurance,
-  //     imageUrl: data.imageUrl,
-  //   });
-  //   handleClose();
-  // };
 
   const handleChangePage = (_: unknown, newPage: number) => {
     setPage(newPage);
@@ -223,7 +188,7 @@ const AccountPage: React.FC = () => {
       <TablePagination
         rowsPerPageOptions={[5, 10, 25, 50]}
         component="div"
-        count={metaData?.total||0}
+        count={metaData?.total || 0}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}
@@ -238,10 +203,8 @@ const AccountPage: React.FC = () => {
             interest: editingAccount?.interest || "",
             description: editingAccount?.description || "",
             minimumblance: editingAccount?.minBalance || "",
-            // insurance: editingAccount?.insurance || "",
             imageUrl: editingAccount?.imageUrl || "",
           }}
-          // onSave={handleSave}
           onCancel={handleClose}
         />
       )}

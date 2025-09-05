@@ -60,7 +60,7 @@ const EditUser: React.FC<EditUserProps> = ({ open, onClose, userId }) => {
       mobile: "",
       email: "",
       username: "",
-      gender: "",
+      gender: undefined,
       role: "",
       password: "",
       confirmPassword: "",
@@ -71,13 +71,19 @@ const EditUser: React.FC<EditUserProps> = ({ open, onClose, userId }) => {
     if (userId !== null) {
       const user = users.find((u) => u.id === userId);
       if (user) {
+        const validGenders = ["Male", "Female", "Other"] as const;
+
+        const gender = validGenders.includes(user.gender as any)
+          ? (user.gender as "Male" | "Female" | "Other")
+          : undefined;
+
         reset({
-          id: user.id,
+          id: user.id || undefined,
           name: user.name || "",
           mobile: user.mobilenumber || "",
           email: user.email || "",
           username: user.username || "",
-          gender: user.gender || "",
+          gender,
           role: user.role || "",
           password: user.password || "",
           confirmPassword: user.confirmPassword || "",
@@ -92,19 +98,24 @@ const EditUser: React.FC<EditUserProps> = ({ open, onClose, userId }) => {
 
   const onSubmit = async (data: UserFormData) => {
     try {
-      if (userId !== null) {
-        const payload = {
+      if (userId!) {
+        const payload: UserProfile = {
           ...data,
-          id: userId,
-        } as UserProfile;
+          id: userId!,
+        };
         await dispatch(updateUser(payload)).unwrap();
       } else {
-        await dispatch(createUser(data)).unwrap();
+        const payload: UserProfile = {
+          ...data,
+          id: userId!,
+        };
+        await dispatch(createUser(payload)).unwrap();
       }
+
       onClose();
       reset();
     } catch (err: any) {
-      toast.error(" save failed ", err);
+      toast.error("Save failed", err);
     }
   };
 
@@ -154,16 +165,6 @@ const EditUser: React.FC<EditUserProps> = ({ open, onClose, userId }) => {
               />
             )}
           />
-
-          {/* <InputField
-            label="Username"
-            fullWidth
-            
-            margin="normal"
-            {...register("username")}
-            error={!!errors.username}
-            helperText={errors.username?.message}
-          /> */}
           <Controller
             name="username"
             control={control}

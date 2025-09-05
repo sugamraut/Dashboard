@@ -19,6 +19,7 @@ import {
   ProfileSchema,
   type ProfileFormData,
 } from "../../globals/ZodValidation";
+import useDocumentTitle from "../../globals/useBrowserTitle";
 
 const Profile = () => {
   const dispatch = useAppDispatch();
@@ -47,19 +48,25 @@ const Profile = () => {
   useEffect(() => {
     dispatch(fetchProfile());
   }, [dispatch]);
+  useDocumentTitle("Profile - SNLI");
 
-  useEffect(() => {
-    if (data) {
-      reset({
-        name: data.name || "",
-        username: data.username || "",
-        email: data.email || "",
-        mobile: data.mobile || "",
-        password: "",
-        confirmPassword: "",
-      });
-    }
-  }, [data, reset]);
+ useEffect(() => {
+  console.log("Fetched profile data:", data);
+  if (data && data.length > 0) {
+    const user = data[0];
+    console.log("efdb",user)
+    reset({
+      name: user.name,
+      username: user.username || "",
+      email: user.email || "",
+      mobile: user.mobile || "",
+      password: "",
+      confirmPassword: "",
+    });
+  }
+}, [data, reset]);
+
+
 
   const onSubmit = (formData: ProfileFormData) => {
     if (formData.password && formData.password !== formData.confirmPassword) {
@@ -69,7 +76,7 @@ const Profile = () => {
 
     dispatch(
       updateProfile({
-        id: data?.id ?? 0,
+        id: formData?.id!,
         name: formData.name,
         username: formData.username,
         email: formData.email,

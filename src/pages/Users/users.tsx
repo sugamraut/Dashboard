@@ -21,15 +21,18 @@ import type { RootState } from "../../store/store";
 import { fetchAllUsers } from "../../store/user/UserSlice";
 import EditUser from "./EditUser";
 import { useAppDispatch, useAppSelector } from "../../store/hook";
+import useDocumentTitle from "../../globals/useBrowserTitle";
 
 const User = () => {
   const dispatch = useAppDispatch();
+  useDocumentTitle("Users - SNLI");
   const userList = useAppSelector((state: RootState) =>
     Array.isArray(state.User.list) ? state.User.list : []
   );
+  // const userList= useAppSelector((state:RootState)=>state.User.list)
 
   const [editOpen, setEditOpen] = useState(false);
-  const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
+  const [selectedUserId, setSelectedUserId] = useState<number | undefined>(undefined);
 
   useEffect(() => {
     dispatch(fetchAllUsers());
@@ -41,13 +44,13 @@ const User = () => {
   };
 
   const handleAddClick = () => {
-    setSelectedUserId(null);
+    setSelectedUserId(undefined);
     setEditOpen(true);
   };
 
   const handleClose = () => {
     setEditOpen(false);
-    setSelectedUserId(null);
+    setSelectedUserId(undefined);
   };
 
   return (
@@ -108,7 +111,7 @@ const User = () => {
                 <TableCell className="table-data">
                   <IconButton
                     className="action-icon-btn "
-                    onClick={() => handleEditClick(user.id)}
+                    onClick={() => handleEditClick(user.id !)}
                   >
                     <EditIcon />
                   </IconButton>
@@ -135,7 +138,7 @@ const User = () => {
         <EditUser
           open={editOpen}
           onClose={handleClose}
-          userId={selectedUserId}
+          userId={selectedUserId!}
         />
       )}
     </Box>

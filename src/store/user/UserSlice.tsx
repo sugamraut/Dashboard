@@ -38,6 +38,7 @@ export const fetchAllUsers = createAsyncThunk(
         username: u.username,
         mobilenumber: u.mobile,
         email: u.email,
+        
       }));
 
       return { users: formattedData, total };
@@ -73,7 +74,7 @@ export const updateUser = createAsyncThunk<
   }
 });
 
-export const deleteUser = createAsyncThunk<UserProfile, UserProfile>(
+export const deleteUser = createAsyncThunk<UserProfile, number>(
   "users/delete",
   async (UserDelete, { rejectWithValue }) => {
     try {

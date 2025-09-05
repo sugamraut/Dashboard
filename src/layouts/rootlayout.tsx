@@ -10,6 +10,7 @@ import Sidebar from "../pages/sidebar";
 import LoadingButtons from "../pages/loader";
 import type { RootState } from "../store/store"; 
 import { useAppDispatch, useAppSelector } from "../store/hook";
+import { token } from "../globals/config";
 
 const RootLayout = () => {
   const dispatch = useAppDispatch();
@@ -20,7 +21,7 @@ const RootLayout = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem("jwt")
+    
 
     if (token && isTokenValid(token)) {
       dispatch(setToken(token))

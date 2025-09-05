@@ -38,6 +38,7 @@ export default function CityPage() {
   const totalCount = useAppSelector(
     (state: RootState) => state.city.totalCount
   );
+  
 
   const [search, setSearch] = useState("");
   const [selectedDistrict, setSelectedDistrict] = useState<{

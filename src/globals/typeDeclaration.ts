@@ -1,8 +1,6 @@
-
-
 export interface authItem {
-  username: string;
-  password: string;
+  username?: string;
+  password?: string;
 }
 export interface StateType {
   id: number;
@@ -28,10 +26,6 @@ export interface Branch extends City {
   name: string;
   nameNp: string;
   nameCombined: string;
-  // districtId: number;
-  // code: string | null;
-  // district: string;
-  // state: string;
   data?: any;
 }
 
@@ -61,16 +55,14 @@ export interface State extends StateType {
   code: string;
 }
 
-export interface UserProfile {
+export interface UserProfile extends authItem {
   id: number;
   name: string;
-  username: string;
   mobile?: string;
   mobilenumber?: string;
   email: string;
   gender?: string;
   role?: string;
-  password?: string;
   confirmPassword?: string;
 }
 
@@ -84,7 +76,6 @@ export interface Log {
 
 export interface LogsResponse {
   data: Log[];
-  metaData: MetaData | null;
   total: number;
 }
 export interface ActivityUser {
@@ -93,29 +84,14 @@ export interface ActivityUser {
   roles: [];
 }
 
-export interface ActivityLog {
-  id: string;
+export interface ActivityLog extends Log {
   ip: string;
-  type: number;
-  description: string;
-  createdDate: string;
   userAgent: string;
   user?: ActivityUser;
 }
 
-export interface MetaData {
-  page: number;
-  rowsPerPage: number;
-  sortBy: number;
-  sortOrder: string;
-  query: string;
-  filters: Record<string, any>;
-  total: number;
-}
-
 export interface ActivityResponse {
   data: ActivityLog[];
-  metaData: MetaData | null;
   total: number;
 }
 
@@ -129,13 +105,10 @@ export interface AccountType {
   originalName: string | undefined;
   id: number;
   title: string;
-  // Details?: string;
   code?: string;
   description?: string;
-  // details?: string;
   interest?: string;
   minBalance?: string;
-  // insurance?: string;
   imageUrl?: string;
 }
 

@@ -17,7 +17,7 @@ export const userSchema = z
       .string()
       .min(10, "Mobile number must be at least 10 digits")
       .regex(/^\d{10,}$/, "Mobile number must contain only digits"),
-    email: z.string().email("Invalid email address"),
+    email: z.email({ pattern: z.regexes.html5Email }),
     username: z.string().min(1, "Username is required"),
     gender: z.enum(["Male", "Female", "Other"], {
       message: "Gender is required",
@@ -97,9 +97,9 @@ export const roleSchema = z.object({
   id: z.number().optional(),
   name: z.string().min(1, "Role name is required"),
   displayName: z.string().min(1, "Display name is required"),
-  // Permissions: z
-  //   .array(z.string().min(1, "Permission cannot be empty"))
-  //   .min(1, "At least one permission must be selected"),
+  Permissions: z
+    .array(z.string().min(1, "Permission cannot be empty"))
+    .min(1, "At least one permission must be selected"),
 });
 
 export type RoleFormData = z.infer<typeof roleSchema>;
@@ -127,10 +127,7 @@ export const stateSchema = z.object({
   code: z
     .string()
     .min(1, "State code is required")
-    .regex(
-      /^[A-Za-z0-9-]+$/,
-      "State code must be alphanumeric "
-    ),
+    .regex(/^[A-Za-z0-9-]+$/, "State code must be alphanumeric "),
 });
 
 export type StateFormData = z.infer<typeof stateSchema>;
@@ -157,18 +154,12 @@ export const AccountSchema = z.object({
   interest: z
     .string()
     .min(1, "Interest rate is required")
-    .regex(
-      /^\d+(\.\d{1,2})?$/,
-      "Interest rate must be a valid number "
-    ),
+    .regex(/^\d+(\.\d{1,2})?$/, "Interest rate must be a valid number "),
   description: z.string().min(1, "Description is required"),
   minBalance: z
     .string()
     .min(1, "Minimum balance is required")
-    .regex(
-      /^\d+(\.\d{1,2})?$/,
-      "Minimum balance must be a valid number "
-    ),
+    .regex(/^\d+(\.\d{1,2})?$/, "Minimum balance must be a valid number "),
   imageUrl: z.string().url("Invalid URL").optional(),
   originalName: z.string().min(1, "Original name is required"),
 });
@@ -180,7 +171,7 @@ export const ProfileSchema = z
     id: z.number().optional(),
     name: z.string().min(1, "Name is required"),
     username: z.string().min(1, "Username is required"),
-    email: z.string().email("Invalid email address"),
+    email: z.email({ pattern: z.regexes.html5Email }),
     mobile: z
       .string()
       .optional()

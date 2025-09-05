@@ -7,6 +7,7 @@ import {
   Chip,
 } from "@mui/material";
 
+// import StorageIcon from "@mui/icons-material/Storage";
 import StorageIcon from "@mui/icons-material/Storage";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
@@ -18,6 +19,8 @@ import type { RootState } from "../../store/store";
 import { useEffect } from "react";
 import { fetchdashboarddata } from "../../store/dashboard/DashboardSlice";
 import { useAppDispatch, useAppSelector } from "../../store/hook";
+import useDocumentTitle from "../../globals/useBrowserTitle";
+import ShowChartIcon from "@mui/icons-material/ShowChart";
 
 const cardItems = [
   {
@@ -54,6 +57,7 @@ const cardItems = [
 
 const StatusCards = () => {
   const dispatch = useAppDispatch();
+  useDocumentTitle("Dashboard - SNLI");
 
   const { list } = useAppSelector((state: RootState) => state.dashboard);
 
@@ -89,7 +93,13 @@ const StatusCards = () => {
                 <Card className="card-design">
                   <CardContent>
                     <Avatar
-                      sx={{ bgcolor: card.trendColor }}
+                      sx={{
+                        bgcolor: "transparent",
+                        color: card.trendColor,
+                        "& .MuiSvgIcon-root": {
+                          fontSize: "2.8rem",
+                        },
+                      }}
                       className="avatar-icon-style"
                     >
                       {card.icon}
@@ -98,7 +108,13 @@ const StatusCards = () => {
                     <Chip
                       label={apiData.changeValue ?? "N/A"}
                       size="small"
-                      sx={{ backgroundColor: card.trendColor }}
+                      icon={<ShowChartIcon sx={{ fill: "#ffffffff" }} />}
+                      sx={{
+                        backgroundColor: card.trendColor,
+                        color: "white",
+                        padding: "9px",
+                        fontSize:"1.1rem"
+                      }}
                       className="chip-icon-style"
                     />
 
@@ -112,7 +128,7 @@ const StatusCards = () => {
 
                     <Typography
                       variant="subtitle2"
-                      sx={{ textAlign: "center", color: "gray", mt: 1 }}
+                      sx={{ textAlign: "center", color: "#807f7fff", mt: 1 }}
                     >
                       {card.title}
                     </Typography>

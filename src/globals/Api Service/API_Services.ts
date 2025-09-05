@@ -80,11 +80,11 @@ const RestService = <T>(basePath: string) => ({
     return response.data;
   },
 
-  remove: async (payload: T & { id: number }): Promise<T> => {
-    const response = await API.delete(`${basePath}/${payload.id}`, {
+  remove:  async (id: number): Promise<T> => {
+    const response = await API.delete(`${basePath}/${id}`, {
       headers: getAuthHeader(),
     });
-    return response.data ?? payload;
+    return response.data ;
   },
   getById: async (id: number): Promise<T> => {
     const response = await API.get(`${basePath}/${id}`, {

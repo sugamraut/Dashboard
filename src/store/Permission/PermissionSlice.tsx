@@ -108,18 +108,19 @@ export const updatePermission = createAsyncThunk<
 });
 
 export const deletePermission = createAsyncThunk<
-  Permission,
-  Permission,
+  Permission,           
+  number,              
   { rejectValue: string }
->("permissions/delete", async (permissionToDelete, thunkAPI) => {
+>("permissions/delete", async (permissionId, thunkAPI) => {
   try {
-    return await PermissionService.remove(permissionToDelete);
+    return await PermissionService.remove(permissionId); 
   } catch (error: any) {
     return thunkAPI.rejectWithValue(
       error.message || "Failed to delete permission"
     );
   }
 });
+
 
 const permissionsSlice = createSlice({
   name: "permissions",

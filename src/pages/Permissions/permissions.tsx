@@ -4,7 +4,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useEffect, useState } from "react";
 import {
-  // fetchAllPermissions,
+  deletePermission,
   fetchPermissions,
 } from "../../store/Permission/PermissionSlice";
 import type { RootState } from "../../store/store";
@@ -25,9 +25,12 @@ import {
 import AddEditPage from "./add_edit";
 import type { Permission } from "../../globals/typeDeclaration";
 import { useAppDispatch, useAppSelector } from "../../store/hook";
+import { toast } from "react-toastify";
+import useDocumentTitle from "../../globals/useBrowserTitle";
 
 const Permissions: React.FC = () => {
   const dispatch = useAppDispatch();
+   useDocumentTitle("Permission - SNLI");
   const { data, metaData, error } = useAppSelector(
     (state: RootState) => state.permissions
   );
@@ -88,7 +91,6 @@ const Permissions: React.FC = () => {
     setOpenDialog(true);
   };
 
-
   const handleCloseDialog = () => {
     setOpenDialog(false);
     setEditingPermission(null);
@@ -102,6 +104,27 @@ const Permissions: React.FC = () => {
         sortOrder: "desc",
       })
     );
+  };
+
+  const handleDelete = async (id: number) => {
+    if (window.confirm("Are you sure you want to delete this role?")) {
+      await dispatch(deletePermission(id))
+        .unwrap()
+        .then(() => {
+          dispatch(
+            fetchPermissions({
+              page: 1,
+              rowsPerPage,
+              query: "",
+              sortBy: null,
+              sortOrder: "desc",
+            })
+          );
+        })
+        .catch((error) => {
+          toast.error(`Delete failed: ${error}`);
+        });
+    }
   };
 
   return (
@@ -190,7 +213,10 @@ const Permissions: React.FC = () => {
                     >
                       <EditIcon />
                     </IconButton>
-                    <IconButton className="action-icon-btn-delete m-2 p-6">
+                    <IconButton
+                      className="action-icon-btn-delete m-2 p-6"
+                      onClick={() => handleDelete(permission.id)}
+                    >
                       <DeleteIcon />
                     </IconButton>
                   </TableCell>

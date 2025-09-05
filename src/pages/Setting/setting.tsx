@@ -23,9 +23,11 @@ import ADDEDIT from "./add_edit";
 import type { Setting } from "../../globals/typeDeclaration";
 import { toast } from "react-toastify";
 import Loading from "../loader";
+import useDocumentTitle from "../../globals/useBrowserTitle";
 
 const Setting = () => {
   const dispatch = useAppDispatch();
+   useDocumentTitle("Setting - SNLI");
   const { data, metaData, loading, error } = useAppSelector(
     (state) => state.setting ?? null
   );
@@ -37,7 +39,7 @@ const Setting = () => {
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
 
   const [page, setPage] = useState(0);
-  const [rowPerPage, setRowsPerPage] = useState(10);
+  const [rowsPerPage, setRowsPerPage] = useState(25);
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -51,9 +53,9 @@ const Setting = () => {
   useEffect(() => {
     dispatch(
       fetchsetting({
-        page: page + 1,
-        rowPerPage: rowPerPage,
-        sortBy: null,
+        page: 1,
+        rowsPerPage,
+        sortBy: "id",
         sortOrder: "dec",
         query: debouncedSearchQuery,
       })
@@ -62,7 +64,7 @@ const Setting = () => {
       .catch((err) => {
         toast.error(`Failed to load settings: ${err}`);
       });
-  }, [page, rowPerPage, debouncedSearchQuery, dispatch]);
+  }, [page, rowsPerPage, debouncedSearchQuery, dispatch]);
 
   useEffect(() => {
     if (error) {
@@ -156,7 +158,7 @@ const Setting = () => {
                     key={log.id}
                     sx={{ "& .MuiTableCell-root": { padding: "6px" } }}
                   >
-                    <TableCell>{page * rowPerPage + index + 1}</TableCell>
+                    <TableCell>{page * rowsPerPage + index + 1}</TableCell>
                     <TableCell>{log.name}</TableCell>
                     <TableCell>{log.description}</TableCell>
                     <TableCell>{log.value}</TableCell>
@@ -189,7 +191,7 @@ const Setting = () => {
             component="div"
             count={metaData?.total || 0}
             page={page}
-            rowsPerPage={rowPerPage}
+            rowsPerPage={rowsPerPage}
             rowsPerPageOptions={[10, 25, 50, 100]}
             onPageChange={handleChangePage}
             onRowsPerPageChange={handleChangeRowsPerPage}
@@ -205,7 +207,7 @@ const Setting = () => {
             dispatch(
               fetchsetting({
                 page: page + 1,
-                rowPerPage: rowPerPage,
+                rowsPerPage,
                 sortBy: null,
                 sortOrder: "dec",
                 query: debouncedSearchQuery,

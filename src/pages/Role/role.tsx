@@ -21,9 +21,12 @@ import type { RootState } from "../../store/store";
 import { useAppDispatch, useAppSelector } from "../../store/hook";
 import { deletedRole, fetchRoles } from "../../store/role/RoleSlice";
 import ADDEDIT from "./add_edit";
+import useDocumentTitle from "../../globals/useBrowserTitle";
 
 function RolePage() {
   const dispatch = useAppDispatch();
+ useDocumentTitle("Role - SNLI");
+
   const { list } = useAppSelector((state: RootState) => state.roles);
 
   const [openDialog, setOpenDialog] = useState(false);
@@ -70,7 +73,8 @@ function RolePage() {
   };
   const handleDelete = (roleId: number) => {
     if (window.confirm("Are you sure you want to delete this role?")) {
-      dispatch(deletedRole({ userId: roleId }))
+
+      dispatch(deletedRole(roleId))
         .unwrap()
         .then(() => {
           dispatch(fetchRoles({ page: 1, rowsPerPage: 10 }));

@@ -104,7 +104,7 @@ export const updateRole = createAsyncThunk<
 
 export const deletedRole = createAsyncThunk<
   Role,
-  Role,
+  number,
   { rejectValue: string }
 >("roles/delete", async (RoleDelete, { rejectWithValue }) => {
   try {

@@ -28,9 +28,11 @@ import {
 import AddEditPage from "./add_edit";
 import type { DistrictType } from "../../globals/typeDeclaration";
 import { useAppDispatch, useAppSelector } from "../../store/hook";
+import useDocumentTitle from "../../globals/useBrowserTitle";
 
 export default function DistrictPage() {
   const dispatch = useAppDispatch();
+    useDocumentTitle("District - SNLI");
 
   const fullDistrictList = useAppSelector(
     (state: RootState) => state.district.fullList

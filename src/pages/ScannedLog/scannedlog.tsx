@@ -27,9 +27,11 @@ import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 
 import { Dayjs } from "dayjs";
 import { toast } from "react-toastify";
+import useDocumentTitle from "../../globals/useBrowserTitle";
 
 const ScannedLog = () => {
   const dispatch = useAppDispatch();
+   useDocumentTitle("Scanned Log - SNLI");
 
   const { data, metaData, loading, error } = useAppSelector(
     (state) => state.scannedLog

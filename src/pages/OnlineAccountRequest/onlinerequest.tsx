@@ -30,9 +30,11 @@ import { fetchOnlineAccount } from "../../store/onlineaccount/OnlineAccountSlice
 import EditIcon from "@mui/icons-material/Edit";
 
 import SearchIcon from "@mui/icons-material/Search";
+import useDocumentTitle from "../../globals/useBrowserTitle";
 
 const OnlineAccountRequest = () => {
   const dispatch = useAppDispatch();
+   useDocumentTitle("Online Request - SNLI");
   const list = useAppSelector(
     (state: RootState) => state.onlineAccount.list ?? []
   );
