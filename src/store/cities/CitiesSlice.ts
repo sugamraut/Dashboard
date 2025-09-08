@@ -32,7 +32,10 @@ export const fetchAllCities = createAsyncThunk<
   { rejectValue: string }
 >("city/fetchAll", async (_, thunkAPI) => {
   try {
-    return await CityService.fetchAll();
+    const response= await CityService.get("/all");
+    console.log("all",response.data)
+    return response.data
+
   } catch (error: any) {
     return thunkAPI.rejectWithValue(
       error.message || "failed to fetch all city"
@@ -52,16 +55,17 @@ export const fetchCityBypaginated = createAsyncThunk<
       if (districtId) filters.districtId = districtId;
       if (search) filters.name = search;
 
-      const response = await CityService.fetchPaginated({
+      const response = await CityService.get("/",{
         page,
         rowsPerPage,
         filters,
       });
-
+ console.log("rew",response.data)
       return {
         data: response.data,
         metaData: response.metaData,
       };
+     
     } catch (error: any) {
       return rejectWithValue(error.message || "Failed to fetch cities");
     }

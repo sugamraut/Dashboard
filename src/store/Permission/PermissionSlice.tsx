@@ -28,13 +28,19 @@ const initialState: PermissionsState = {
   ActionData: [],
 };
 
+
 export const fetchPermissions = createAsyncThunk<
-  PaginatedResponse<Permission>,
-  FetchParams,
+  PaginatedResponse<Permission>, 
+  FetchParams, 
   { rejectValue: string }
 >("permissions/fetchPermissions", async (params, thunkAPI) => {
   try {
-    const response = await PermissionService.fetchPaginated(params);
+
+    const response = await PermissionService.get("/", params);
+
+    if (!response || !Array.isArray(response.data)) {
+      throw new Error("Invalid response data");
+    }
 
     const sortedData = response.data.sort(
       (a: { id: number }, b: { id: number }) => a.id - b.id
@@ -46,7 +52,9 @@ export const fetchPermissions = createAsyncThunk<
     };
   } catch (error: any) {
     return thunkAPI.rejectWithValue(
-      error.response?.data?.message || error.message || "Something went wrong"
+      error.response?.data?.message ||
+        error.message ||
+        "Failed to fetch permissions"
     );
   }
 });
@@ -57,7 +65,17 @@ export const fetchAllPermissions = createAsyncThunk<
   { rejectValue: string }
 >("permissions/fetchAll", async (_, thunkAPI) => {
   try {
-    return await PermissionService.fetchAll();
+    const response = await PermissionService.get("/all");
+
+    if (response && Array.isArray(response.data)) {
+      return response.data;
+    }
+
+    if (Array.isArray(response)) {
+      return response;
+    }
+
+    throw new Error("Invalid response format for all permissions");
   } catch (error: any) {
     return thunkAPI.rejectWithValue(
       error.message || "Failed to fetch all permissions"
@@ -71,7 +89,7 @@ export const fetchPermissionsByGroup = createAsyncThunk<
   { rejectValue: string }
 >("permissions/fetchByGroup", async (_, thunkAPI) => {
   try {
-    return await PermissionService.fetchGrouped();
+    return await PermissionService.get("/groups");
   } catch (error: any) {
     return thunkAPI.rejectWithValue(
       error.message || "Failed to fetch grouped permissions"
@@ -108,19 +126,18 @@ export const updatePermission = createAsyncThunk<
 });
 
 export const deletePermission = createAsyncThunk<
-  Permission,           
-  number,              
+  Permission,
+  number,
   { rejectValue: string }
 >("permissions/delete", async (permissionId, thunkAPI) => {
   try {
-    return await PermissionService.remove(permissionId); 
+    return await PermissionService.remove(permissionId);
   } catch (error: any) {
     return thunkAPI.rejectWithValue(
       error.message || "Failed to delete permission"
     );
   }
 });
-
 
 const permissionsSlice = createSlice({
   name: "permissions",

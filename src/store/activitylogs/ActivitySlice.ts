@@ -30,25 +30,45 @@ const initialState: ActivityStatus = {
   user: null,
 };
 
+// export const fetchActivityLog = createAsyncThunk<
+//   PaginatedResponse<ActivityLog>,
+//   FetchParams,
+//   { rejectValue: string }
+// >("ActivityLog/fetch", async (params, thunkAPI) => {
+//   try {
+// //  const response = await ActivityService.fetchPaginated(params);
+// const response =await ActivityService.get(params)
+//     console.log("response",response.data)
+//     return {
+//       data: response.data,
+//       metaData: response.metaData,
+//     };
+//   } catch (error: any) {
+//     return thunkAPI.rejectWithValue(
+//       (toast.error(error.message) && error.response?.data?.message) ||
+//         error.message ||
+//         "something went wrong"
+//     );
+//   }
+// });
 export const fetchActivityLog = createAsyncThunk<
   PaginatedResponse<ActivityLog>,
   FetchParams,
   { rejectValue: string }
 >("ActivityLog/fetch", async (params, thunkAPI) => {
   try {
-    const response = await ActivityService.fetchPaginated(params);
-    return {
-      data: response.data,
-      metaData: response.metaData,
-    };
-  } catch (error: any) {
+    const response =await ActivityService.get("/",params)
+    // return{
+    //   data:response.data,
+    //   metaData:response.metaData
+    // }
+    return response.data
+  } catch (error:any) {
     return thunkAPI.rejectWithValue(
-      (toast.error(error.message) && error.response?.data?.message) ||
-        error.message ||
-        "something went wrong"
-    );
+      (toast.error(error.message)&&  error.response?.data?.message)||error.message||"something went wrong"
+    )
   }
-});
+})
 
 const ActivityLogSlice = createSlice({
   name: "activityLog",
@@ -69,6 +89,7 @@ const ActivityLogSlice = createSlice({
         state.data = action.payload.data;
         // state.total = action.payload.total;
         state.metaData = action.payload.metaData;
+        console.log("log data",state.data)
       });
   },
 });

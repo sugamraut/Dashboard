@@ -47,6 +47,7 @@ const ActivityLog = () => {
   //   );
   // }, [data]);
 
+  console.log("data====>",data)
   const userOptions = useMemo(() => {
     const userSet = new Set<string>();
     const uniqueUsers: { username: string; name: string }[] = [];
@@ -137,6 +138,7 @@ const ActivityLog = () => {
     }));
   }, [data]);
 
+  // console.log("data",data)
   return (
     <Box marginLeft={9} padding={2}>
       <Box className="header" mb={2}>

@@ -35,7 +35,7 @@ export const fetchsetting = createAsyncThunk<
   { rejectValue: string }
 >("setting/fetch", async (params, { rejectWithValue }) => {
   try {
-    const response = await SettingService.fetchPaginated(params);
+    const response = await SettingService.get("/",params);
     return {
       data: response.data,
       metaData: response.metaData,
@@ -49,7 +49,9 @@ export const fetchSettingById = createAsyncThunk(
   "setting/fetchById",
   async (settingId: number, { rejectWithValue }) => {
     try {
-      return await SettingService.getById(settingId);
+      // return await SettingService.getById(settingId);
+      const response = await SettingService.get("/",settingId)
+      return response.data
     } catch (error: any) {
       return rejectWithValue(
         error.response?.data?.message || error.message || "Fetch failed"

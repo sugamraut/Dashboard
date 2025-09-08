@@ -14,7 +14,8 @@ export const fetchDistrictAsync = createAsyncThunk<
   { rejectValue: string }
 >("district/fetch", async (params, thunkAPI) => {
   try {
-    const response = await DistrictService.fetchPaginated(params);
+    // const response = await DistrictService.fetchPaginated(params);
+    const response =await DistrictService.get("/",params)
 
     const sortedData = response.data.sort(
       (a: { id: number }, b: { id: number }) => a.id - b.id
@@ -35,7 +36,9 @@ export const fetchAllDistrictsAsync = createAsyncThunk(
   "district/fetchAll",
   async (_, { rejectWithValue }) => {
     try {
-      return await DistrictService.fetchAll();
+      // return await DistrictService.fetchAll();
+      const response =await DistrictService.get("/all")
+      return response.data
     } catch (error: any) {
       return rejectWithValue(
         error.response?.data?.message || error.message || "Unknown error"
@@ -78,7 +81,7 @@ export const fetchDistrictByIdAsync = createAsyncThunk(
   "district/fetchById",
   async (districtId: number, { rejectWithValue }) => {
     try {
-      return await DistrictService.getById(districtId);
+      return await DistrictService.get("/",districtId);
     } catch (error: any) {
       return rejectWithValue(
         error.response?.data?.message || error.message || "Unknown error"

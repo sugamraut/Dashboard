@@ -63,7 +63,6 @@ const AddEditPage: React.FC<AddEditPageProps> = ({ initialData, onClose }) => {
     dispatch(fetchAllPermissions());
   }, [dispatch]);
 
- 
   const onSubmit = async (data: PermissionFormData) => {
     if (!data.displayName) {
       toast.error("Display Name is required");
@@ -174,7 +173,7 @@ const AddEditPage: React.FC<AddEditPageProps> = ({ initialData, onClose }) => {
             )}
           />
 
-          <Controller
+          {/* <Controller
             control={control}
             name="ActionGroups"
             render={({ field }) => (
@@ -191,6 +190,29 @@ const AddEditPage: React.FC<AddEditPageProps> = ({ initialData, onClose }) => {
                     label="Action type"
                     margin="normal"
                     // {...register("ActionGroups")}
+                    error={!!errors.ActionGroups}
+                    helperText={errors?.ActionGroups?.message as string}
+                  />
+                )}
+              />
+            )}
+          /> */}
+          <Controller
+            control={control}
+            name="ActionGroups"
+            render={({ field }) => (
+              <Autocomplete
+                multiple
+                options={Array.isArray(ActionData) ? ActionData : []} // <-- defensive check here
+                getOptionLabel={(option) => option.name || ""}
+                value={field.value || []}
+                onChange={(_, data) => field.onChange(data)}
+                isOptionEqualToValue={(option, value) => option.id === value.id}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Action type"
+                    margin="normal"
                     error={!!errors.ActionGroups}
                     helperText={errors?.ActionGroups?.message as string}
                   />

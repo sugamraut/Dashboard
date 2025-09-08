@@ -24,7 +24,9 @@ export const fetchStates = createAsyncThunk<
   { rejectValue: string }
 >("states/fetchStates", async (_, { rejectWithValue }) => {
   try {
-    return await StateService.fetch();
+    // return await StateService.get("/");
+    const response =await StateService.get("/")
+    return response.data
   } catch (err: any) {
     console.error("fetchStates error:", err);
     return rejectWithValue(err.response?.data?.message || err.message);

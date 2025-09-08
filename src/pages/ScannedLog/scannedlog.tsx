@@ -31,11 +31,16 @@ import useDocumentTitle from "../../globals/useBrowserTitle";
 
 const ScannedLog = () => {
   const dispatch = useAppDispatch();
-   useDocumentTitle("Scanned Log - SNLI");
+  useDocumentTitle("Scanned Log - SNLI");
 
+  // const { data, metaData, loading, error } = useAppSelector(
+  //   (state) => state.scannedLog
+  // );
   const { data, metaData, loading, error } = useAppSelector(
-    (state) => state.scannedLog
+    (state) => state.scannedLog ?? []
   );
+  console.log("logs", data);
+
   const [selectedDate, setSelectedDate] = useState<Dayjs | null>(null);
 
   const [page, setPage] = useState(0);
@@ -48,12 +53,12 @@ const ScannedLog = () => {
         rowsPerPage,
         sortBy: null,
         sortOrder: "desc",
-        query: "",
-        filters: selectedDate
-          ? {
-              date: selectedDate.format("YYYY-MM-DD"),
-            }
-          : undefined,
+        query: undefined,
+        // filters: selectedDate
+        //   ? {
+        //       date: selectedDate.format("YYYY-MM-DD"),
+        //     }
+        //   : undefined,
       })
     );
   };
@@ -100,16 +105,10 @@ const ScannedLog = () => {
             <DemoContainer
               components={["DatePicker"]}
               sx={{
-                // "&.MuiPickersTextField": {
-                //   maxWidth: "500px",
-                //   width: "500px",
-                // },
-                " &.MuiPickersOutlinedInput-sectionsContainer ": {
+                " &.MuiPickersOutlinedInput-sectionsContainer": {
                   width: "200px",
                   padding: " 12.5px 0px 12.5px 0px",
                 },
-
-                // "MuiPickersOutlinedInput-sectionsContainer"
               }}
             >
               <DatePicker
@@ -119,6 +118,9 @@ const ScannedLog = () => {
                 sx={{
                   " &.MuiPickersTextField-root": {
                     backgroundColor: "#0000000d",
+                    " &.MuiPickersOutlinedInput-sectionsContainer ": {
+                      padding: "12.5px 0px 12.5px 0px",
+                    },
                   },
                 }}
               />

@@ -39,7 +39,7 @@ interface FormValues {
   permissions: Record<string, boolean>;
 }
 
-const ADDEDIT: React.FC<AddEditProps> = ({ initialData, roleId, onCancel }) => {
+const ADDEDIT: React.FC<AddEditProps> = ({ initialData,  onCancel }) => {
   const dispatch = useAppDispatch();
   const permissions = useAppSelector(
     (state: RootState) => state.permissions.fulllist ?? []

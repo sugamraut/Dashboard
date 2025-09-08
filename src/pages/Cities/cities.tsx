@@ -31,9 +31,10 @@ export default function CityPage() {
   // const dispatch = useDispatch<AppDispatch>();
   const dispatch = useAppDispatch();
 
-  const fulldistrict = useAppSelector(
-    (state: RootState) => state.city.fullList
-  );
+  // const fulldistrict = useAppSelector(
+  //   (state: RootState) => state.city.fullList
+  // );
+  const fulldistrict =useAppSelector((state:RootState)=>state.city.fullList)
   const cityList = useAppSelector((state: RootState) => state.city.list ?? []);
   const totalCount = useAppSelector(
     (state: RootState) => state.city.totalCount

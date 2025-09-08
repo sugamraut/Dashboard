@@ -54,7 +54,7 @@ const Profile = () => {
   console.log("Fetched profile data:", data);
   if (data && data.length > 0) {
     const user = data[0];
-    console.log("efdb",user)
+    // console.log("efdb",user)
     reset({
       name: user.name,
       username: user.username || "",
@@ -66,6 +66,7 @@ const Profile = () => {
   }
 }, [data, reset]);
 
+console.log("log file",data)
 
 
   const onSubmit = (formData: ProfileFormData) => {

@@ -39,7 +39,8 @@ export const fetchRoles = createAsyncThunk<
   { rejectValue: string }
 >("role/fetch", async (params, { rejectWithValue }) => {
   try {
-    const response = await RoleService.fetchPaginated(params);
+    // const response = await RoleService.fetchPaginated(params);
+    const response = await RoleService.get("/",params)
     return {
       data: response.data,
       metaData: response.metaData,
@@ -53,7 +54,7 @@ export const fetchAllRole = createAsyncThunk<Role[]>(
   "fetch/Allrole",
   async (_, { rejectWithValue }) => {
     try {
-      return await RoleService.fetchAll();
+      return await RoleService.get("/all");
     } catch (error: any) {
       return rejectWithValue(error.message || "failed to fetch all the data");
     }
@@ -75,18 +76,7 @@ export const createRole = createAsyncThunk<
   }
 });
 
-// export const updateRole = createAsyncThunk<Role, Role, { rejectValue: string }>(
-//   "roles/update",
-//   async (UpdateRoleData, { rejectWithValue }) => {
-//     try {
-//       return await RoleService.update(UpdateRoleData);
-//     } catch (error: any) {
-//       return rejectWithValue(
-//         error.response?.data?.message || "Failed to update role"
-//       );
-//     }
-//   }
-// );
+
 export const updateRole = createAsyncThunk<
   Role,
   Role, 

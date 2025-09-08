@@ -29,7 +29,10 @@ export const fetchAllUsers = createAsyncThunk(
   "users/fetchAll",
   async (_, { rejectWithValue }) => {
     try {
-      const rawData = await UserService.fetch();
+      // const rawData = await UserService.fetch();
+      // const rawData = await UserService.get("/")
+      const response =await UserService.get("/")
+      const rawData = response.data
       const total = rawData.length;
 
       const formattedData: UserProfile[] = rawData.map((u: any) => ({
@@ -40,7 +43,7 @@ export const fetchAllUsers = createAsyncThunk(
         email: u.email,
         
       }));
-
+     console.log("test",rawData)
       return { users: formattedData, total };
     } catch (error: any) {
       return rejectWithValue(
@@ -55,7 +58,9 @@ export const fetchUserById = createAsyncThunk(
   async (userId: number, { rejectWithValue }) => {
     try {
       // const response = await API.get(`/users/${userId}`);
-      return await UserService.getById(userId);
+      // return await UserService.getById(userId);
+      const response= await UserService.get("/",userId)
+      return response.data
       // return response.data.data;
     } catch (error: any) {
       return rejectWithValue(error?.message || "Failed to fetch user");

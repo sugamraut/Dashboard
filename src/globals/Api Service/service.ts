@@ -7,10 +7,10 @@ import type {
   DistrictType,
   OnlineAccount,
   UserProfile,
-  LogsResponse,
   Setting,
   State,
   Role,
+  Log,
 } from "../typeDeclaration";
 import RestService from "./API_Services";
 
@@ -25,7 +25,7 @@ export const OnlineAccountService = RestService<OnlineAccount>(
   "/online-account-requests"
 );
 export const ProfileService = RestService<UserProfile>(`/users/profile`);
-export const ScannedLogService = RestService<LogsResponse>("/logs");
+export const ScannedLogService = RestService<Log>("/logs");
 export const SettingService = RestService<Setting>("/settings");
 export const StateService = RestService<State>("/states");
 export const UserService = RestService<UserProfile>("/users");

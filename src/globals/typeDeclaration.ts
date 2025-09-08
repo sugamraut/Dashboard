@@ -72,6 +72,7 @@ export interface Log {
   description: string;
   timestamp: string;
   createdDate: string;
+  total:number
 }
 
 export interface LogsResponse {

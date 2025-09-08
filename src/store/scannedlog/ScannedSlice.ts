@@ -1,16 +1,15 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
-import type { LogsResponse } from "../../globals/typeDeclaration";
+import type { Log } from "../../globals/typeDeclaration";
 
 import type {
-  FetchParams,
   MetaData,
   PaginatedResponse,
 } from "../../globals/Api Service/API_Services";
 import { ScannedLogService } from "../../globals/Api Service/service";
 
 interface LogsState {
-  data: LogsResponse[];
+  data: Log[];
   total: number;
   metaData: MetaData | null;
   loading: boolean;
@@ -26,17 +25,30 @@ const initialState: LogsState = {
 };
 
 export const fetchLogs = createAsyncThunk<
-  PaginatedResponse<LogsResponse>,
-  FetchParams,
+  PaginatedResponse<Log>,
+  {
+    page: number;
+    rowsPerPage: number;
+    sortBy?: string | null;
+    sortOrder?: "asc" | "desc";
+    query?: string;
+    filters?: Record<string, any>;
+  },
   { rejectValue: string }
 >("logs/fetchLogs", async (params, { rejectWithValue }) => {
   try {
-    const response = await ScannedLogService.fetchPaginated(params);
+    // console.log("Calling ScannedLogService.get with", params);
+
+    const response = await ScannedLogService.get("", params);
+
+    console.log("API response:", response);
+
     return {
-      data: response.data,
-      metaData: response.metaData,
+      data: response.data || [],
+      metaData: response.metaData || null,
     };
   } catch (error: any) {
+    console.error("API Error:", error);
     return rejectWithValue(error.response?.data || error.message);
   }
 });
@@ -51,7 +63,7 @@ const logsSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-    .addCase(fetchLogs.fulfilled, (state, action) => {
+      .addCase(fetchLogs.fulfilled, (state, action) => {
         state.loading = false;
         state.data = action.payload.data;
         state.metaData = action.payload.metaData;

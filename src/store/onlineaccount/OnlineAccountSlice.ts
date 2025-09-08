@@ -42,11 +42,13 @@ const initialState: OnlineAccountStatus = {
 
 export const fetchOnlineAccount = createAsyncThunk<
   PaginatedResponse<OnlineAccount>,
-  Partial<FetchParams> | undefined,
+  // Partial<FetchParams> | undefined,
+  FetchParams,
   { rejectValue: string }
 >("fetch/onlineaccount", async (params = {}, { rejectWithValue }) => {
   try {
-    const response = await OnlineAccountService.fetchPaginated(params);
+    // const response = await OnlineAccountService.fetchPaginated(params);
+    const response =await OnlineAccountService.get("/",params)
     return response;
   } catch (error: any) {
     return rejectWithValue(

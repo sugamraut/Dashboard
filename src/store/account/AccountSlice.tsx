@@ -1,17 +1,13 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
 import API, { getAuthHeader } from "../../http";
 import { toast } from "react-toastify";
 import type { AccountType } from "../../globals/typeDeclaration";
 import { AccountService } from "../../globals/Api Service/service";
-import type { PaginatedResponse, FetchParams, MetaData } from "../../globals/Api Service/API_Services";
-
-// interface FetchParams {
-//   page: number;
-//   rowsPerPage: number;
-//   sortBy: string;
-//   sortOrder: "asc" | "desc";
-// }
+import type {
+  PaginatedResponse,
+  FetchParams,
+  MetaData,
+} from "../../globals/Api Service/API_Services";
 
 export interface UploadedFile {
   imageUrl: string;
@@ -24,9 +20,8 @@ export interface UploadedFile {
   filePath: string;
 }
 
-
 interface AccountTypesState {
-  metaData: MetaData|null;
+  metaData: MetaData | null;
   data: AccountType[];
   total: number;
   loading: boolean;
@@ -42,29 +37,49 @@ const initialState: AccountTypesState = {
   error: null,
   selected: null,
   uploadedFiles: [],
-  metaData: null
+  metaData: null,
 };
 
+// export const fetchAccountTypes = createAsyncThunk<
+//   // AccountTypeResponse,
+//   PaginatedResponse <AccountType>,
+//   FetchParams,
+//   { rejectValue: string }
+// >("accountTypes/fetchAll", async (params, thunkAPI) => {
+//   const token = getAuthHeader();
+//   if (!token) {
+//     toast.error("No auth token found");
+//   }
+//   try {
+//     const response = await AccountService.fetchPaginated(params);
+
+//     return {
+//       data:response.data,
+//       metaData:response.metaData
+//     }
+//   } catch (error: any) {
+//     return thunkAPI.rejectWithValue(
+//       error.response?.data?.message || error.message || "Something went wrong"
+//     );
+//   }
+// });
 export const fetchAccountTypes = createAsyncThunk<
   // AccountTypeResponse,
-  PaginatedResponse <AccountType>,
+  PaginatedResponse<AccountType>,
   FetchParams,
   { rejectValue: string }
 >("accountTypes/fetchAll", async (params, thunkAPI) => {
-  const token = getAuthHeader();
-  if (!token) {
-    toast.error("No auth token found");
-  }
   try {
-    const response = await AccountService.fetchPaginated(params);
-  
+    const response = await AccountService.get("/", params);
     return {
-      data:response.data,
-      metaData:response.metaData
-    }
-  } catch (error: any) {
+      data: response.data,
+      metaData: response.metaData,
+    };
+  } catch (error:any) {
     return thunkAPI.rejectWithValue(
-      error.response?.data?.message || error.message || "Something went wrong"
+      error.response?.data?.message ||
+        error.message ||
+        "Failed to fetch permissions"
     );
   }
 });
@@ -198,7 +213,7 @@ const accountTypesSlice = createSlice({
       })
       .addCase(fetchAccountTypes.fulfilled, (state, action) => {
         state.loading = false;
-         state.data = action.payload.data;
+        state.data = action.payload.data;
         state.metaData = action.payload.metaData;
       })
 

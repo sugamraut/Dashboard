@@ -21,11 +21,12 @@ export const fetchdashboarddata = createAsyncThunk<
   { rejectValue: string }
 >("fetch/dashboard", async (params = {}, { rejectWithValue }) => {
   try {
-    const response = await dashboardService.fetchPaginated(params);
+    const response = await dashboardService.get("/", params);
+
     return response.data ?? [];
   } catch (error: any) {
     return rejectWithValue(
-      error.message || "failed to fetch the dashboard data"
+      error.message || "Failed to fetch the dashboard data"
     );
   }
 });
@@ -42,7 +43,7 @@ const dashboardSlice = createSlice({
       })
       .addCase(fetchdashboarddata.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload ?? "unknown error";
+        state.error = action.payload ?? "Unknown error";
       })
       .addCase(fetchdashboarddata.fulfilled, (state, action) => {
         state.loading = false;
