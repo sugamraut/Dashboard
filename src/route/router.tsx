@@ -11,7 +11,7 @@ const Sidebar = React.lazy(() => import("../pages/sidebar"));
 const BrandingSignInPage = React.lazy(() => import("../pages/Branches/branch"));
 const District = React.lazy(() => import("../pages/Districts/districts"));
 const Cities = React.lazy(() => import("../pages/Cities/cities"));
-
+const loading=React.lazy(()=>import("../pages/loader"));
 const User = React.lazy(() => import("../pages/Users/users"));
 const Account = React.lazy(() => import("../pages/Account/Account"));
 const Permission = React.lazy(() => import("../pages/Permissions/permissions"));
@@ -68,6 +68,7 @@ const router = createBrowserRouter([
           { path: "setting", element: withSuspense(Setting) },
           { path: "logout", element: withSuspense(Logout) },
           { path: "onlineaccount", element: withSuspense(OnlineAccount) },
+          {path:"loading",element:withSuspense(loading)}
         ],
       },
     ],

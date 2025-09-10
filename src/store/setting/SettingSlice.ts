@@ -6,8 +6,8 @@ import type {
   FetchParams,
   MetaData,
   PaginatedResponse,
-} from "../../globals/Api Service/API_Services";
-import { SettingService } from "../../globals/Api Service/service";
+} from "../../globals/api_service/api_services";
+import { SettingService } from "../../globals/api_service/service";
 
 interface settingState {
   data: Setting[];

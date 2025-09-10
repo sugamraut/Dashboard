@@ -1,9 +1,9 @@
 import CircularProgress from "@mui/material/CircularProgress";
-import { Box } from "@mui/material";
+import { Box, Modal } from "@mui/material";
 
 export default function Loading() {
   return (
-    <Box
+    <Modal open={true}
       sx={{
         position: "absolute",
         top: "50%",
@@ -12,9 +12,14 @@ export default function Loading() {
         width: 400,
 
         backgroundColor: "#f1f5f8",
+        '& .MuiModal-backdrop': {
+      // backgroundColor: 'rgba(255, 255, 255, 1)', 
+      backgroundColor:"#f1f5f8;"
+    },
+
       }}
     >
       <CircularProgress className="modal-loading-indicator" />
-    </Box>
+    </Modal>
   );
 }

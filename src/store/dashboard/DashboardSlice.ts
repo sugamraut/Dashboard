@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import type { dashboardData } from "../../globals/typeDeclaration";
-import { dashboardService } from "../../globals/Api Service/service";
-import type { FetchParams } from "../../globals/Api Service/API_Services";
+import { dashboardService } from "../../globals/api_service/service";
+import type { FetchParams } from "../../globals/api_service/api_services";
 
 interface dashboardState {
   list: dashboardData[];

@@ -1,16 +1,13 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import type {
-  ActivityLog,
-  ActivityUser,
-} from "../../globals/typeDeclaration";
+import type { ActivityLog, ActivityUser } from "../../globals/typeDeclaration";
 
 import { toast } from "react-toastify";
 import type {
   FetchParams,
   MetaData,
   PaginatedResponse,
-} from "../../globals/Api Service/API_Services";
-import { ActivityService } from "../../globals/Api Service/service";
+} from "../../globals/api_service/api_services";
+import { ActivityService } from "../../globals/api_service/service";
 
 interface ActivityStatus {
   data: ActivityLog[];
@@ -36,39 +33,48 @@ const initialState: ActivityStatus = {
 //   { rejectValue: string }
 // >("ActivityLog/fetch", async (params, thunkAPI) => {
 //   try {
-// //  const response = await ActivityService.fetchPaginated(params);
-// const response =await ActivityService.get(params)
-//     console.log("response",response.data)
-//     return {
-//       data: response.data,
-//       metaData: response.metaData,
-//     };
-//   } catch (error: any) {
+//     const response =await ActivityService.get("/",params)
+//     // return{
+//     //   data:response.data,
+//     //   metaData:response.metaData
+//     // }
+//     return response.data
+//   } catch (error:any) {
 //     return thunkAPI.rejectWithValue(
-//       (toast.error(error.message) && error.response?.data?.message) ||
-//         error.message ||
-//         "something went wrong"
-//     );
+//       (toast.error(error.message)&&  error.response?.data?.message)||error.message||"something went wrong"
+//     )
 //   }
-// });
+// })
 export const fetchActivityLog = createAsyncThunk<
   PaginatedResponse<ActivityLog>,
-  FetchParams,
+  FetchParams | undefined,
   { rejectValue: string }
 >("ActivityLog/fetch", async (params, thunkAPI) => {
   try {
-    const response =await ActivityService.get("/",params)
-    // return{
-    //   data:response.data,
-    //   metaData:response.metaData
-    // }
-    return response.data
-  } catch (error:any) {
+    const filters = params?.filters
+      ? { ...params.filters, type: 1 }
+      : { type: 1 };
+
+    const queryParams = {
+      page: params?.page,
+      rowsPerPage: params?.rowsPerPage,
+      sortBy: params?.sortBy || null,
+      sortOrder: params?.sortOrder || "desc",
+      query: params?.query || "",
+      filters: JSON.stringify(filters),
+    };
+
+    const response = await ActivityService.get("", queryParams);
+    console.log("lof ac",response)
+    return response as PaginatedResponse<ActivityLog>;
+  } catch (error: any) {
     return thunkAPI.rejectWithValue(
-      (toast.error(error.message)&&  error.response?.data?.message)||error.message||"something went wrong"
-    )
+      (toast.error(error.message) && error.response?.data?.message) ||
+        error.message ||
+        "something went wrong"
+    );
   }
-})
+});
 
 const ActivityLogSlice = createSlice({
   name: "activityLog",
@@ -89,7 +95,7 @@ const ActivityLogSlice = createSlice({
         state.data = action.payload.data;
         // state.total = action.payload.total;
         state.metaData = action.payload.metaData;
-        console.log("log data",state.data)
+        console.log("log data", state.data);
       });
   },
 });

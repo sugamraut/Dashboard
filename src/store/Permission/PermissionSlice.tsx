@@ -5,8 +5,8 @@ import type {
   FetchParams,
   MetaData,
   PaginatedResponse,
-} from "../../globals/Api Service/API_Services";
-import { PermissionService } from "../../globals/Api Service/service";
+} from "../../globals/api_service/api_services";
+import { PermissionService } from "../../globals/api_service/service";
 
 export interface PermissionsState {
   data: Permission[];

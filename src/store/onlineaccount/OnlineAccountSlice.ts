@@ -9,9 +9,9 @@ import axios from "axios";
 import type {
   FetchParams,
   PaginatedResponse,
-} from "../../globals/Api Service/API_Services";
+} from "../../globals/api_service/api_services";
 import type { OnlineAccount } from "../../globals/typeDeclaration";
-import { OnlineAccountService } from "../../globals/Api Service/service";
+import { OnlineAccountService } from "../../globals/api_service/service";
 
 interface CreateblacklistStatus {
   firstname: string;

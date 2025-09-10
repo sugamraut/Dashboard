@@ -3,7 +3,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { Status, type StatusType } from "../../globals/status";
 import type { UserProfile } from "../../globals/typeDeclaration";
 
-import { UserService } from "../../globals/Api Service/service";
+import { UserService } from "../../globals/api_service/service";
 
 export interface UserState {
   fullList: UserProfile[] | null;

@@ -3,10 +3,11 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import type { Log } from "../../globals/typeDeclaration";
 
 import type {
+  FetchParams,
   MetaData,
   PaginatedResponse,
-} from "../../globals/Api Service/API_Services";
-import { ScannedLogService } from "../../globals/Api Service/service";
+} from "../../globals/api_service/api_services";
+import { ScannedLogService } from "../../globals/api_service/service";
 
 interface LogsState {
   data: Log[];
@@ -26,33 +27,29 @@ const initialState: LogsState = {
 
 export const fetchLogs = createAsyncThunk<
   PaginatedResponse<Log>,
-  {
-    page: number;
-    rowsPerPage: number;
-    sortBy?: string | null;
-    sortOrder?: "asc" | "desc";
-    query?: string;
-    filters?: Record<string, any>;
-  },
+  FetchParams | undefined,
   { rejectValue: string }
->("logs/fetchLogs", async (params, { rejectWithValue }) => {
+>("scannedLog/fetchLogs", async (params, thunkAPI) => {
   try {
-    // console.log("Calling ScannedLogService.get with", params);
+    const filters = params?.filters
+      ? { ...params.filters, type: 1 }
+      : { type: 1 };
 
-    const response = await ScannedLogService.get("", params);
-
-    console.log("API response:", response);
-
-    return {
-      data: response.data || [],
-      metaData: response.metaData || null,
+    const queryParams = {
+      page: params?.page,
+      rowsPerPage: params?.rowsPerPage,
+      sortBy: params?.sortBy || null,
+      sortOrder: params?.sortOrder || "desc",
+      query: params?.query || "",
+      filters: JSON.stringify(filters),
     };
+
+    const response = await ScannedLogService.get("", queryParams);
+    return response as PaginatedResponse<Log>;
   } catch (error: any) {
-    console.error("API Error:", error);
-    return rejectWithValue(error.response?.data || error.message);
+    return thunkAPI.rejectWithValue(error.message || "Failed to fetch logs");
   }
 });
-
 const logsSlice = createSlice({
   name: "scannedLog",
   initialState,

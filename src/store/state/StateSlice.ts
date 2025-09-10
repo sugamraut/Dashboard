@@ -4,7 +4,7 @@ import {
   type PayloadAction,
 } from "@reduxjs/toolkit";
 import { type State } from "../../globals/typeDeclaration";
-import { StateService } from "../../globals/Api Service/service";
+import { StateService } from "../../globals/api_service/service";
 
 interface StateSliceType {
   statesList: State[];

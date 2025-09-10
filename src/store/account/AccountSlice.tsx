@@ -2,12 +2,12 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import API, { getAuthHeader } from "../../http";
 import { toast } from "react-toastify";
 import type { AccountType } from "../../globals/typeDeclaration";
-import { AccountService } from "../../globals/Api Service/service";
+import { AccountService } from "../../globals/api_service/service";
 import type {
   PaginatedResponse,
   FetchParams,
   MetaData,
-} from "../../globals/Api Service/API_Services";
+} from "../../globals/api_service/api_services";
 
 export interface UploadedFile {
   imageUrl: string;

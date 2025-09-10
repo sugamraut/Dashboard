@@ -75,10 +75,10 @@ export interface Log {
   total:number
 }
 
-export interface LogsResponse {
-  data: Log[];
-  total: number;
-}
+// export interface LogsResponse {
+//   data: Log[];
+//   total: number;
+// }
 export interface ActivityUser {
   name: string;
   username: string;

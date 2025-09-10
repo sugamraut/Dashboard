@@ -9,8 +9,8 @@ import { Status, type StatusType } from "../../globals/status";
 import type {
   FetchParams,
   PaginatedResponse,
-} from "../../globals/Api Service/API_Services";
-import { RoleService } from "../../globals/Api Service/service";
+} from "../../globals/api_service/api_services";
+import { RoleService } from "../../globals/api_service/service";
 
 
 export interface RolesState {

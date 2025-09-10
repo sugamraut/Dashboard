@@ -12,7 +12,7 @@ import type {
   Role,
   Log,
 } from "../typeDeclaration";
-import RestService from "./API_Services";
+import RestService from "./api_services";
 
 export const PermissionService = RestService<Permission>("/permissions");
 

@@ -31,14 +31,25 @@ export interface FetchParams {
 // }
 
 const RestService = <T>(basePath: string) => ({
+  // get: async (path = "", params = {}): Promise<any> => {
+  //   const url = `${basePath}${path}`;
+  //   const response = await API.get(url, {
+  //     params,
+  //     headers: getAuthHeader(),
+  //   });
+  //   return response.data;
+  // },
   get: async (path = "", params = {}): Promise<any> => {
     const url = `${basePath}${path}`;
     const response = await API.get(url, {
       params,
       headers: getAuthHeader(),
     });
-    return response.data;
+
+    console.log("🌐 Raw Axios response:", response); // Add this to confirm
+    return response.data; // ✅ Assuming this contains both data and metaData
   },
+
   create: async (payload: T): Promise<T> => {
     const response = await API.post(`${basePath}`, payload, {
       headers: getAuthHeader(),

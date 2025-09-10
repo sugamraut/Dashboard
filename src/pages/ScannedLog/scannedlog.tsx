@@ -28,6 +28,7 @@ import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { Dayjs } from "dayjs";
 import { toast } from "react-toastify";
 import useDocumentTitle from "../../globals/useBrowserTitle";
+import type { RootState } from "../../store/store";
 
 const ScannedLog = () => {
   const dispatch = useAppDispatch();
@@ -37,7 +38,7 @@ const ScannedLog = () => {
   //   (state) => state.scannedLog
   // );
   const { data, metaData, loading, error } = useAppSelector(
-    (state) => state.scannedLog ?? []
+    (state: RootState) => state.scannedLog ?? []
   );
   console.log("logs", data);
 
@@ -54,11 +55,11 @@ const ScannedLog = () => {
         sortBy: null,
         sortOrder: "desc",
         query: undefined,
-        // filters: selectedDate
-        //   ? {
-        //       date: selectedDate.format("YYYY-MM-DD"),
-        //     }
-        //   : undefined,
+        filters: selectedDate
+          ? {
+              date: selectedDate.format("YYYY-MM-DD"),
+            }
+          : undefined,
       })
     );
   };

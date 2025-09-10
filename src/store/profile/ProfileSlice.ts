@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import type { UserProfile } from "../../globals/typeDeclaration";
 
-import { ProfileService } from "../../globals/Api Service/service";
+import { ProfileService } from "../../globals/api_service/service";
 import { toast } from "react-toastify";
 import API from "../../http";
 

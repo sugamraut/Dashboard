@@ -6,7 +6,7 @@ import {
 import { Status, type StatusType } from "../../globals/status";
 import type { City } from "../../globals/typeDeclaration";
 
-import { CityService } from "../../globals/Api Service/service";
+import { CityService } from "../../globals/api_service/service";
 
 interface CityState {
   fullList: City[] | null;
