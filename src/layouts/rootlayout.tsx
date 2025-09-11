@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
 
@@ -8,30 +7,28 @@ import { Status } from "../globals/status";
 
 import Sidebar from "../pages/sidebar";
 import LoadingButtons from "../pages/loader";
-import type { RootState } from "../store/store"; 
+import type { RootState } from "../store/store";
 import { useAppDispatch, useAppSelector } from "../store/hook";
 import { token } from "../globals/config";
 
 const RootLayout = () => {
   const dispatch = useAppDispatch();
 
-  const accessToken = useAppSelector((state: RootState) => state.auth.accessToken);
-  const status = useAppSelector((state: RootState) => state.auth.status);
-
+  const { status, accessToken } = useAppSelector(
+    (state: RootState) => state.auth
+  );
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    
-
     if (token && isTokenValid(token)) {
-      dispatch(setToken(token))
-      dispatch(setStatus(Status.Success))
+      dispatch(setToken(token));
+      dispatch(setStatus(Status.Success));
     } else {
       localStorage.removeItem("jwt");
-      dispatch(setStatus(Status.Error))
+      dispatch(setStatus(Status.Error));
     }
 
-    setLoading(false)
+    setLoading(false);
   }, [dispatch]);
 
   if (loading || status === Status.Loading) {
@@ -39,15 +36,15 @@ const RootLayout = () => {
       <div>
         <LoadingButtons />
       </div>
-    )
+    );
   }
 
   return (
     <>
       {accessToken && isTokenValid(accessToken) && <Sidebar />}
-      <Outlet/> 
+      <Outlet />
     </>
-  )
+  );
 };
 
 export default RootLayout;

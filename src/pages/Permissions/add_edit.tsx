@@ -118,9 +118,6 @@ const AddEditPage: React.FC<AddEditPageProps> = ({ initialData, onClose }) => {
                 label="Display Name"
                 fullWidth
                 margin="normal"
-                // {...register("displayNameNp", {
-                //   required: "Display name in Nepali is required",
-                // })}
                 error={!!errors.displayNameNp}
                 helperText={errors?.displayNameNp?.message}
               />
@@ -173,37 +170,14 @@ const AddEditPage: React.FC<AddEditPageProps> = ({ initialData, onClose }) => {
             )}
           />
 
-          {/* <Controller
-            control={control}
-            name="ActionGroups"
-            render={({ field }) => (
-              <Autocomplete
-                multiple
-                options={ActionData ?? []}
-                getOptionLabel={(option) => option.name || ""}
-                value={field.value || []}
-                onChange={(_, data) => field.onChange(data)}
-                isOptionEqualToValue={(option, value) => option.id === value.id}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Action type"
-                    margin="normal"
-                    // {...register("ActionGroups")}
-                    error={!!errors.ActionGroups}
-                    helperText={errors?.ActionGroups?.message as string}
-                  />
-                )}
-              />
-            )}
-          /> */}
+
           <Controller
             control={control}
             name="ActionGroups"
             render={({ field }) => (
               <Autocomplete
                 multiple
-                options={Array.isArray(ActionData) ? ActionData : []} // <-- defensive check here
+                options={Array.isArray(ActionData) ? ActionData : []} 
                 getOptionLabel={(option) => option.name || ""}
                 value={field.value || []}
                 onChange={(_, data) => field.onChange(data)}

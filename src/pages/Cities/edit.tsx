@@ -82,7 +82,7 @@ const AddEditCity: React.FC<EditBranchFormProps> = ({
 
   const onSubmit = async (data: CityFormData) => {
     const payload = {
-      id: initialData?.id ?? 0,
+      id: initialData?.id !,
       name: data.name,
       nameNp: data.nameNp,
       nameCombined: `${data.name}, ${data.nameNp}`,

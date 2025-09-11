@@ -29,13 +29,12 @@ import { useAppDispatch, useAppSelector } from "../../store/hook";
 import { toast } from "react-toastify";
 
 export default function BranchesPage() {
-  // const dispatch = useDispatch<AppDispatch>();
+
   const dispatch = useAppDispatch();
   const branches =
     useAppSelector((state: RootState) => state.branch.list) || [];
   const loading = useAppSelector((state: RootState) => state.branch.loading);
-  // const error = useSelector((state: RootState) => state.branch.error);
-
+ 
   const [search, setSearch] = useState("");
   const [Edit, setEdit] = useState(false);
   const [editBranch, setEditBranch] = useState<Branch | null>(null);

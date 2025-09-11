@@ -61,9 +61,6 @@ const StatusCards = () => {
 
   const { list } = useAppSelector((state: RootState) => state.dashboard);
 
-  // useEffect(() => {
-  //   dispatch(fetchdashboarddata());
-  // }, [dispatch]);
   useEffect(() => {
     if (!list.length) {
       dispatch(fetchdashboarddata());
@@ -72,11 +69,9 @@ const StatusCards = () => {
 
   console.log("list", list);
 
-  // const apiDataMap = Object.fromEntries(list.map((item) => [item.title, item]));
   const apiDataMap = Object.fromEntries(
-  Array.isArray(list) ? list.map((item) => [item.title, item]) : []
-);
-
+    Array.isArray(list) ? list.map((item) => [item.title, item]) : []
+  );
 
   console.log("apiDataMap", apiDataMap);
 

@@ -13,6 +13,7 @@ import {
   TableCell,
   TableContainer,
   TableHead,
+  TablePagination,
   TableRow,
   Typography,
 } from "@mui/material";
@@ -25,7 +26,7 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import FilterAltOffIcon from "@mui/icons-material/FilterAltOff";
 import { useAppDispatch, useAppSelector } from "../../store/hook";
 import type { RootState } from "../../store/store";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { fetchOnlineAccount } from "../../store/onlineaccount/OnlineAccountSlice";
 import EditIcon from "@mui/icons-material/Edit";
 
@@ -34,14 +35,23 @@ import useDocumentTitle from "../../globals/useBrowserTitle";
 
 const OnlineAccountRequest = () => {
   const dispatch = useAppDispatch();
-   useDocumentTitle("Online Request - SNLI");
+  useDocumentTitle("Online Request - SNLI");
   const list = useAppSelector(
     (state: RootState) => state.onlineAccount.list ?? []
   );
-
+  const totalCount =useAppSelector((state:RootState)=>state.onlineAccount.totalCount ?? 0)
+  const [rowsPerPage, setRowsPerPage] = useState(25);
+  const [page, setPage] = useState(0);
   useEffect(() => {
-    dispatch(fetchOnlineAccount());
+    dispatch(fetchOnlineAccount({ page: 1, rowsPerPage: rowsPerPage }));
   });
+  const handleChangePage = (_: unknown, newPage: number) => setPage(newPage);
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
 
   return (
     <Box marginLeft={10} padding={2}>
@@ -207,6 +217,16 @@ const OnlineAccountRequest = () => {
             )}
           </TableBody>
         </Table>
+
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25, 50]}
+          component="div"
+          count={totalCount}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
       </TableContainer>
     </Box>
   );

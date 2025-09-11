@@ -29,6 +29,7 @@ interface OnlineAccountStatus {
   loading: boolean;
   error: string | null;
   status: StatusType;
+    totalCount: number;
 }
 
 const initialState: OnlineAccountStatus = {
@@ -38,6 +39,7 @@ const initialState: OnlineAccountStatus = {
   loading: false,
   error: null,
   status: Status.Loading,
+  totalCount: 0
 };
 
 export const fetchOnlineAccount = createAsyncThunk<
@@ -47,7 +49,7 @@ export const fetchOnlineAccount = createAsyncThunk<
   { rejectValue: string }
 >("fetch/onlineaccount", async (params = {}, { rejectWithValue }) => {
   try {
-    // const response = await OnlineAccountService.fetchPaginated(params);
+
     const response =await OnlineAccountService.get("/",params)
     return response;
   } catch (error: any) {
@@ -109,6 +111,7 @@ const OnlineAccountSlice = createSlice({
       .addCase(fetchOnlineAccount.fulfilled, (state, action) => {
         state.list = action.payload.data;
         state.data = action.payload.data;
+        state.totalCount = action.payload.metaData.total;
         state.loading = false;
       })
 

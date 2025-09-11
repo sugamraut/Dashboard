@@ -79,7 +79,6 @@ const LoginPage: React.FC = () => {
             <LoginInput
               id="password"
               label="Password"
-              // type={showPassword ? "text" : "password"}
               type="password"
               {...register("password")}
               error={!!errors.password}
