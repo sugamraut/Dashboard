@@ -43,28 +43,28 @@ const Profile = () => {
     },
   });
 
-  // const password = watch("password");
+
 
   useEffect(() => {
     dispatch(fetchProfile());
   }, [dispatch]);
   useDocumentTitle("Profile - SNLI");
 
- useEffect(() => {
+
+useEffect(() => {
   console.log("Fetched profile data:", data);
-  if (data && data.length > 0) {
-    const user = data[0];
-    // console.log("efdb",user)
+  if (data) {
     reset({
-      name: user.name,
-      username: user.username || "",
-      email: user.email || "",
-      mobile: user.mobile || "",
+      name: data.name || "",
+      username: data.username || "",
+      email: data.email || "",
+      mobile: data.mobile || "",
       password: "",
       confirmPassword: "",
     });
   }
 }, [data, reset]);
+
 
 console.log("log file",data)
 

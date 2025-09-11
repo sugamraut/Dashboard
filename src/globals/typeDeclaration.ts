@@ -79,10 +79,21 @@ export interface Log {
 //   data: Log[];
 //   total: number;
 // }
+// export interface ActivityUser {
+//   name: string;
+//   username: string;
+//   roles: [];
+// }
+
+// export interface ActivityLog extends Log {
+//   ip: string;
+//   userAgent: string;
+//   user?: ActivityUser;
+// }
 export interface ActivityUser {
   name: string;
   username: string;
-  roles: [];
+  roles: []; 
 }
 
 export interface ActivityLog extends Log {

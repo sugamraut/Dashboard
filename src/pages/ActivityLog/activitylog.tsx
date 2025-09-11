@@ -100,6 +100,8 @@ const ActivityLog = () => {
 
   const handleRefresh = () => {
     loadLogs();
+    setPage(0);
+    setDebouncedQuery("")
   };
 
   const handleChangePage = (_event: unknown, newPage: number) => {

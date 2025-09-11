@@ -8,22 +8,23 @@ import API from "../../http";
 interface UserState {
   loading: boolean;
   error: string | null;
-  data: UserProfile[] | null;
-  list: UserProfile[] | null;
+  // data: UserProfile[] | null;
+  data: UserProfile | null; 
+  list: UserProfile | null;
   success: boolean;
 }
 
 const initialState: UserState = {
   loading: false,
   error: null,
-  data: [],
+  data: null,
   success: false,
-  list: [],
+  list: null,
 };
 
 export const fetchProfile = createAsyncThunk<
   // PaginatedResponse<UserProfile>,
-  UserProfile[],
+  UserProfile,
   void,
   { rejectValue: string }
 >("user/fetchProfile", async (_, { rejectWithValue }) => {
@@ -31,7 +32,7 @@ export const fetchProfile = createAsyncThunk<
     // return await ProfileService.get("/");
     const response =await API.get("/users/profile");
     console.log("file",response.data)
-    return response.data??[]
+    return response.data
   } catch (error: any) {
     toast.error(error.response?.data?.message||"failed to fetch profile")
     return rejectWithValue(
@@ -83,7 +84,7 @@ const userSlice = createSlice({
       })
       .addCase(updateProfile.fulfilled, (state, action) => {
         state.loading = false;
-        state.data = [action.payload];
+        state.data = action.payload;
         state.success = true;
       })
       .addCase(updateProfile.rejected, (state, action) => {
