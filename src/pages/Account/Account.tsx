@@ -24,6 +24,7 @@ import {
   fetchAccountTypes,
 } from "../../store/account/AccountSlice";
 import AddEditPage from "./add_edit";
+import ConfirmDeleteDialog from "./delete";
 import type { RootState } from "../../store/store";
 import { toast } from "react-toastify";
 import Loading from "../loader";
@@ -41,10 +42,13 @@ const AccountPage: React.FC = () => {
     null
   );
 
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(25);
+  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
+  const [selectedId, setSelectedId] = useState<number | null>(null);
 
-  useEffect(() => {
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(2);
+
+  const fetchData = () => {
     dispatch(
       fetchAccountTypes({
         page: 1,
@@ -53,8 +57,12 @@ const AccountPage: React.FC = () => {
         sortOrder: "asc",
       })
     );
-    toast.error(error);
-  }, [dispatch]);
+  };
+
+  useEffect(() => {
+    fetchData();
+    if (error) toast.error(error);
+  }, [dispatch, error]);
 
   const handleAdd = () => {
     setEditingAccount(null);
@@ -82,18 +90,23 @@ const AccountPage: React.FC = () => {
     setPage(0);
   };
 
-  const handleDelete = async (id: number) => {
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this account type?"
-    );
-    if (!confirmed) return;
+  const handleDeleteClick = (id: number) => {
+    setSelectedId(id);
+    setConfirmDialogOpen(true);
+  };
 
-    const result = await dispatch(deleteAccountType(id));
+  const handleConfirmDelete = async () => {
+    if (!selectedId) return;
 
-    if (deleteAccountType.rejected.match(result)) {
-      toast.error(result.payload || "Failed to delete account type.");
-    } else {
+    try {
+      await dispatch(deleteAccountType(selectedId)).unwrap();
       toast.success("Account type deleted successfully.");
+      fetchData(); // refresh table after deletion
+    } catch (err: any) {
+      toast.error(err || "Failed to delete account type.");
+    } finally {
+      setConfirmDialogOpen(false);
+      setSelectedId(null);
     }
   };
 
@@ -173,7 +186,7 @@ const AccountPage: React.FC = () => {
                     </IconButton>
                     <IconButton
                       className="action-icon-btn-delete ms-2"
-                      onClick={() => handleDelete(account.id)}
+                      onClick={() => handleDeleteClick(account.id)}
                     >
                       <DeleteIcon />
                     </IconButton>
@@ -208,6 +221,12 @@ const AccountPage: React.FC = () => {
           onCancel={handleClose}
         />
       )}
+      <ConfirmDeleteDialog
+        open={confirmDialogOpen}
+        onClose={() => setConfirmDialogOpen(false)}
+        id={selectedId}
+        onConfirm={handleConfirmDelete}
+      />
     </Box>
   );
 };
