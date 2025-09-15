@@ -81,6 +81,7 @@ export const permissionSchema = z.object({
       "Display name in Nepali must use Devanagari script"
     ),
   group: z.string().min(1, "Group is required"),
+  // group:z.array(z.object({name:z.string().min(1,"group name is requier")})),
   ActionGroups: z
     .array(
       z.object({

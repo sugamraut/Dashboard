@@ -16,7 +16,6 @@ import {
   addPermission,
   fetchAllPermissions,
 } from "../../store/Permission/PermissionSlice";
-import type { Permission } from "../../globals/typeDeclaration";
 import { useAppDispatch, useAppSelector } from "../../store/hook";
 import { toast } from "react-toastify";
 import {
@@ -134,9 +133,6 @@ const AddEditPage: React.FC<AddEditPageProps> = ({ initialData, onClose }) => {
                 label="Display Name (Nepali)"
                 fullWidth
                 margin="normal"
-                {...register("displayNameNp", {
-                  required: "Display name in Nepali is required",
-                })}
                 error={!!errors.displayNameNp}
                 helperText={errors?.displayNameNp?.message}
               />
@@ -147,7 +143,7 @@ const AddEditPage: React.FC<AddEditPageProps> = ({ initialData, onClose }) => {
             control={control}
             name="group"
             render={({ field }) => (
-              <Autocomplete<Permission>
+              <Autocomplete
                 disablePortal
                 options={groupedPermissions}
                 onChange={(_, data) => field.onChange(data)}
@@ -163,13 +159,12 @@ const AddEditPage: React.FC<AddEditPageProps> = ({ initialData, onClose }) => {
                     margin="normal"
                     {...register("group")}
                     error={!!errors.group}
-                    helperText={errors?.group?.message as string}
+                    helperText={errors?.group?.message}
                   />
                 )}
               />
             )}
           />
-
 
           <Controller
             control={control}
@@ -177,7 +172,7 @@ const AddEditPage: React.FC<AddEditPageProps> = ({ initialData, onClose }) => {
             render={({ field }) => (
               <Autocomplete
                 multiple
-                options={Array.isArray(ActionData) ? ActionData : []} 
+                options={Array.isArray(ActionData) ? ActionData : []}
                 getOptionLabel={(option) => option.name || ""}
                 value={field.value || []}
                 onChange={(_, data) => field.onChange(data)}

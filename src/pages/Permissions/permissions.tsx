@@ -27,10 +27,11 @@ import type { Permission } from "../../globals/typeDeclaration";
 import { useAppDispatch, useAppSelector } from "../../store/hook";
 import { toast } from "react-toastify";
 import useDocumentTitle from "../../globals/useBrowserTitle";
+import ConfirmDeleteDialog from "./delete";
 
 const Permissions: React.FC = () => {
   const dispatch = useAppDispatch();
-   useDocumentTitle("Permission - SNLI");
+  useDocumentTitle("Permission - SNLI");
   const { data, metaData, error } = useAppSelector(
     (state: RootState) => state.permissions
   );
@@ -38,11 +39,13 @@ const Permissions: React.FC = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(25);
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedId, setSelectedId] = useState<number | null>(null);
 
   const [openDialog, setOpenDialog] = useState(false);
   const [editingPermission, setEditingPermission] = useState<Permission | null>(
     null
   );
+  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
 
   useEffect(() => {
     dispatch(
@@ -106,27 +109,51 @@ const Permissions: React.FC = () => {
     );
   };
 
-  const handleDelete = async (id: number) => {
-    if (window.confirm("Are you sure you want to delete this role?")) {
-      await dispatch(deletePermission(id))
-        .unwrap()
-        .then(() => {
-          dispatch(
-            fetchPermissions({
-              page: 1,
-              rowsPerPage,
-              query: "",
-              sortBy: null,
-              sortOrder: "desc",
-            })
-          );
-        })
-        .catch((error) => {
-          toast.error(`Delete failed: ${error}`);
-        });
-    }
+  // const handleDelete = async (id: number) => {
+  //   if (window.confirm("Are you sure you want to delete this role?")) {
+  //     await dispatch(deletePermission(id))
+  //       .unwrap()
+  //       .then(() => {
+  //         dispatch(
+  //           fetchPermissions({
+  //             page: 1,
+  //             rowsPerPage,
+  //             query: "",
+  //             sortBy: null,
+  //             sortOrder: "desc",
+  //           })
+  //         );
+  //       })
+  //       .catch((error) => {
+  //         toast.error(`Delete failed: ${error}`);
+  //       });
+  //   }
+  // };
+
+  const handleDeleteClick = (id: number) => {
+    setSelectedId(id);
+    setConfirmDialogOpen(true);
   };
 
+  const handleConfirmDelete = async () => {
+    if (!selectedId) return;
+    try {
+      await dispatch(deletePermission(selectedId)).unwrap();
+      toast.success("Permission deleted successfully");
+      fetchPermissions({
+        page: 1,
+        rowsPerPage,
+        query: "",
+        sortBy: null,
+        sortOrder: "desc",
+      });
+    } catch (error: any) {
+      toast.error(error || "failed to deleted permission type");
+    } finally {
+      setConfirmDialogOpen(false);
+      setSelectedId(null);
+    }
+  };
   return (
     <Box marginLeft={9} padding={2}>
       <Box className="header" mb={2}>
@@ -215,7 +242,7 @@ const Permissions: React.FC = () => {
                     </IconButton>
                     <IconButton
                       className="action-icon-btn-delete m-2 p-6"
-                      onClick={() => handleDelete(permission.id)}
+                      onClick={() => handleDeleteClick(permission.id)}
                     >
                       <DeleteIcon />
                     </IconButton>
@@ -248,6 +275,12 @@ const Permissions: React.FC = () => {
           onClose={handleCloseDialog}
         />
       )}
+      <ConfirmDeleteDialog
+        open={confirmDialogOpen}
+        onClose={() => setConfirmDialogOpen(false)}
+        id={selectedId}
+        onConfirm={handleConfirmDelete}
+      />
     </Box>
   );
 };
