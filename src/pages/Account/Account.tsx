@@ -101,7 +101,7 @@ const AccountPage: React.FC = () => {
     try {
       await dispatch(deleteAccountType(selectedId)).unwrap();
       toast.success("Account type deleted successfully.");
-      fetchData(); // refresh table after deletion
+      fetchData();
     } catch (err: any) {
       toast.error(err || "Failed to delete account type.");
     } finally {
