@@ -27,7 +27,7 @@ import type { Permission } from "../../globals/typeDeclaration";
 import { useAppDispatch, useAppSelector } from "../../store/hook";
 import { toast } from "react-toastify";
 import useDocumentTitle from "../../globals/useBrowserTitle";
-import ConfirmDeleteDialog from "./delete";
+import ConfirmDeleteDialog from "../../components/Delete_Model";
 
 const Permissions: React.FC = () => {
   const dispatch = useAppDispatch();

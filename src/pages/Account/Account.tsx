@@ -24,7 +24,7 @@ import {
   fetchAccountTypes,
 } from "../../store/account/AccountSlice";
 import AddEditPage from "./add_edit";
-import ConfirmDeleteDialog from "./delete";
+import ConfirmDeleteDialog from "../../components/Delete_Model";
 import type { RootState } from "../../store/store";
 import { toast } from "react-toastify";
 import Loading from "../loader";

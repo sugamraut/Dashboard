@@ -22,7 +22,6 @@ const ActivityLog = React.lazy(
   () => import("../pages/ActivityLog/activitylog")
 );
 const Setting = React.lazy(() => import("../pages/Setting/setting"));
-const Logout = React.lazy(() => import("../pages/Logout/logout"));
 const OnlineAccount = React.lazy(
   () => import("../pages/OnlineAccountRequest/onlinerequest")
 );
@@ -66,7 +65,6 @@ const router = createBrowserRouter([
           { path: "scannedlog", element: withSuspense(ScannedLog) },
           { path: "activitylog", element: withSuspense(ActivityLog) },
           { path: "setting", element: withSuspense(Setting) },
-          { path: "logout", element: withSuspense(Logout) },
           { path: "onlineaccount", element: withSuspense(OnlineAccount) },
           {path:"loading",element:withSuspense(loading)}
         ],

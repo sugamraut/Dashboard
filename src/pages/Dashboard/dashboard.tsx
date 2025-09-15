@@ -76,7 +76,7 @@ const StatusCards = () => {
   console.log("apiDataMap", apiDataMap);
 
   return (
-    <Box sx={{ display: "flex", paddingLeft: "150px" }}>
+    <Box sx={{ display: "flex", paddingLeft: "90px" }}>
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <Box
           sx={{
@@ -89,7 +89,7 @@ const StatusCards = () => {
             return (
               <Box
                 key={card.title}
-                className="m-3"
+                className="m-3 col "
                 sx={{
                   width: {
                     sm: "100%",
