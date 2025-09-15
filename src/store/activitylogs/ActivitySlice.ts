@@ -65,7 +65,6 @@ export const fetchActivityLog = createAsyncThunk<
     };
 
     const response = await ActivityService.get("", queryParams);
-    console.log("lof ac",response)
     return response ;
   } catch (error: any) {
     return thunkAPI.rejectWithValue(
@@ -91,10 +90,8 @@ const ActivityLogSlice = createSlice({
         state.error = action.payload ?? "Failed to fetch logs";
       })
       .addCase(fetchActivityLog.fulfilled, (state, action) => {
-        console.log("Payload from thunk:", action.payload);
         state.loading = false;
         state.data = action.payload.data;
-        // state.total = action.payload.total;
         state.metaData = action.payload.metaData;
       });
   },
