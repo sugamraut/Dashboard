@@ -21,24 +21,10 @@ export interface FetchParams {
   filters?: Record<string, any>;
 }
 
-// export interface GetParams {
-//   id?: number;
-//   all?: boolean;
-//   groups?: boolean;
-//   paginated?: boolean;
-//   pagination?: FetchParams;
-//   queryParams?: Record<string, any>;
-// }
+
 
 const RestService = <T>(basePath: string) => ({
-  // get: async (path = "", params = {}): Promise<any> => {
-  //   const url = `${basePath}${path}`;
-  //   const response = await API.get(url, {
-  //     params,
-  //     headers: getAuthHeader(),
-  //   });
-  //   return response.data;
-  // },
+
   get: async (path = "", params = {}): Promise<any> => {
     const url = `${basePath}${path}`;
     const response = await API.get(url, {
@@ -46,8 +32,7 @@ const RestService = <T>(basePath: string) => ({
       headers: getAuthHeader(),
     });
 
-    console.log("🌐 Raw Axios response:", response); // Add this to confirm
-    return response.data; // ✅ Assuming this contains both data and metaData
+    return response.data;
   },
 
   create: async (payload: T): Promise<T> => {
