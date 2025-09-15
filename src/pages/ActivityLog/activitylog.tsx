@@ -137,7 +137,7 @@ const ActivityLog = () => {
           Activity Log
         </Typography>
         <Stack direction="row" spacing={2} alignItems="center">
-          {/* User Filter */}
+          
           <Autocomplete
             disablePortal
             options={userOptions}
