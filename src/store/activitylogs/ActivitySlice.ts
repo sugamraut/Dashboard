@@ -52,8 +52,8 @@ export const fetchActivityLog = createAsyncThunk<
 >("ActivityLog/fetch", async (params, thunkAPI) => {
   try {
     const filters = params?.filters
-      ? { ...params.filters, type: 1 }
-      : { type: 1 };
+      ? { ...params.filters }
+      : null;
 
     const queryParams = {
       page: params?.page,
@@ -66,7 +66,7 @@ export const fetchActivityLog = createAsyncThunk<
 
     const response = await ActivityService.get("", queryParams);
     console.log("lof ac",response)
-    return response as PaginatedResponse<ActivityLog>;
+    return response ;
   } catch (error: any) {
     return thunkAPI.rejectWithValue(
       (toast.error(error.message) && error.response?.data?.message) ||
