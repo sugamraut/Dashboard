@@ -4,6 +4,7 @@ import { Status, type StatusType } from "../../globals/status";
 import type { UserProfile } from "../../globals/typeDeclaration";
 
 import { UserService } from "../../globals/api_service/service";
+import { toast } from "react-toastify";
 
 export interface UserState {
   fullList: UserProfile[] | null;
@@ -43,9 +44,9 @@ export const fetchAllUsers = createAsyncThunk(
         email: u.email,
         
       }));
-     console.log("test",rawData)
       return { users: formattedData, total };
     } catch (error: any) {
+      toast.error(error||"fail to fetch the user")
       return rejectWithValue(
         error?.response?.data?.message || "Failed to fetch users"
       );
@@ -57,8 +58,6 @@ export const fetchUserById = createAsyncThunk(
   "users/fetchById",
   async (userId: number, { rejectWithValue }) => {
     try {
-      // const response = await API.get(`/users/${userId}`);
-      // return await UserService.getById(userId);
       const response= await UserService.get("/",userId)
       return response.data
       // return response.data.data;

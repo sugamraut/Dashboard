@@ -33,7 +33,6 @@ export const fetchAllCities = createAsyncThunk<
 >("city/fetchAll", async (_, thunkAPI) => {
   try {
     const response= await CityService.get("/all");
-    console.log("all",response.data)
     return response.data
 
   } catch (error: any) {
@@ -60,7 +59,6 @@ export const fetchCityBypaginated = createAsyncThunk<
         rowsPerPage,
         filters,
       });
- console.log("rew",response.data)
       return {
         data: response.data,
         metaData: response.metaData,

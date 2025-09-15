@@ -5,6 +5,7 @@ import {
 } from "@reduxjs/toolkit";
 import { type State } from "../../globals/typeDeclaration";
 import { StateService } from "../../globals/api_service/service";
+import { toast } from "react-toastify";
 
 interface StateSliceType {
   statesList: State[];
@@ -28,7 +29,7 @@ export const fetchStates = createAsyncThunk<
     const response =await StateService.get("/")
     return response.data
   } catch (err: any) {
-    console.error("fetchStates error:", err);
+    toast.error(err||"failed to fetch the state")
     return rejectWithValue(err.response?.data?.message || err.message);
   }
 });

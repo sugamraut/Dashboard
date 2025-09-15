@@ -176,7 +176,6 @@ const AddEditPage = ({
         toast.success("Account type created successfully.");
       }
     } catch (err) {
-      console.error("Submit error:", err);
       toast.error("An unexpected error occurred.");
     }
   };

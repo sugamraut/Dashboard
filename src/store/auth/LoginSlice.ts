@@ -4,6 +4,7 @@ import type { authItem } from "../../globals/typeDeclaration";
 import type { AppDispatch } from "../store";
 
 import API from "../../http";
+import { toast } from "react-toastify";
 
 interface authState {
   data: authItem | null;
@@ -70,14 +71,16 @@ export function fetchAuthAsync(data: { username: string; password: string }) {
         dispatch(setAuth(response.data));
         dispatch(setStatus(Status.Success));
       } else {
-        console.warn("Login failed with status:", response.status);
+        // console.warn("Login failed with status:", response.status);
+        toast.error("login failed with status")
         dispatch(setError("Login failed with status: " + response.status));
       }
     } catch (error: any) {
-      console.error("Login request error:", error);
+      // console.error("Login request error:", error);
       const message =
         error.response?.data?.message || error.message || "Unknown error";
       dispatch(setError(message));
+      toast.error(message||"failed to login ")
     }
   };
 }

@@ -16,6 +16,7 @@ import {
   type BranchDataState,
 } from "../../globals/ZodValidation";
 import InputField from "../../components/Input_field";
+import { toast } from "react-toastify";
 
 interface BranchFormModalProps {
   open: boolean;
@@ -67,7 +68,7 @@ const BranchFormModal: React.FC<BranchFormModalProps> = ({
       await onSubmit(data);
       onClose();
     } catch (err: any) {
-      console.error(err);
+      toast.error(err||"faield to load branch")
     }
   };
 

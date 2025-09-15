@@ -31,7 +31,6 @@ export const fetchProfile = createAsyncThunk<
   try {
     // return await ProfileService.get("/");
     const response =await API.get("/users/profile");
-    console.log("file",response.data)
     return response.data
   } catch (error: any) {
     toast.error(error.response?.data?.message||"failed to fetch profile")

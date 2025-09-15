@@ -67,13 +67,9 @@ const StatusCards = () => {
     }
   }, [dispatch, list.length]);
 
-  console.log("list", list);
-
   const apiDataMap = Object.fromEntries(
     Array.isArray(list) ? list.map((item) => [item.title, item]) : []
   );
-
-  console.log("apiDataMap", apiDataMap);
 
   return (
     <Box sx={{ display: "flex", paddingLeft: "90px" }}>

@@ -34,13 +34,9 @@ const ScannedLog = () => {
   const dispatch = useAppDispatch();
   useDocumentTitle("Scanned Log - SNLI");
 
-  // const { data, metaData, loading, error } = useAppSelector(
-  //   (state) => state.scannedLog
-  // );
   const { data, metaData, loading, error } = useAppSelector(
     (state: RootState) => state.scannedLog ?? []
   );
-  console.log("logs", data);
 
   const [selectedDate, setSelectedDate] = useState<Dayjs | null>(null);
 

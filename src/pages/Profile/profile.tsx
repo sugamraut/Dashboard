@@ -43,31 +43,23 @@ const Profile = () => {
     },
   });
 
-
-
   useEffect(() => {
     dispatch(fetchProfile());
   }, [dispatch]);
   useDocumentTitle("Profile - SNLI");
 
-
-useEffect(() => {
-  console.log("Fetched profile data:", data);
-  if (data) {
-    reset({
-      name: data.name || "",
-      username: data.username || "",
-      email: data.email || "",
-      mobile: data.mobile || "",
-      password: "",
-      confirmPassword: "",
-    });
-  }
-}, [data, reset]);
-
-
-console.log("log file",data)
-
+  useEffect(() => {
+    if (data) {
+      reset({
+        name: data.name || "",
+        username: data.username || "",
+        email: data.email || "",
+        mobile: data.mobile || "",
+        password: "",
+        confirmPassword: "",
+      });
+    }
+  }, [data, reset]);
 
   const onSubmit = (formData: ProfileFormData) => {
     if (formData.password && formData.password !== formData.confirmPassword) {
@@ -85,7 +77,9 @@ console.log("log file",data)
         password: formData.password,
         confirmPassword: formData.confirmPassword,
       })
+      
     );
+
   };
 
   const togglePasswordVisibility = () => {
